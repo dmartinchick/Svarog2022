@@ -188,3 +188,5 @@ UPDATE `event`
 SET `name_en`="tug_of_war"
 WHERE `name`="Перетягивание каната";
 
+
+SELECT user_id,team_subs, event_subs FROM users;

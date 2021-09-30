@@ -5,12 +5,17 @@ from aiogram import types
 
 from datetime import datetime, timedelta
 
+from aiogram.types.user import User
+
 from utils.db_api.sqlighter import SQL
+
+from handlers.users.subscriptions_menu import subscriptions_categories
 
 #Загрузка клавиатур
 from keyboards.inline.inline_main_menu import inkb_main_menu
 from keyboards.inline.result_menu import inkb_result_menu
 from keyboards.inline.contests_menu import inkb_contests_menu
+# from keyboards.inline.subscriptions_menu import inkb_subscriptions_menu
 
 from loader import dp
 import logging
@@ -141,20 +146,15 @@ async def show_contests_menu(call: types.CallbackQuery):
     await call.message.answer("Выбирите интересующий вас конкурс", reply_markup=inkb_contests_menu)
     pass
 
-
 @dp.callback_query_handler(text_contains="main:subscriptions")
 async def show_subscriptions_menu(call: types.CallbackQuery):
     """Возвращает пользователю меню подписок
     """
-    #TODO: реализовать функцию show_subscriptions_menu
-
     await call.answer(cache_time=360)
     callback_data = call.data
     logging.info(f"{callback_data=}")
     
-    await call.message.answer("Вот менеджер пописок")
-    pass
-
+    await subscriptions_categories(call)
 
 @dp.callback_query_handler(text_contains="main:map")
 async def show_map(call: types.CallbackQuery):
