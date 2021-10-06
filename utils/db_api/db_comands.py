@@ -18,8 +18,6 @@ s = Session()
 rq = s.query(Schedule.time_start).order_by(Schedule.time_start).first()
 print(rq)
 """
-tdate = datetime(2021, 7, 18, 11, 00)
-# tdate = datetime.now()
 
 # методы извлечения данных
 
