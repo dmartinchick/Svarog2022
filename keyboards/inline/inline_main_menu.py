@@ -22,7 +22,10 @@ inkb_main_menu = InlineKeyboardMarkup(
             InlineKeyboardButton(text="Конкурсы", callback_data="main:contests"),
         ],
         [
-            InlineKeyboardButton(text="Управление подписками", callback_data="main:subscriptions"),
+            InlineKeyboardButton(text="Команды", callback_data="main:team"),
+        ],
+        [
+            InlineKeyboardButton(text="Менеджер подписок", callback_data="main:subscriptions_manager"),
         ],
         [
             InlineKeyboardButton(text="Карта фестиваля", callback_data="main:map"),

@@ -66,14 +66,14 @@ async def show_what_now(call: types.CallbackQuery):
         # запуск цикла обработки текущих событий
         for event in rq:
             # парсинг данных
-            event_name = event[0]
+            event_name = event['name']
             # time_start = event[1].strftime('%d.%m %H:%M')
             # time_end = event[2].strftime('%d.%m %H:%M')
             # address = event[3]
             # contains = event[4]
 
             # отправка сообщения с информацией о конкурсе
-            await call.message.answer(event_name)
+            await call.message.answer(text=event_name)
 
 
 @dp.callback_query_handler(text_contains="main:what_next")

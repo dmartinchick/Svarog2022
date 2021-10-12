@@ -15,10 +15,10 @@ Session = sessionmaker(bind=engine)
 s = Session()
 
 """
-rq = s.query(Schedule.time_start).order_by(Schedule.time_start).first()
+tdate = datetime(2021, 7, 18, 19, 29)
+rq = s.query(Event.name, Schedule.time_start, Schedule.time_end).filter(and_(Schedule.event_id == Event.id, Schedule.time_start < tdate, Schedule.time_end > tdate)).all()
 print(rq)
 """
-
 # методы извлечения данных
 
 def get_date_start():
@@ -39,16 +39,19 @@ def get_date_end():
 
 def get_what_now(tdate):
     # TODO: добавить поля с картинкой, временем оканчания
-    rq = s.query(Event.name).filter(and_(Schedule.event_id == Event.id, Schedule.time_start > tdate)).limit(1)
-    return rq
+    now_event_list = []
+    for item in s.query(Event.name, Event.id, Schedule.time_end).filter(and_(Schedule.event_id == Event.id, Schedule.time_start < tdate, Schedule.time_end > tdate)).all():
+        now_event_list.append({'name':item[0], 'event_id':item[1], 'event_time_end':item[2]})
+
+    return now_event_list
 
 
 def get_what_next(tdate):
     # TODO: добавить поля с картинкой, временем оканчания
     next_event_list = []
-    for item in s.query(Event.name, Schedule.time_start).filter(and_(Schedule.event_id == Event.id, Schedule.time_start > tdate)).order_by(Schedule.time_start).limit(2):
-        event_dict = {'name':item[0], 'time_start':item[1]}
-        next_event_list.append(event_dict)
+    for item in s.query(Event.name, Event.id, Schedule.time_start).filter(and_(Schedule.event_id == Event.id, Schedule.time_start > tdate)).order_by(Schedule.time_start).limit(2):
+        next_event_list.append({'name':item[0], 'event_id':item[1], 'event_time_start':item[1]})
+    
     return next_event_list
 
 
