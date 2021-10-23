@@ -1,15 +1,28 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.types.callback_query import CallbackQuery
-from aiogram.utils import callback_data
 from aiogram.utils.callback_data import CallbackData
 
 main_menu_cb = CallbackData("show_menu", "level", "category", "subcategory", "to_do", "item_id")
 
 def make_callback_data(level, category="0", subcategory="0", to_do="0", item_id="0"):
-    return main_menu_cb.new(level=level, category=category, subcategory=subcategory, to_do=to_do, item_id=item_id)
+    """формирует callback_data
+    """
+    return main_menu_cb.new(level=level, 
+                            category=category, 
+                            subcategory=subcategory, 
+                            to_do=to_do, item_id=item_id)
+
 
 # Создаем клавиатуру главного меню
 async def main_menu_keyboard():
+    """Формирует клавиатуру главного меню
+
+    Args:
+        category ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
     CURENT_LEVEL = 0
 
     markup = InlineKeyboardMarkup(row_width=1)
@@ -24,7 +37,7 @@ async def main_menu_keyboard():
         {'name':"Менеджер подписок",'category_item':"subscriptions_manager"},
         {'name':"Карта фестиваля",'category_item':"map"},
         {'name':"Поделиться ссылкой",'category_item':"share"},
-        {'name':"Положение фестиваля",'category_item':"svarog_rule"}
+        {'name':"Положение фестиваля",'category_item':"about"}
     ]
 
     for category in categorys:
