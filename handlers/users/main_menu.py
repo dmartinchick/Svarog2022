@@ -24,14 +24,11 @@ from data import config
 @dp.message_handler(commands=['Меню', 'menu'], commands_prefix = ['⠀','/'])
 async def show_main_menu(message: types.Message):
     """Отправляет пользователю сообщение с клавиатурой главного меню
-
-    Args:
-        message (types.Message): [description]
     """
     await message.answer(text="Главное меню", reply_markup=inkb_main_menu)
 
 
-@dp.callback_query_handler(text_contains='back')
+@dp.callback_query_handler(text_contains='back_to_main')
 async def back_main_menu(call: types.CallbackQuery):
     """Возвращает пользователя в главное меню
     """
@@ -41,12 +38,41 @@ async def back_main_menu(call: types.CallbackQuery):
 
     await call.message.answer(text="Главное меню", reply_markup=inkb_main_menu)
 
+
+@dp.callback_query_handler(text_contains="back_to_result")
+async def back_to_result_menu(call: types.CallbackQuery):
+    """Возвращает пользователя в раздел 'Результаты'
+
+    """
+    pass
+
+
+@dp.callback_query_handler(text_contains="back_to_event")
+async def back_to_event_menu(call: types.CallbackQuery):
+    """Возвращает пользователя в раздел 'Конкурсы'
+    """
+    pass
+
+
+@dp.callback_query_handler(text_contains="back_to_team")
+async def back_to_team_menu(call: types.CallbackQuery):
+    """Возвращает пользователя в разде 'Команды'
+    """
+    pass
+
+
+@dp.callback_query_handler(text_contains="back_to_subscriptions_manager")
+async def back_to_subscriptions_manager_menu(call: types.CallbackQuery):
+    """Возвращает пользователя в раздел 'Менеджер подписок'
+    """
+    pass
+
+
 @dp.callback_query_handler(text_contains="main:what_now")
 async def show_what_now(call: types.CallbackQuery):
     """Отправляет пользователю текущие события
     TODO: заменить tdate
     """
-
     await call.answer(cache_time=360)
     callback_data = call.data
     logging.info(f"{callback_data=}")
