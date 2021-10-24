@@ -170,6 +170,23 @@ def get_event_info(event_id:int) -> dict:
         }
     return event_info
 
+
+def get_events_list() -> list:
+    """Возвращает пользователю список конкурсов
+
+    Returns:
+        list: список словарей конкурсов
+    """
+    event_list = []
+    for event in s.query(
+        Event.name,
+        Event.id).filter(
+            Event.type != "Прочее").all():
+        event_list.append(
+            {'name' : event[0],
+            'event_id' : event[1]})
+    return event_list
+
 def get_users_list() -> list:
     """Возвращает список пользователей
 
@@ -182,7 +199,7 @@ def get_users_list() -> list:
     return users_list
 
 
-def get_team_all() -> list:
+def get_teams_list() -> list:
     """Возвращает спискок всех команд
 
     Returns:
@@ -191,10 +208,10 @@ def get_team_all() -> list:
     team_list = []
     for team in s.query(
         Team.name,
-        Team.id).all:
+        Team.id).all():
         team_list.append(
             {'name':team[0],
-            'id':team[1]})
+            'team_id':team[1]})
     return team_list
 
 

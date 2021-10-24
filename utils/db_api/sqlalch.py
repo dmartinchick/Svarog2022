@@ -1,7 +1,8 @@
+"""Модуль для подключения к БД и оределения класов таблиц БД"""
 # Данные для подключения к базе данных
 from sqlalchemy import Column, ForeignKey, Integer, String, Enum, Float, Text, DateTime, engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationships
+
 from sqlalchemy import create_engine
 from sqlalchemy.sql.expression import null
 from sqlalchemy.sql.schema import MetaData, Table
@@ -11,13 +12,20 @@ HOST = config.HOST
 USER = config.USER
 PASSWORD = config.PASSWORD
 DB = config.DB
-engine =  create_engine(f"mysql+mysqlconnector://{USER}:{PASSWORD}@{HOST}/{DB}", echo=False)
-# engine =  create_engine(f"mysql+mysqlconnector://dmartinchick:samsungLX40@localhost/svarog2022_db", echo=False)
+engine =  create_engine(
+    f"mysql+mysqlconnector://{USER}:{PASSWORD}@{HOST}/{DB}",
+    echo=False)
+
+"""engine =  create_engine(
+    f"mysql+mysqlconnector://dmartinchick:samsungLX40@localhost/svarog2022_db",
+    echo=False)
+"""
 
 Base = declarative_base()
 metadata = MetaData(bind=engine)
 
 class Event(Base):
+    """Определение класа Event"""
     __tablename__ = Table("Event", metadata, autoload=True)
 
     id = Column(Integer, primary_key=True)
@@ -43,23 +51,28 @@ class Event(Base):
 
 
 class Team(Base):
+    """Определение класса Team"""
     __tablename__ = Table("Team", metadata, autoload=True)
 
     id = Column(Integer,primary_key=True)
     name = Column(String(100), nullable=False)
     holding = Column(Integer, nullable=False)
     address = Column(String(255))
-    
+
     def __init__(self, name, holding, address):
         self.name = name
         self.holding = holding
         self.address = address
 
     def __repr__(self):
-        return "Team (name = '%s', holding = '%s', address = '%s')"%(self.name, self.holding, self.address)
+        return "Team (name = '%s', holding = '%s', address = '%s')"%(
+            self.name,
+            self.holding,
+            self.address)
 
 
 class User(Base):
+    """Определение класса User"""
     __tablename__ = Table("User", metadata, autoload=True)
 
     user_id = Column(Integer, primary_key=True, autoincrement=False)
@@ -69,6 +82,7 @@ class User(Base):
 
 
 class Results(Base):
+    """Определение класса Resilts"""
     __tablename__ = Table("Results", metadata, autoload=True)
 
     id = Column(Integer, primary_key=True)
@@ -80,10 +94,10 @@ class Results(Base):
         self.team_id = team_id
         self.evet_id = event_id
         self.results = results
-    
-    
+
 
 class Schedule(Base):
+    """Определение класса Shedule"""
     __tablename__ = Table("Schedule", metadata, autoload=True)
 
     id = Column(Integer, primary_key=True)
@@ -96,7 +110,9 @@ class Schedule(Base):
         self.time_start = time_start
         self.time_end = time_end
 
+
 class Subscriptions(Base):
+    """Определение класса Subscriptions"""
     __tablename__ = Table("Subscriptions", metadata, autoload=True)
 
     id = Column(Integer, primary_key=True)
@@ -108,5 +124,6 @@ class Subscriptions(Base):
         self.user_id = user_id
         self.team_id = team_id
         self.event_id = event_id
+
 
 Base.metadata.create_all(engine)
