@@ -85,6 +85,7 @@ async def result_keyboard(category:str) -> InlineKeyboardMarkup:
     )
     return markup
 
+
 async def event_keyboard(category:str) -> InlineKeyboardMarkup:
     """Создает клавиатуру со списком конкурсов
 
@@ -121,6 +122,45 @@ async def event_keyboard(category:str) -> InlineKeyboardMarkup:
         )
     )
     return markup
+
+
+async def team_keyboard(category:str) -> InlineKeyboardMarkup:
+    """Создает клавиатуру меню команд
+
+    Args:
+        category (str): раздел главного меню 'Команды'
+
+    Returns:
+        InlineKeyboardMarkup: Клавиатура со списком команд
+    """
+    CURENT_LEVEL = 1
+    markup = InlineKeyboardMarkup(
+        row_width=1
+    )
+    teams = get_teams_list()
+    for team in teams:
+        button_text = team['name']
+        button_callback_data = make_callback_data(
+            level=CURENT_LEVEL + 1,
+            category=category,
+            subcategory=team['team_id']
+        )
+        markup.insert(
+            InlineKeyboardButton(
+                text=button_text,
+                callback_data=button_callback_data
+            )
+        )
+    markup.row(
+        InlineKeyboardButton(
+            text="Назад",
+            callback_data=make_callback_data(
+                level = CURENT_LEVEL - 1
+            )
+        )
+    )
+    return markup
+
 
 async def subscriptions_manager_keyboard(category:str) -> InlineKeyboardMarkup:
     """Создает клавиатуру менеджера подписок
@@ -162,43 +202,54 @@ async def subscriptions_manager_keyboard(category:str) -> InlineKeyboardMarkup:
     )
     return markup
 
-async def team_keyboard(category:str) -> InlineKeyboardMarkup:
-    """Создает клавиатуру меню команд
+
+async def signed_to_item(category:str, subcategory:str, user_id:int) -> InlineKeyboardMarkup:
+    """Создает клавиатуру с командами или конкурсами на которые подписан пользователь
 
     Args:
-        category (str): раздел главного меню 'Команды'
+        category (str): раздел главного меню
+        subcategory (str): раздел меню менеджера подписок
+        user_id (int): id пользователя
 
     Returns:
-        InlineKeyboardMarkup: Клавиатура со списком команд
+        InlineKeyboardMarkup: Клавиатура со списком команд или конкурсов
+         на которые подписан пользователь
     """
-    CURENT_LEVEL = 1
+    CURENT_LEVEL = 2
     markup = InlineKeyboardMarkup(
-        row_width=1
+        row_width=2
     )
-    teams = get_teams_list()
-    for team in teams:
-        button_text = team['name']
-        button_callback_data = make_callback_data(
-            level=CURENT_LEVEL + 1,
-            category=category,
-            subcategory=team['team_id']
-        )
-        markup.insert(
-            InlineKeyboardButton(
-                text=button_text,
-                callback_data=button_callback_data
-            )
-        )
-    markup.row(
-        InlineKeyboardButton(
-            text="Назад",
-            callback_data=make_callback_data(
-                level = CURENT_LEVEL - 1
-            )
-        )
-    )
+    # Получение списка конкурсов или команд
+    if category == "event":
+        pass
+    else:
+        pass
+    pass
     return markup
 
+
+async def unsigned_to_item(category:str, subcategory:str, user_id:int) -> InlineKeyboardMarkup:
+    """Создает клавиатуру с командами или конкурсами на которые не подписан пользователь
+
+    Args:
+        category (str): раздел главного меню
+        subcategory (str): раздел меню менеджера подписок
+        user_id (int): id пользователя
+
+    Returns:
+        InlineKeyboardMarkup: Клавиатура со списком команд или конкурсов
+         на которые не подписан пользователь
+    """
+    CURENT_LEVEL = 2
+    markup = InlineKeyboardMarkup(
+        row_width=2
+    )
+    if category == "event":
+        pass
+    else:
+        pass
+    pass
+    return markup
 
 inkb_main_menu = InlineKeyboardMarkup(
     inline_keyboard=[

@@ -3,9 +3,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import and_, desc
 from sqlalchemy.orm.session import Session
-from utils.db_api.sqlalch import Event, Schedule, Team, User
+from utils.db_api.sqlalch import Event, Schedule, Subscriptions, Team, User
 
 from data.config import USER, PASSWORD, HOST, DB
+
+from utils.misc.other import get_unsubs_list
 
 engine =  create_engine(
     f"mysql+mysqlconnector://{USER}:{PASSWORD}@{HOST}/{DB}",
@@ -22,16 +24,12 @@ Session = sessionmaker(bind=engine)
 s = Session()
 
 """
-tdate = datetime(2021, 7, 18, 19, 29)
+user_id = 466138751
 request = s.query(
-    Event.name,
-    Schedule.time_start,
-    Schedule.time_end).filter(
+    Team.name, Team.id).filter(
         and_(
-            Schedule.event_id == Event.id,
-            Schedule.time_start < tdate,
-            Schedule.time_end > tdate)
-            ).all()
+            Team.id == Subscriptions.team_id,
+            Subscriptions.user_id == user_id)).all()
 print(request)
 """
 # методы извлечения данных
@@ -187,6 +185,7 @@ def get_events_list() -> list:
             'event_id' : event[1]})
     return event_list
 
+
 def get_users_list() -> list:
     """Возвращает список пользователей
 
@@ -213,6 +212,80 @@ def get_teams_list() -> list:
             {'name':team[0],
             'team_id':team[1]})
     return team_list
+
+
+def get_signed_teams_list(user_id: int) -> list:
+    """Возвращает список команд на которые подписан пользователь
+
+    Args:
+        user_id (int): id пользователя
+
+    Returns:
+        list: список словарей на которые подписан пользователь
+    """
+    signed_teams_list = []
+    for team in s.query(
+        Team.name,
+        Team.id).filter(
+            and_(
+                Team.id == Subscriptions.team_id,
+                Subscriptions.user_id == user_id)).all():
+        signed_teams_list.append(
+            {'name': team[0], 'item_id':team[1]})
+
+    return signed_teams_list
+
+
+def get_unsigned_teams_list(user_id:int) -> list:
+    """Возвращает список команд на которые не подписан пользователь
+
+    Args:
+        user_id (int): id пользователя
+
+    Returns:
+        list: список словарей на которые не подписан пользователь
+    """
+    team_list = get_teams_list()
+    signed_teams_list = get_signed_teams_list(user_id)
+    unsigned_teams_list = get_unsubs_list(team_list, signed_teams_list)
+    return unsigned_teams_list
+
+
+def get_signed_events_list(user_id: int) -> list:
+    """Возвращает список конкурсов на которые подписан пользователь
+
+    Args:
+        user_id (int): id пользователя
+
+    Returns:
+        list: список словарей конкурсов на которые подписан пользователь
+    """
+    signed_events_list = []
+    for event in s.query(
+        Event.name,
+        Event.id).filter(
+            and_(
+                Event.id == Subscriptions.event_id,
+                Subscriptions.user_id == user_id)).all():
+        signed_events_list.append(
+            {'name': event[0], 'item_id':event[1]})
+
+    return signed_events_list
+
+
+def get_unsigned_events_list(user_id:int) -> list:
+    """Возвращает список конкурсов на которые не подписан пользователь
+
+    Args:
+        user_id (int): id пользователя
+
+    Returns:
+        list: список словарей на которые не подписан пользователь
+    """
+    events_list = get_events_list()
+    signed_events_list = get_signed_events_list(user_id)
+    unsigned_events_list = get_unsubs_list(events_list, signed_events_list)
+    return unsigned_events_list
 
 
 # Методы добавления данных
