@@ -3,11 +3,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import and_, desc
 from sqlalchemy.orm.session import Session
+
 from utils.db_api.sqlalch import Event, Schedule, Subscriptions, Team, User
+from utils.misc.other import get_unsubs_list
 
 from data.config import USER, PASSWORD, HOST, DB
 
-from utils.misc.other import get_unsubs_list
 
 engine =  create_engine(
     f"mysql+mysqlconnector://{USER}:{PASSWORD}@{HOST}/{DB}",

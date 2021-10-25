@@ -216,6 +216,9 @@ async def signed_to_item(category:str, subcategory:str, user_id:int) -> InlineKe
     Returns:
         InlineKeyboardMarkup: Клавиатура со списком команд или конкурсов
          на которые подписан пользователь
+
+    TODO:
+        Реализовать button_callback_data
     """
     CURENT_LEVEL = 2
     markup = InlineKeyboardMarkup(
@@ -259,6 +262,9 @@ async def unsigned_to_item(category:str, subcategory:str, user_id:int) -> Inline
     Returns:
         InlineKeyboardMarkup: Клавиатура со списком команд или конкурсов
          на которые не подписан пользователь
+
+    TODO:
+        Реализовать button_callback_data
     """
     CURENT_LEVEL = 2
     markup = InlineKeyboardMarkup(
