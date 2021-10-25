@@ -1,6 +1,8 @@
 """Создание клавиатуры главного меню"""
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from utils.db_api.db_comands import get_events_list, get_teams_list
+from utils.db_api.db_comands import get_events_list, get_signed_events_list
+from utils.db_api.db_comands import get_signed_teams_list, get_teams_list
+from utils.db_api.db_comands import get_unsigned_events_list, get_unsigned_teams_list
 from keyboards.inline.callback_datas import main_menu_choice, main_menu_cb
 
 def make_callback_data(level,category = 0,subcategory = 0,item = 0):
@@ -221,10 +223,28 @@ async def signed_to_item(category:str, subcategory:str, user_id:int) -> InlineKe
     )
     # Получение списка конкурсов или команд
     if category == "event":
-        pass
+        items_list = get_signed_events_list(user_id)
     else:
-        pass
-    pass
+        items_list = get_signed_teams_list(user_id)
+    for item in items_list:
+        button_text = item['name']
+        button_callback_data = ""
+        markup.insert(
+            InlineKeyboardButton(
+                text=button_text,
+                callback_data=button_callback_data
+            )
+        )
+    markup.row(
+        InlineKeyboardButton(
+            text = "Назад",
+            callback_data = make_callback_data(
+                level = CURENT_LEVEL - 1,
+                category=category,
+                subcategory=subcategory
+            )
+        )
+    )
     return markup
 
 
@@ -245,10 +265,28 @@ async def unsigned_to_item(category:str, subcategory:str, user_id:int) -> Inline
         row_width=2
     )
     if category == "event":
-        pass
+        items_list = get_unsigned_events_list(user_id)
     else:
-        pass
-    pass
+        items_list = get_unsigned_teams_list(user_id)
+    for item in items_list:
+        button_text = item['name']
+        button_callback_data = ''
+        markup.insert(
+            InlineKeyboardButton(
+                text=button_text,
+                callback_data=button_callback_data
+            )
+        )
+    markup.row(
+        InlineKeyboardButton(
+            text="Назад",
+            callback_data=make_callback_data(
+                level=CURENT_LEVEL -1,
+                category=category,
+                subcategory=subcategory
+            )
+        )
+    )
     return markup
 
 inkb_main_menu = InlineKeyboardMarkup(
