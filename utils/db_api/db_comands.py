@@ -183,7 +183,7 @@ def get_events_list() -> list:
             Event.type != "Прочее").all():
         event_list.append(
             {'name' : event[0],
-            'event_id' : event[1]})
+            'item_id' : event[1]})
     return event_list
 
 
@@ -211,7 +211,7 @@ def get_teams_list() -> list:
         Team.id).all():
         team_list.append(
             {'name':team[0],
-            'team_id':team[1]})
+            'item_id':team[1]})
     return team_list
 
 

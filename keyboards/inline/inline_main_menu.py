@@ -1,11 +1,12 @@
 """Создание клавиатуры главного меню"""
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
 from utils.db_api.db_comands import get_events_list, get_signed_events_list
 from utils.db_api.db_comands import get_signed_teams_list, get_teams_list
 from utils.db_api.db_comands import get_unsigned_events_list, get_unsigned_teams_list
 from keyboards.inline.callback_datas import main_menu_choice, main_menu_cb
 
-def make_callback_data(level,category = 0,subcategory = 0,item = 0):
+def make_callback_data(level, category = "0", subcategory = "0", item = "0"):
     """Формирует callback_data, подставля вместо отсутствующих значений '0'."""
     return main_menu_cb.new(
         level = level,
@@ -14,12 +15,17 @@ def make_callback_data(level,category = 0,subcategory = 0,item = 0):
         item = item
     )
 
-async def main_menu_keyboard():
-    """Возвращает пользователю клавиатуру главного меню"""
+
+async def main_menu_keyboard() -> InlineKeyboardMarkup:
+    """Возвращает пользователю клавиатуру главного меню
+
+    Returns:
+        InlineKeyboardMarkup: Клавиатура со списком категорий
+    """
     # Указываем текущий уровень
     CURENT_LEVEL = 0
     markup = InlineKeyboardMarkup(
-        row_width = 1
+        row_width=1
     )
     categories = [
         {'name':"Что сейчас происходит", 'category_item':"what_now"},
@@ -60,18 +66,18 @@ async def result_keyboard(category:str) -> InlineKeyboardMarkup:
         row_width = 1
     )
     result_subcategories = [
-        {'name' : "Кубок фестиваля", 'subcategory_item' : "festival_cup"},
-        {'name' : "Кубок холдинга", 'subcategory_item' : "holding_cup"},
-        {'name' : "Кубок туризма", 'subcategory_item' : "tourism_cup"},
-        {'name' : "Кубок спорта", 'subcategory_item' : "sport_cup"},
-        {'name' : "Кубок культуры", 'subcategory_item': "culture_cup"},
+        {'name' : "Кубок фестиваля", 'subcategory' : "festival_cup"},
+        {'name' : "Кубок холдинга", 'subcategory' : "holding_cup"},
+        {'name' : "Кубок туризма", 'subcategory' : "tourism_cup"},
+        {'name' : "Кубок спорта", 'subcategory' : "sport_cup"},
+        {'name' : "Кубок культуры", 'subcategory': "culture_cup"},
     ]
     for subcategory in result_subcategories:
         button_text = subcategory['name']
         button_callback_data = make_callback_data(
             level = CURENT_LEVEL + 1,
             category = category,
-            subcategory = subcategory['subcategory_item'])
+            subcategory = subcategory['subcategory'])
         markup.insert(
             InlineKeyboardButton(
                 text=button_text,
@@ -107,7 +113,7 @@ async def event_keyboard(category:str) -> InlineKeyboardMarkup:
         button_callback_data = make_callback_data(
             level=CURENT_LEVEL + 1,
             category=category,
-            subcategory=event['event_id']
+            subcategory=event['item_id']
         )
         markup.insert(
             InlineKeyboardButton(
@@ -137,7 +143,7 @@ async def team_keyboard(category:str) -> InlineKeyboardMarkup:
     """
     CURENT_LEVEL = 1
     markup = InlineKeyboardMarkup(
-        row_width=1
+        row_width=2
     )
     teams = get_teams_list()
     for team in teams:
@@ -145,7 +151,7 @@ async def team_keyboard(category:str) -> InlineKeyboardMarkup:
         button_callback_data = make_callback_data(
             level=CURENT_LEVEL + 1,
             category=category,
-            subcategory=team['team_id']
+            subcategory=team['item_id']
         )
         markup.insert(
             InlineKeyboardButton(
@@ -178,15 +184,15 @@ async def subscriptions_manager_keyboard(category:str) -> InlineKeyboardMarkup:
         row_width=1
     )
     subscriptions_manager_subcategories= [
-        {'name':"Подписки на команды",'subcategory_item':"subscription_manager_team"},
-        {'name':"Подписки на конкурсы",'subcategory_item':"subscription_manager_event"}
+        {'name':"Подписки на команды",'subcategory':"subscription_manager_team"},
+        {'name':"Подписки на конкурсы",'subcategory':"subscription_manager_event"}
     ]
     for subcategory in subscriptions_manager_subcategories:
         button_text=subcategory['name']
         button_callback_data = make_callback_data(
             level=CURENT_LEVEL + 1,
             category=category,
-            subcategory=subcategory['subcategory_item']
+            subcategory=subcategory['subcategory']
         )
         markup.insert(
             InlineKeyboardButton(
@@ -231,7 +237,7 @@ async def signed_to_item(category:str, subcategory:str, user_id:int) -> InlineKe
         items_list = get_signed_teams_list(user_id)
     for item in items_list:
         button_text = item['name']
-        button_callback_data = ""
+        button_callback_data = item['item_id']
         markup.insert(
             InlineKeyboardButton(
                 text=button_text,
@@ -276,7 +282,7 @@ async def unsigned_to_item(category:str, subcategory:str, user_id:int) -> Inline
         items_list = get_unsigned_teams_list(user_id)
     for item in items_list:
         button_text = item['name']
-        button_callback_data = ''
+        button_callback_data = item['item_id']
         markup.insert(
             InlineKeyboardButton(
                 text=button_text,
@@ -294,6 +300,7 @@ async def unsigned_to_item(category:str, subcategory:str, user_id:int) -> Inline
         )
     )
     return markup
+
 
 inkb_main_menu = InlineKeyboardMarkup(
     inline_keyboard=[

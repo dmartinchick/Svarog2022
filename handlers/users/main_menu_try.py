@@ -1,104 +1,201 @@
-from typing import Union
 
-import logging
-from datetime import datetime, timedelta
-
-from aiogram import types
-from aiogram.types import CallbackQuery, Message
-from keyboards.inline.inkb_main_menu import main_menu_keyboard
-from keyboards.inline.inkb_event import ink_event_card
-from keyboards.inline.subscriptions_menu import categories_keyboard
-from utils.db_api.db_comands import get_date_end, get_date_start, get_what_now
-
-from loader import dp
-from data import config
-
-
-
-
-async def main_menu_category(message: Union[CallbackQuery, Message], **kwargs):
-    """Формирует клавиатуру Главного меню бота
-
-    Args:
-        message (Union[CallbackQuery, Message]): [description]
-    """
-    # Формируем клавиатуру
-    markup = main_menu_keyboard(**kwargs)
-    # Проверяем, что за тип апдейта. Если Message - отправляем новое сообщение
-    if isinstance(message, Message):
-        await message.answer("Главное меню", reply_markup=markup)
-    # Если CallbackQuery - изменяем это сообщение
-    elif isinstance(message, CallbackQuery):
-        call = message
-        await call.message.answer(text="Главное меню", reply_markup=markup)
-
-
-@dp.message_handler(commands=['Меню', 'menu'], commands_prefix = ['⠀','/'])
-async def show_main_menu(message: types.Message):
-    """Обрабатывает хэндлер меню, и вызывает функцию, которая формирует клавиатуру главного меню
-    """
-    await main_menu_category(message)
-
-
-@dp.callback_query_handler(text_contains="what_now")
-async def show_what_now(call: types.CallbackQuery):
-    """Показывет ВСЕ события, которые проходят в настоящий момент
+@dp.callback_query_handler(text_contains='back_to_main')
+async def back_main_menu(call: types.CallbackQuery):
+    """Возвращает пользователя в главное меню
     """
     await call.answer(cache_time=360)
     callback_data = call.data
     logging.info(f"{callback_data=}")
 
-    tdate = datetime.now() + timedelta(hours=config.DELTA)
+    await call.message.answer(
+        text="Главное меню",
+        reply_markup=main_menu_keyboard())
 
-    # получаем дату и время начало и конца фестиваля
-    festival_start = get_date_start()
-    festival_end = get_date_end()
 
-    # Проверяем начался/закончился ли фестиваль
-    if tdate < festival_start:
-        await call.message.answer("😁 Фестиваль еще не начался, \nЗагляни сюда 18 июня!")
-    elif tdate > festival_end:
+@dp.callback_query_handler(text_contains="back_to_result")
+async def back_to_result_menu(call: types.CallbackQuery):
+    """Возвращает пользователя в раздел 'Результаты'
+
+    """
+    pass
+
+
+@dp.callback_query_handler(text_contains="back_to_event")
+async def back_to_event_menu(call: types.CallbackQuery):
+    """Возвращает пользователя в раздел 'Конкурсы'
+    """
+    pass
+
+
+@dp.callback_query_handler(text_contains="back_to_team")
+async def back_to_team_menu(call: types.CallbackQuery):
+    """Возвращает пользователя в разде 'Команды'
+    """
+    pass
+
+
+@dp.callback_query_handler(text_contains="back_to_subscriptions_manager")
+async def back_to_subscriptions_manager_menu(call: types.CallbackQuery):
+    """Возвращает пользователя в раздел 'Менеджер подписок'
+    """
+    pass
+
+
+@dp.callback_query_handler(text_contains="what_now")
+async def show_what_now(call: types.CallbackQuery):
+    """Отправляет пользователю текущие события
+    TODO: заменить tdate
+    """
+    await call.answer(cache_time=360)
+    callback_data = call.data
+    logging.info(f"{callback_data=}")
+    # текущее время и дата
+    # tdate = datetime.now() + timedelta(hours=config.DELTA)
+    tdate = datetime(2021, 7, 18, 19, 29) + timedelta(hours=config.DELTA)
+    dt_start = get_date_start()
+    dt_end = get_date_end()
+
+    # Проверка начался ли фестиваль
+    if tdate < dt_start:
         await call.message.answer(
-            text="☹ К сожелению, фестиваль уже прошел.\nУвидимся в следующем году! 😁")
+            text="😁 Фестиваль еще не начался, \nЗагляни сюда 18 июня!"
+            )
+    elif tdate > dt_end:
+        await call.message.answer(
+            text="☹ К сожелению, фестиваль уже прошел.\nУвидимся в следующем году! 😁"
+            )
     else:
-        await call.message.answer(text='🤓 Сейча проходит 🤓')
-        # Получаем список текущих событий
-        event_now_list = get_what_now(tdate)
-        for event in event_now_list:
-            #TODO: реализовать клавиатуру для карточки события. кнопки Подписаться|отписаться, подробнее
-            await call.message.answer(text=event['name'], reply_markup=ink_event_card)
+        await call.message.answer(
+            text='🤓 Сейча проходит 🤓'
+            )
+        # обращение к базе данных и получение данных
+        events_list = get_what_now(tdate)
+        # проверка есть ли меропириятия сейчас, если нет отправляет сообщение
+        if len(events_list) == 0:
+            await call.message.answer(
+                text="К сожелению сейчас ничего не происходит.\n"
+                "Можешь посмотреть ближайшие события нажав на кнокпу"
+                # TODO: Доваить клавиатуру с кноппкой what_next
+            )
+        else:
+            for event in events_list:
+                # парсинг данных
+                event_name = event['name']
+                time_end = event['event_time_end'].strftime('%H:%M')
+                # отправка сообщения с информацией о конкурсе
+                await call.message.answer(
+                    text=f"Саейчас проходит конкурс '{event_name}'\n"
+                    f"Он закончиться в {time_end}"
+                    )
 
 
 @dp.callback_query_handler(text_contains="what_next")
 async def show_what_next(call: types.CallbackQuery):
-    """Возвращает сообщения с 2-мя ближайшими мероприятиями (и показывает сколько времени до них осталось)
+    """Возвращает пользователю ближайшее событие
+    TODO: реализовать функцию show_what_next. добавить обратный отсчет?
+    TODO: заменить tdate
     """
-    pass
+    await call.answer(cache_time=360)
+    callback_data = call.data
+    logging.info(f"{callback_data=}")
+    # получение текущей даты и времени, а так же даты и времени окончания фестиваля
+    # tdate = datetime.now() + timedelta(hours=config.DELTA)
+    tdate = datetime(2021, 7, 18, 19, 29) + timedelta(hours=config.DELTA)
+    dt_end = get_date_end()
+    # проверка не закончился ли фестиваль
+    if tdate >= dt_end:
+        await call.message.answer(
+            text="☹ К сожелению, фестиваль уже прошел.\nУвидимся в следующем году! 😁"
+            )
+    else:
+        # обращение к БД и получение ближайших мероприятий
+        events_list = get_what_next(tdate)
+        await call.message.answer("В скором времени состоится")
+        # запуск цикла обработки текущих событий
+        for event in events_list:
+            await call.message.answer(
+                                    f"'{event['name']}'\n"
+                                    f"Конкурс начнется "
+                                    f"{event['event_time_start'].strftime('%d.%m')} "
+                                    f"в {event['event_time_start'].strftime('%H:%M')}")
 
 
-@dp.callback_query_handler(text_contains="full_shedule")
+@dp.callback_query_handler(text_contains="full_schedule")
 async def show_full_schedule(call: types.CallbackQuery):
-    """Возвращает сообщение с картинкой с полным расписание фестиваля
+    """Возвращает пользователю полное расписание
     """
-    pass
+    await call.answer(cache_time=360)
+    callback_data = call.data
+    logging.info(f"{callback_data=}")
+    full_schedule = get_full_shedule()
+    await call.message.answer("Вот полное расписание")
+    for event in full_schedule:
+        await call.message.answer(f"{event['name']}"
+                                f"\nНачало:{event['time_start'].strftime('%d.%m %H:%M')}"
+                                f"\nКонец:{event['time_end'].strftime('%d.%m %H:%M')}\n\n")
 
+
+@dp.callback_query_handler(text_contains="results")
+async def show_results_menu(call: types.CallbackQuery):
+    """Возвращает пользователю таблицы результатов
+    TODO: добавить параметр category
+    """
+
+    await call.answer(cache_time=360)
+    callback_data = call.data
+    logging.info(f"{callback_data=}")
+    await call.message.answer(
+        "Выбери интересующие тебя результаты",
+        reply_markup= await result_keyboard(category))
+
+
+@dp.callback_query_handler(text_contains="contests")
+async def show_contests_menu(call: types.CallbackQuery):
+    """Возвращает пользователю меню конкурсов
+    """
+    await call.answer(cache_time=360)
+    callback_data = call.data
+    logging.info(f"{callback_data=}")
+    await call.message.answer("Выбирите интересующий вас конкурс", reply_markup=inkb_contests_menu)
+
+
+@dp.callback_query_handler(text_contains="subscriptions")
+async def show_subscriptions_menu(call: types.CallbackQuery):
+    """Возвращает пользователю меню подписок
+    """
+    await call.answer(cache_time=360)
+    callback_data = call.data
+    logging.info(f"{callback_data=}")
+    await subscriptions_categories(call)
 
 @dp.callback_query_handler(text_contains="map")
 async def show_map(call: types.CallbackQuery):
-    """Возвращает сообщение с картинкой картой фестиваля
+    """Возвращает пользователю кеарту фестиваля
+    TODO: реализовать отправку картинки с картой фестиваля
     """
-    pass
+    await call.answer(cache_time=360)
+    callback_data = call.data
+    logging.info(f"{callback_data=}")
+    await call.message.answer("Вот карта фестиваля")
 
 
 @dp.callback_query_handler(text_contains="share")
 async def show_share(call: types.CallbackQuery):
-    """Возвращает сообщение с картинкой в виде QR-кода со ссылкой на бота
+    """Возвращает пользователю QR-код со сылкой на этот телеграм бот
+    TODO: реализовать отправку картинки с QR-кодом
     """
-    pass
+    await call.answer(cache_time=360)
+    callback_data = call.data
+    logging.info(f"{callback_data=}")
+    await call.message.answer("Вот ссылка на телеграмм бота")
 
 
 @dp.callback_query_handler(text_contains="about")
 async def show_about(call: types.CallbackQuery):
-    """Возвращает сообщение прикрепленым файлом "Положение туристического фестиваля"
+    """Возвращает пользователю документ с положением фестиваля
+    TODO: реализовать отправку файла с положением фестиваля
     """
-    pass
+    await call.answer(cache_time=360)
+    callback_data = call.data
+    logging.info(f"{callback_data=}")
+    await call.message.answer("Положение туристического фестиваля Свароог2022")
