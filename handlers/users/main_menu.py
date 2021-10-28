@@ -1,13 +1,11 @@
-"""Хэндлеры управления главным меню"""
+"""Хэндлеры управления меню"""
 from datetime import datetime, timedelta
 import logging
 from typing import Union
 
 from aiogram import types
-#from aiogram.types.callback_query import CallbackQuery
-#from aiogram.types.message import Message
-#from aiogram.dispatcher.filters import Command
 
+# Подгрузка команд для управления БД
 from utils.db_api.db_comands import get_date_start, get_date_end, get_full_shedule, \
     get_what_next, get_what_now
 
@@ -15,7 +13,6 @@ from utils.db_api.db_comands import get_date_start, get_date_end, get_full_shedu
 from keyboards.inline.inline_main_menu import event_keyboard, main_menu_keyboard, \
     result_keyboard, signed_to_item, subscriptions_manager_keyboard, team_keyboard, unsigned_to_item
 from keyboards.inline.callback_datas import main_menu_cb
-# from keyboards.inline.subscriptions_menu import inkb_subscriptions_menu
 
 from loader import dp
 from data import config

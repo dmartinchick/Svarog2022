@@ -1,3 +1,4 @@
+"""Эхо хэндлер"""
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 
