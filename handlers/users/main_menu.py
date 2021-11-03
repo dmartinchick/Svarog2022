@@ -6,12 +6,17 @@ from typing import Union
 from aiogram import types
 
 # Подгрузка команд для управления БД
-from utils.db_api.db_comands import get_date_start, get_date_end, get_full_shedule, \
-    get_what_next, get_what_now
+from utils.db_api.db_comands import get_date_start, get_date_end, \
+    get_event_info, get_full_shedule, \
+        get_team_info, get_what_next, \
+            get_what_now, set_sign_to_event, \
+                set_sign_to_team, set_unsing_to_event, \
+                    set_unsing_to_team
 
 #Загрузка клавиатур
 from keyboards.inline.inline_main_menu import event_keyboard, main_menu_keyboard, \
-    result_keyboard, signed_to_item, subscriptions_manager_keyboard, team_keyboard, unsigned_to_item
+    result_keyboard, signed_to_item, \
+        subscriptions_manager_keyboard, team_keyboard, unsigned_to_item
 from keyboards.inline.callback_datas import main_menu_cb
 
 from loader import dp
@@ -84,7 +89,7 @@ async def show_what_now(call: types.CallbackQuery, **kwargs):
 
 async def show_what_next(call: types.CallbackQuery, **kwargs):
     """Возвращает пользователю ближайшее событие
-    TODO: реализовать функцию show_what_next. добавить обратный отсчет?
+    TODO: ????добавить обратный отсчет
     TODO: заменить tdate
     """
     await call.answer(cache_time=360)
@@ -142,7 +147,7 @@ async def show_festival_cup_result(call:types.CallbackQuery, **kwargs):
     """Возвращает пользователю результаты кубка Фестиваля
 
     Args:
-        call (types.CallbackQuery): callback_data
+        call (types.CallbackQuery): callback_data  пользователя
     """
     await call.answer(cache_time=360)
     callback_data = call.data
@@ -156,7 +161,7 @@ async def show_holding_cup_result(call: types.CallbackQuery, **kwargs):
     """Возвращает пользователю результаты кубка холдинга
 
     Args:
-        call (types.CallbackQuery): callback_data
+        call (types.CallbackQuery): callback_data пользователя
     """
     await call.answer(cache_time=360)
     callback_data = call.data
@@ -170,7 +175,7 @@ async def show_tourism_cup_result(call: types.CallbackQuery, **kwargs):
     """Возвращает пользователю результаты кубка туризма
 
     Args:
-        call (types.CallbackQuery): callback_data
+        call (types.CallbackQuery): callback_data пользователя
     """
     await call.answer(cache_time=360)
     callback_data = call.data
@@ -179,11 +184,12 @@ async def show_tourism_cup_result(call: types.CallbackQuery, **kwargs):
         text="Вот результат кубка туризма"
     )
 
+
 async def show_sport_cup_result(call: types.CallbackQuery, **kwargs):
     """Возвращает пользователю результаты кубка спорта
 
     Args:
-        call (types.CallbackQuery): callback_data
+        call (types.CallbackQuery): callback_data пользователя
     """
     await call.answer(cache_time=360)
     callback_data = call.data
@@ -197,7 +203,7 @@ async def show_culture_cup_result(call: types.CallbackQuery, **kwargs):
     """Возвращает пользователю результаты кубка культуры
 
     Args:
-        call (types.CallbackQuery): callback_data
+        call (types.CallbackQuery): callback_data пользователя
     """
     await call.answer(cache_time=360)
     callback_data = call.data
@@ -211,7 +217,7 @@ async def show_event_menu(call: types.CallbackQuery, category, **kwargs):
     """Возвращает пользователю меню конкурсов
 
     Args:
-        call (types.CallbackQuery): callback_data
+        call (types.CallbackQuery): callback_data пользователя
         category ([type]): выбранная категория
     """
     await call.answer(cache_time=360)
@@ -228,7 +234,7 @@ async def show_team_menu(call: types.CallbackQuery, category, **kwargs):
     """Возвращает пользователю меню команд
 
     Args:
-        call (types.CallbackQuery): callback_data
+        call (types.CallbackQuery): callback_data пользователя
         category ([type]): выбранная категория
     """
     await call.answer(cache_time=360)
@@ -245,7 +251,7 @@ async def show_subscriptions_manager_menu(call: types.CallbackQuery, category, *
     """Возвращает пользователю меню менеджера подписок
 
     Args:
-        call (types.CallbackQuery): callbcak_data
+        call (types.CallbackQuery): callbcak_data пользователя
         category ([type]): выбранная категория
     """
     await call.answer(cache_time=360)
@@ -262,7 +268,7 @@ async def show_subscriptions_manager_team(call: types.CallbackQuery, category, s
     """Возвращает пользователю список команд на которые подписан/ не подписан пользователь
 
     Args:
-        call (types.CallbackQuery): callback_data
+        call (types.CallbackQuery): callback_data пользователя
         category ([type]): выбранная категория
         subcategory ([type]): выбранная подкатегория
     """
@@ -286,7 +292,7 @@ async def show_subscriptions_manager_event(call: types.CallbackQuery, category, 
     """Возвращает список конкурсов на которые подписан/ не подписан пользователь
 
     Args:
-        call (types.CallbackQuery): callback_data
+        call (types.CallbackQuery): callback_data пользователя
         category ([type]): выбранная категория
         subcategory ([type]): выбранная подкатегория
     """
@@ -310,7 +316,7 @@ async def show_map(call: types.CallbackQuery, **kwargs):
     """Возвращает пользователю карту фестиваля
 
     Args:
-        call (types.CallbackQuery): callback_data
+        call (types.CallbackQuery): callback_data пользователя
 
     TODO: реализовать отправку картинки с картой фестиваля
     """
@@ -324,7 +330,7 @@ async def show_share(call: types.CallbackQuery, **kwargs):
     """Возвращает пользователю QR-код со сылкой на этот телеграм бот
 
     Args:
-        call (types.CallbackQuery): callback_data
+        call (types.CallbackQuery): callback_data пользователя
 
     TODO: реализовать отправку картинки с QR-кодом
     """
@@ -338,7 +344,7 @@ async def show_about(call: types.CallbackQuery, **kwargs):
     """Возвращает пользователю документ с положением фестиваля
 
     Args:
-        call (types.CallbackQuery): callback_data
+        call (types.CallbackQuery): callback_data пользователя
 
     TODO: реализовать отправку файла с положением фестиваля
     """
@@ -352,7 +358,7 @@ async def navigate_to_category(call: types.CallbackQuery, category, **kwargs):
     """Осуществляет навигацию по level 1
 
     Args:
-        call (types.CallbackQuery): callback_data
+        call (types.CallbackQuery): callback_data пользователя
         category ([type]): выбранная категория
     """
     categories = {
@@ -362,7 +368,7 @@ async def navigate_to_category(call: types.CallbackQuery, category, **kwargs):
         "result" : show_result_menu,
         "event" : show_event_menu,
         "team" : show_team_menu,
-        "subscriptions_manager" : show_subscriptions_manager_menu,
+        "sm" : show_subscriptions_manager_menu,
         "map" : show_map,
         "share" : show_share,
         "about" : show_about
@@ -378,7 +384,7 @@ async def navigate_to_subcategory(call: types.CallbackQuery, category, subcatego
     """осуществляет навигацию по level 2
 
     Args:
-        call (types.CallbackQuery): callback_data
+        call (types.CallbackQuery): callback_data пользователя
         category ([type]): выбранная категория
         subcategory ([type]): выбранная подкатегория
     """
@@ -388,8 +394,8 @@ async def navigate_to_subcategory(call: types.CallbackQuery, category, subcatego
         "sport_cup" : show_sport_cup_result,
         "tourism_cup" : show_tourism_cup_result,
         "culture_cup" : show_culture_cup_result,
-        "subscription_manager_team" : show_subscriptions_manager_team,
-        "subscription_manager_event" : show_subscriptions_manager_event
+        "sm_team" : show_subscriptions_manager_team,
+        "sm_event" : show_subscriptions_manager_event
     }
     curent_subcategory_function = subcategories[subcategory]
     await curent_subcategory_function(
@@ -399,16 +405,135 @@ async def navigate_to_subcategory(call: types.CallbackQuery, category, subcatego
     )
 
 
-async def show_item(call: types.CallbackQuery, category, subcategory, item_id):
-    """Выводит описание конкурса/ команды
+async def function_with_item(
+    call: types.CallbackQuery,
+    category:str,
+    subcategory:str,
+    action:str,
+    item_id:str,
+    **kwargs):
+    """Осуществляет навигацию по работе с item
 
     Args:
-        call (types.CallbackQuery): callback_data
-        category ([type]): выбраная категория
-        subcategory ([type]): [description]
-        item_id ([type]): [description]
+        call (types.CallbackQuery): callback_data пользователя
+        category (str): выбраная категория
+        subcategory (str): выброная подкатегория
+        action (str): необходимое действи на item
+        item_id (str): id элемента
+    TODO: Реализовать функцию отображения элемента
+    TODO: Реализовать функцию подписки на элементsubscription_manager
+    TODO: Реализовать функцию отписки от элемента
     """
-    pass
+    await call.answer(cache_time=360)
+    callback_data = call.data
+    logging.info(f"{callback_data=}")
+    user_id = call.from_user.id
+
+    actions = {
+        "show":show_item_info,
+        "subscribe" : subscribe_to_item,
+        "unsubscribe" : unsubscribe_to_item
+    }
+
+    curent_action_function = actions[action]
+
+    await curent_action_function(
+        call,
+        user_id,
+        subcategory,
+        item_id
+    )
+
+
+async def show_item_info(call : types.CallbackQuery, category:str, item_id:str, **kwargs):
+    """Возвращет пользователю сообщение с информацией о конкурсе или команде
+
+    Args:
+        call (types.CallbackQuery): callback_data пользователя
+        category (str): выбранная категория
+        item_id (str): id конкурса или команды
+    TODO: добавить кнопку "Подписаться" и "назад"
+    """
+    if category == "event":
+        event_info = get_event_info(int(item_id))
+        await call.message.answer(
+            text=f"----{event_info['name']}---\n"
+            f"{event_info['type']}\n\n"
+            f"Коэфициент сложности: {event_info['coefficient']}\n\n"
+            f"Состав представителей команд:\n{event_info['composition']}\n\n"
+            f"Время старта конкурса:\n{event_info['time_start']}\n\n"
+            f"Правила конкурса:\n{event_info['rule']}"
+        )
+    else:
+        team_info = get_team_info(int(item_id))
+        if team_info['holding'] is True:
+            holding_text = "Команда входит в состав холдинга БМК"
+        else:
+            holding_text = "Команда не входит в состав холдинга БМК"
+        await call.message.answer(
+            text=f"---{team_info['name']}\n"
+            f"{holding_text}"
+        )
+
+
+async def subscribe_to_item(
+    call: types.CallbackQuery,
+    user_id:int,
+    subcategory:str,
+    item_id:str,
+    **kwargs):
+    """Добавляет подписку
+
+    Args:
+        call (types.CallbackQuery): callback_data пользователя
+        user_id (int): id пользователя
+        category (str): выбранная категория
+        item_id (str): id конкурса или команды
+    """
+    if subcategory == "sm_event":
+        set_sign_to_event(int(user_id), int(item_id))
+        await call.message.answer(
+            text="Подписка добавлена"
+        )
+    elif subcategory == "sm_team":
+        set_sign_to_team(int(user_id), int(item_id))
+        await call.message.answer(
+            text="Подписка добавлена"
+        )
+    else:
+        await call.message.answer(
+            text="Что то пошло не так"
+        )
+
+
+async def unsubscribe_to_item(
+    call: types.CallbackQuery,
+    user_id:int,
+    subcategory:str,
+    item_id:str,
+    **kwargs):
+    """Отменяет подписку
+
+    Args:
+        call (types.CallbackQuery): callback_data пользователя
+        user_id (int): id пользователя
+        category (str): выбранная категория
+        item_id (str): id конкурса или команды
+    """
+    if subcategory == "sm_event":
+        set_unsing_to_event(int(user_id), int(item_id))
+        await call.message.answer(
+            text="Подписка отменена"
+        )
+    elif subcategory == "sm_team":
+        set_unsing_to_team(int(user_id), int(item_id))
+        await call.message.answer(
+            text="Подписка отменена"
+        )
+    else:
+        await call.message.answer(
+            text="Что то пошло не так"
+        )
 
 
 @dp.callback_query_handler(main_menu_cb.filter())
@@ -416,19 +541,20 @@ async def navigate_to_level(call: types.CallbackQuery, callback_data: dict):
     """Осуществляет навигацию по level 0
 
     Args:
-        call (types.CallbackQuery): callback_data
+        call (types.CallbackQuery): callback_data пользователя
         callback_data (dict): словарь callback_data
     """
     curent_level = callback_data.get("level")
     category = callback_data.get("category")
     subcategory = callback_data.get("subcategory")
+    action = callback_data.get("action")
     item_id = callback_data.get("item_id")
 
     levels = {
         "0" : show_main_menu,
         "1" : navigate_to_category,
         "2" : navigate_to_subcategory,
-        "3" : show_item
+        "3" : function_with_item
     }
 
     curent_level_function = levels[curent_level]
@@ -437,5 +563,6 @@ async def navigate_to_level(call: types.CallbackQuery, callback_data: dict):
         call,
         category = category,
         subcategory = subcategory,
+        action = action,
         item_id = item_id
         )

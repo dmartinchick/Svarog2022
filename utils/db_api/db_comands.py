@@ -4,11 +4,11 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import and_, desc
 from sqlalchemy.orm.session import Session
 
-from utils.db_api.sqlalch import Event, Schedule, Subscriptions, Team, User
+from utils.db_api.sqlalch import Event, Schedule, Team, User, \
+    ass_user_event, ass_user_team
 from utils.misc.other import get_unsubs_list
 
 from data.config import USER, PASSWORD, HOST, DB
-
 
 engine =  create_engine(
     f"mysql+mysqlconnector://{USER}:{PASSWORD}@{HOST}/{DB}",
@@ -24,15 +24,11 @@ engine =  create_engine(
 Session = sessionmaker(bind=engine)
 s = Session()
 
-"""
-user_id = 466138751
-request = s.query(
-    Team.name, Team.id).filter(
-        and_(
-            Team.id == Subscriptions.team_id,
-            Subscriptions.user_id == user_id)).all()
-print(request)
-"""
+#user_id = 466138751
+rq = s.query(User).all() 
+print(rq)
+
+
 # методы извлечения данных
 
 def get_date_start():
@@ -122,6 +118,8 @@ def get_full_shedule() -> list:
 
     Returns:
         list: список словарей с полным расписанием
+    
+    TODO: filter(and_(Schedule.event_id == Event.id, Event.event_type != "Прочее"))
     """
     event_list = []
     for event in s.query(
@@ -130,7 +128,7 @@ def get_full_shedule() -> list:
         Schedule.time_end).filter(
             and_(
                 Schedule.event_id == Event.id,
-                Event.type != "Прочее")).all():
+                Event.event_type != "Прочее")).all():
         event_dict = {
             'name':event[0],
             'time_start':event[1],
@@ -149,13 +147,13 @@ def get_event_info(event_id:int) -> dict:
     Returns:
         dict: словарь с информацие о конкурсе
     """
-    event_info_request = s.qery(
+    event_info_request = s.query(
         Event.name,
-        Event.type,
+        Event.event_type,
         Event.coefficient,
         Event.rule,
         Event.composition,
-        Schedule.time_start).filtre(
+        Schedule.time_start).filter(
             and_(
                 Schedule.event_id == Event.id,
                 Event.id ==event_id)).one()
@@ -170,17 +168,40 @@ def get_event_info(event_id:int) -> dict:
     return event_info
 
 
+def get_team_info(team_id:int) ->dict:
+    """Возвращает пользователю информацию о команде
+
+    Args:
+        team_id (int): id команды
+
+    Returns:
+        dict: словарь с информацией о конкурся
+    """
+    team_info_request = s.query(
+        Team.name,
+        Team.holding).filter(
+            Team.id == team_id
+        ).one()
+    team_info={
+        'name' : team_info_request[0],
+        'holding' : team_info_request[1]
+    }
+    return team_info
+
+
 def get_events_list() -> list:
     """Возвращает пользователю список конкурсов
 
     Returns:
         list: список словарей конкурсов
+    
+    TODO: Не работает. filter(Event.event_type != "Прочее") 
     """
     event_list = []
     for event in s.query(
         Event.name,
         Event.id).filter(
-            Event.type != "Прочее").all():
+            Event.event_type != "Прочее").all():
         event_list.append(
             {'name' : event[0],
             'item_id' : event[1]})
@@ -223,14 +244,12 @@ def get_signed_teams_list(user_id: int) -> list:
 
     Returns:
         list: список словарей на которые подписан пользователь
+    TODO: Не работает. Проблема в filter(ass_user_team == user_id)
     """
     signed_teams_list = []
     for team in s.query(
         Team.name,
-        Team.id).filter(
-            and_(
-                Team.id == Subscriptions.team_id,
-                Subscriptions.user_id == user_id)).all():
+        Team.id).filter(ass_user_team.user_id == user_id).all():
         signed_teams_list.append(
             {'name': team[0], 'item_id':team[1]})
 
@@ -260,14 +279,14 @@ def get_signed_events_list(user_id: int) -> list:
 
     Returns:
         list: список словарей конкурсов на которые подписан пользователь
+    
+    #TODO: Не работает. Проблема в filter(ass_user_event == user_id)
     """
     signed_events_list = []
     for event in s.query(
         Event.name,
         Event.id).filter(
-            and_(
-                Event.id == Subscriptions.event_id,
-                Subscriptions.user_id == user_id)).all():
+            ass_user_event.user_id == user_id).all():
         signed_events_list.append(
             {'name': event[0], 'item_id':event[1]})
 
@@ -299,3 +318,50 @@ def set_user(user_id):
     user = User(user_id)
     s.add(user)
     s.commit()
+
+
+def set_sign_to_event(user_id:int, event_id:int):
+    """Добавляет подписку на события
+
+    Args:
+        user_id (int): id пользователя
+        event_id (int): id конкурса
+    """
+    s.execute(ass_user_event.insert().values(user_id, event_id))
+    s.commit()
+
+
+def set_sign_to_team(user_id:int, team_id:int):
+    """Добавляет подписку на команды
+
+    Args:
+        user_id (int): id пользователя
+        team_id (int): id команды
+    TODO: не добавляет данные. AttributeError: 'Session' object has no attribute 'comit'
+    """
+    s.execute(ass_user_team.insert().values(user_id = user_id, team_id = team_id))
+
+
+# Функции для удаления данных
+def set_unsing_to_event(user_id: int, event_id:int):
+    """удаляет запись о подписке на конкурс из БД
+
+    Args:
+        user_id (int): id пользователя
+        event_id (int): id конкурса
+    
+    TODO: Реализовать функцию
+    """
+    pass
+
+
+def set_unsing_to_team(user_id:int, team_id:int):
+    """Удаляет запись о подписке на команду из БД
+
+    Args:
+        user_id (int): id пользователя
+        team_id (int): id команды
+    
+    TODO: Реализовать функцию
+    """
+    pass

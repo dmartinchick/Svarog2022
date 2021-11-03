@@ -4,16 +4,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from utils.db_api.db_comands import get_events_list, get_signed_events_list
 from utils.db_api.db_comands import get_signed_teams_list, get_teams_list
 from utils.db_api.db_comands import get_unsigned_events_list, get_unsigned_teams_list
-from keyboards.inline.callback_datas import main_menu_choice, main_menu_cb
-
-def make_callback_data(level, category = "0", subcategory = "0", item = "0"):
-    """Формирует callback_data, подставля вместо отсутствующих значений '0'."""
-    return main_menu_cb.new(
-        level = level,
-        category = category,
-        subcategory = subcategory,
-        item = item
-    )
+from keyboards.inline.callback_datas import make_callback_data
 
 
 async def main_menu_keyboard() -> InlineKeyboardMarkup:
@@ -23,7 +14,7 @@ async def main_menu_keyboard() -> InlineKeyboardMarkup:
         InlineKeyboardMarkup: Клавиатура со списком категорий
     """
     # Указываем текущий уровень
-    CURENT_LEVEL = 0
+    curent_level = 0
     markup = InlineKeyboardMarkup(
         row_width=1
     )
@@ -34,7 +25,7 @@ async def main_menu_keyboard() -> InlineKeyboardMarkup:
         {'name':"Результаты",'category_item':"result"},
         {'name':"Конкурсы",'category_item':"event"},
         {'name':"Команды",'category_item':"team"},
-        {'name':"Менеджер подписок",'category_item':"subscriptions_manager"},
+        {'name':"Менеджер подписок",'category_item':"sm"},
         {'name':"Карта фестиваля",'category_item':"map"},
         {'name':"Поделиться ссылкой",'category_item':"share"},
         {'name':"Положение фестиваля",'category_item':"about"}
@@ -42,7 +33,7 @@ async def main_menu_keyboard() -> InlineKeyboardMarkup:
     for category in categories:
         button_text = category['name']
         button_callback_data = make_callback_data(
-            level=CURENT_LEVEL + 1,
+            level=curent_level + 1,
             category=category['category_item'])
         markup.insert(
             InlineKeyboardButton(
@@ -61,7 +52,7 @@ async def result_keyboard(category:str) -> InlineKeyboardMarkup:
     Returns:
         InlineKeyboardMarkup: клавиатура со списком подкатегорий результатов
     """
-    CURENT_LEVEL = 1
+    curent_level = 1
     markup = InlineKeyboardMarkup(
         row_width = 1
     )
@@ -75,7 +66,7 @@ async def result_keyboard(category:str) -> InlineKeyboardMarkup:
     for subcategory in result_subcategories:
         button_text = subcategory['name']
         button_callback_data = make_callback_data(
-            level = CURENT_LEVEL + 1,
+            level = curent_level + 1,
             category = category,
             subcategory = subcategory['subcategory'])
         markup.insert(
@@ -88,7 +79,7 @@ async def result_keyboard(category:str) -> InlineKeyboardMarkup:
         InlineKeyboardButton(
             text="Назад",
             callback_data=make_callback_data(
-                level = CURENT_LEVEL-1)
+                level = curent_level-1)
         )
     )
     return markup
@@ -103,7 +94,7 @@ async def event_keyboard(category:str) -> InlineKeyboardMarkup:
     Returns:
         markup[InlineKeyboardMarkup]: клавиатура cо списком конкурсов
     """
-    CURENT_LEVEL = 1
+    curent_level = 1
     markup = InlineKeyboardMarkup(
         row_width=1
     )
@@ -111,9 +102,10 @@ async def event_keyboard(category:str) -> InlineKeyboardMarkup:
     for event in events:
         button_text = event['name']
         button_callback_data = make_callback_data(
-            level=CURENT_LEVEL + 1,
+            level= curent_level + 2, # +2, т.к. необходимо перейти к выводу информации
             category=category,
-            subcategory=event['item_id']
+            action="show",
+            item_id=event["item_id"]
         )
         markup.insert(
             InlineKeyboardButton(
@@ -125,7 +117,7 @@ async def event_keyboard(category:str) -> InlineKeyboardMarkup:
         InlineKeyboardButton(
             text="Назад",
             callback_data=make_callback_data(
-                level=CURENT_LEVEL - 1
+                level=curent_level - 1
             )
         )
     )
@@ -141,7 +133,7 @@ async def team_keyboard(category:str) -> InlineKeyboardMarkup:
     Returns:
         InlineKeyboardMarkup: Клавиатура со списком команд
     """
-    CURENT_LEVEL = 1
+    curent_level = 1
     markup = InlineKeyboardMarkup(
         row_width=2
     )
@@ -149,9 +141,10 @@ async def team_keyboard(category:str) -> InlineKeyboardMarkup:
     for team in teams:
         button_text = team['name']
         button_callback_data = make_callback_data(
-            level=CURENT_LEVEL + 1,
-            category=category,
-            subcategory=team['item_id']
+            level=curent_level + 2, # +2, т.к. необходимо перейти выводу информации
+            category= category,
+            action="show",
+            item_id=team["item_id"]
         )
         markup.insert(
             InlineKeyboardButton(
@@ -163,7 +156,7 @@ async def team_keyboard(category:str) -> InlineKeyboardMarkup:
         InlineKeyboardButton(
             text="Назад",
             callback_data=make_callback_data(
-                level = CURENT_LEVEL - 1
+                level = curent_level - 1
             )
         )
     )
@@ -179,18 +172,18 @@ async def subscriptions_manager_keyboard(category:str) -> InlineKeyboardMarkup:
     Returns:
         InlineKeyboardMarkup: клавиатура со списком подкатегорий менеджера подписок
     """
-    CURENT_LEVEL = 1
+    curent_level = 1
     markup = InlineKeyboardMarkup(
         row_width=1
     )
     subscriptions_manager_subcategories= [
-        {'name':"Подписки на команды",'subcategory':"subscription_manager_team"},
-        {'name':"Подписки на конкурсы",'subcategory':"subscription_manager_event"}
+        {'name':"Подписки на команды",'subcategory':"sm_team"},
+        {'name':"Подписки на конкурсы",'subcategory':"sm_event"}
     ]
     for subcategory in subscriptions_manager_subcategories:
         button_text=subcategory['name']
         button_callback_data = make_callback_data(
-            level=CURENT_LEVEL + 1,
+            level=curent_level + 1,
             category=category,
             subcategory=subcategory['subcategory']
         )
@@ -204,7 +197,7 @@ async def subscriptions_manager_keyboard(category:str) -> InlineKeyboardMarkup:
         InlineKeyboardButton(
             text="Назад",
             callback_data=make_callback_data(
-                level = CURENT_LEVEL - 1
+                level = curent_level - 1
             )
         )
     )
@@ -222,11 +215,8 @@ async def signed_to_item(category:str, subcategory:str, user_id:int) -> InlineKe
     Returns:
         InlineKeyboardMarkup: Клавиатура со списком команд или конкурсов
          на которые подписан пользователь
-
-    TODO:
-        Реализовать button_callback_data
     """
-    CURENT_LEVEL = 2
+    curent_level = 2
     markup = InlineKeyboardMarkup(
         row_width=2
     )
@@ -237,7 +227,13 @@ async def signed_to_item(category:str, subcategory:str, user_id:int) -> InlineKe
         items_list = get_signed_teams_list(user_id)
     for item in items_list:
         button_text = item['name']
-        button_callback_data = item['item_id']
+        button_callback_data = make_callback_data(
+            level = curent_level + 1,
+            category=category,
+            subcategory=subcategory,
+            action="unsubscribe",
+            item_id=item["item_id"]
+        )
         markup.insert(
             InlineKeyboardButton(
                 text=button_text,
@@ -248,7 +244,7 @@ async def signed_to_item(category:str, subcategory:str, user_id:int) -> InlineKe
         InlineKeyboardButton(
             text = "Назад",
             callback_data = make_callback_data(
-                level = CURENT_LEVEL - 1,
+                level = curent_level - 1,
                 category=category,
                 subcategory=subcategory
             )
@@ -270,9 +266,10 @@ async def unsigned_to_item(category:str, subcategory:str, user_id:int) -> Inline
          на которые не подписан пользователь
 
     TODO:
-        Реализовать button_callback_data
+        1. Реализовать button_callback_data
+        2. Не уверен насчет успешности реализации
     """
-    CURENT_LEVEL = 2
+    curent_level = 2
     markup = InlineKeyboardMarkup(
         row_width=2
     )
@@ -282,7 +279,13 @@ async def unsigned_to_item(category:str, subcategory:str, user_id:int) -> Inline
         items_list = get_unsigned_teams_list(user_id)
     for item in items_list:
         button_text = item['name']
-        button_callback_data = item['item_id']
+        button_callback_data = make_callback_data(
+            level = curent_level + 1,
+            category=category,
+            subcategory=subcategory,
+            action="subscribe",
+            item_id=item["item_id"]
+        )
         markup.insert(
             InlineKeyboardButton(
                 text=button_text,
@@ -293,66 +296,10 @@ async def unsigned_to_item(category:str, subcategory:str, user_id:int) -> Inline
         InlineKeyboardButton(
             text="Назад",
             callback_data=make_callback_data(
-                level=CURENT_LEVEL -1,
+                level=curent_level -1,
                 category=category,
                 subcategory=subcategory
             )
         )
     )
     return markup
-
-
-inkb_main_menu = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(
-                text="Что сейчас происходит",
-                callback_data=main_menu_choice.new(category_name="what_now")),
-        ],
-        [
-            InlineKeyboardButton(
-                text="Ближайшие мероприятия",
-                callback_data="main:what_next"),
-        ],
-        [
-            InlineKeyboardButton(
-                text="Полное расписание",
-                callback_data="main:full_schedule"),
-        ],
-        [
-            InlineKeyboardButton(
-                text="Результаты",
-                callback_data="main:results"),
-        ],
-        [
-            InlineKeyboardButton(
-                text="Конкурсы",
-                callback_data="main:contests"),
-        ],
-        [
-            InlineKeyboardButton(
-                text="Команды",
-                callback_data="main:team"),
-        ],
-        [
-            InlineKeyboardButton(
-                text="Менеджер подписок",
-                callback_data="main:subscriptions_manager"),
-        ],
-        [
-            InlineKeyboardButton(
-                text="Карта фестиваля",
-                callback_data="main:map"),
-        ],
-        [
-            InlineKeyboardButton(
-                text="Поделиться ссылкой",
-                callback_data="main:share"),
-        ],
-        [
-            InlineKeyboardButton(
-                text="Положения фестиваля",
-                callback_data="main:about")
-        ]
-    ]
-)
