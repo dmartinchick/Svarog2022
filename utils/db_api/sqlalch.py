@@ -45,7 +45,7 @@ class User(Base):
 
     user_id = Column(Integer, primary_key=True, autoincrement=False)
     event = relationship('Event', secondary=ass_user_event, backref='user')
-    team = relationship('Team', secondary=ass_user_team, backref='team')
+    team = relationship('Team', secondary=ass_user_team, backref='user')
 
 
 class Event(Base):
@@ -95,5 +95,5 @@ class Results(Base):
     team_id = Column(Integer, ForeignKey('team.id'))
     place = Column(Integer)
 
-
+print("creat_all")
 Base.metadata.create_all(engine)
