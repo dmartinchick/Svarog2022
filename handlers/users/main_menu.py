@@ -151,12 +151,17 @@ async def show_full_schedule(
 
     full_schedule = get_full_shedule()
 
-    await call.message.answer("Вот полное расписание")
+    # await call.message.answer("Вот полное расписание")
 
+    message_text = "📅 Полное расписание\n\n"
     for event in full_schedule:
-        await call.message.answer(f"{event['name']}"
-                                f"\nНачало:{event['time_start'].strftime('%d.%m %H:%M')}"
-                                f"\nКонец:{event['time_end'].strftime('%d.%m %H:%M')}\n\n")
+        event_text = f"{event['name']}\n" \
+            + f"Начало: {event['time_start'].strftime('%d.%m %H:%M')}\n" \
+            + f"Окончание: {event['time_end'].strftime('%d.%m %H:%M')}\n" \
+            + "- "*20 + "\n"
+        message_text = message_text + event_text
+
+    await call.message.answer(text=message_text)
 
 
 async def show_result_menu(
@@ -385,7 +390,6 @@ async def show_subscriptions_manager_team(
     )
 
 
-
 async def show_subscriptions_manager_event(
     call: types.CallbackQuery,
     category,
@@ -578,6 +582,7 @@ async def function_with_item(
     await curent_action_function(
         call,
         user_id,
+        category,
         subcategory,
         item_id
     )
@@ -585,7 +590,9 @@ async def function_with_item(
 
 async def show_item_info(
     call : types.CallbackQuery,
+    user_id:int,
     category:str,
+    subcategory:str,
     item_id:str,
     **kwargs # pylint: disable=unused-argument
     ):
@@ -601,12 +608,19 @@ async def show_item_info(
 
     if category == "event":
         event_info = get_event_info(int(item_id))
+
+        #проверка есть ли ограничения по количеству участников в конкурсе
+        if event_info['composition'] is None:
+            event_composition = "Ограничений по количеству участников нет"
+        else:
+            event_composition = event_info['composition']
+
         await call.message.answer(
-            text=f"----{event_info['name']}---\n"
+            text=f"Конкурс '{event_info['name']}'\n"
             f"{event_info['type']}\n\n"
             f"Коэфициент сложности: {event_info['coefficient']}\n\n"
-            f"Состав представителей команд:\n{event_info['composition']}\n\n"
-            f"Время старта конкурса:\n{event_info['time_start']}\n\n"
+            f"Состав представителей команд:\n{event_composition}\n\n"
+            f"Время начала конкурса:\n{event_info['time_start'].strftime('%d.%m %H:%M')}\n\n"
             f"Правила конкурса:\n{event_info['rule']}"
         )
     else:
@@ -616,7 +630,7 @@ async def show_item_info(
         else:
             holding_text = "Команда не входит в состав холдинга БМК"
         await call.message.answer(
-            text=f"---{team_info['name']}\n"
+            text=f"Команда '{team_info['name']}'\n"
             f"{holding_text}"
         )
 
