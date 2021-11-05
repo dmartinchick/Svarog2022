@@ -120,7 +120,6 @@ def get_full_shedule() -> list:
     Returns:
         list: список словарей с полным расписанием
 
-    TODO: filter(and_(Schedule.event_id == Event.id, Event.event_type != "Прочее"))
     """
     event_list = []
     for event in s.query(
@@ -196,7 +195,6 @@ def get_events_list() -> list:
     Returns:
         list: список словарей конкурсов
 
-    TODO: Не работает. filter(Event.event_type != "Прочее")
     """
     event_list = []
     for event in s.query(
@@ -246,7 +244,6 @@ def get_signed_teams_list(user_id: int) -> list:
     Returns:
         list: список словарей на которые подписан пользователь
 
-    TODO: выдает список количество_элементов^2. проблема в строке 252
     """
     signed_teams_list = []
 
@@ -350,7 +347,6 @@ def set_sign_to_team(user_id:int, team_id:int):
     Args:
         user_id (int): id пользователя
         team_id (int): id команды
-    TODO: не добавляет данные. AttributeError: 'Session' object has no attribute 'comit'
     """
     s.execute(ass_user_team\
         .insert()\
@@ -368,7 +364,6 @@ def set_unsing_to_event(user_id: int, event_id:int):
         user_id (int): id пользователя
         event_id (int): id конкурса
 
-    TODO: Реализовать функцию
     """
     unsigned_event = delete(ass_user_event).\
         where(
@@ -390,7 +385,6 @@ def set_unsing_to_team(user_id:int, team_id:int):
         user_id (int): id пользователя
         team_id (int): id команды
 
-    TODO: Реализовать функцию
     """
     unsigned_team = delete(ass_user_team).\
         where(

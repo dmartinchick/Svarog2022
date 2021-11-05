@@ -575,7 +575,7 @@ async def function_with_item(
         action (str): необходимое действи на item
         item_id (str): id элемента
     TODO: Реализовать функцию отображения элемента
-    TODO: Реализовать функцию подписки на элементsubscription_manager
+    TODO: Реализовать функцию подписки на элемент subscription_manager
     TODO: Реализовать функцию отписки от элемента
     """
 

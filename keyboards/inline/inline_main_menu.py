@@ -267,9 +267,6 @@ async def unsigned_to_item(category:str, subcategory:str, user_id:int) -> Inline
         InlineKeyboardMarkup: Клавиатура со списком команд или конкурсов
          на которые не подписан пользователь
 
-    TODO:
-        1. Реализовать button_callback_data
-        2. Не уверен насчет успешности реализации
     """
     curent_level = 2
     markup = InlineKeyboardMarkup(
