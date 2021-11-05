@@ -1,5 +1,6 @@
 """Функции для работы с БД"""
-from sqlalchemy import create_engine
+
+from sqlalchemy import create_engine, delete
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import and_, desc
 from sqlalchemy.orm.session import Session
@@ -352,8 +353,8 @@ def set_sign_to_team(user_id:int, team_id:int):
     TODO: не добавляет данные. AttributeError: 'Session' object has no attribute 'comit'
     """
     s.execute(ass_user_team\
-        .insert().\
-            values(
+        .insert()\
+            .values(
                 user_id = user_id,
                 team_id = team_id))
     s.commit()
@@ -369,7 +370,17 @@ def set_unsing_to_event(user_id: int, event_id:int):
 
     TODO: Реализовать функцию
     """
-    pass
+    unsigned_event = delete(ass_user_event).\
+        where(
+            ass_user_event.c.user_id == user_id,
+            ass_user_event.c.event_id == event_id
+        ).\
+            execution_options(
+                synchronize_session = "False"
+            )
+
+    s.execute(unsigned_event)
+    s.commit()
 
 
 def set_unsing_to_team(user_id:int, team_id:int):
@@ -381,4 +392,14 @@ def set_unsing_to_team(user_id:int, team_id:int):
 
     TODO: Реализовать функцию
     """
-    pass
+    unsigned_team = delete(ass_user_team).\
+        where(
+            ass_user_team.c.user_id == user_id,
+            ass_user_team.c.team_id == team_id
+        ).\
+            execution_options(
+                synchronize_session="False"
+            )
+
+    s.execute(unsigned_team)
+    s.commit()
