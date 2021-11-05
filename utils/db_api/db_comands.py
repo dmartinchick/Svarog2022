@@ -12,7 +12,7 @@ from data.config import USER, PASSWORD, HOST, DB
 
 engine =  create_engine(
     f"mysql+mysqlconnector://{USER}:{PASSWORD}@{HOST}/{DB}",
-    echo=True
+    echo=False
     )
 
 """engine =  create_engine(
@@ -23,11 +23,11 @@ engine =  create_engine(
 
 Session = sessionmaker(bind=engine)
 s = Session()
-
+"""
 #user_id = 466138751
 rq = s.query(User).all()
 print(rq)
-
+"""
 
 # методы извлечения данных
 
@@ -201,7 +201,7 @@ def get_events_list() -> list:
     for event in s.query(
         Event.name,
         Event.id).filter(
-            Event.event_type != "Прочее").all():
+            Event.event_type != "Прочее"):
         event_list.append(
             {'name' : event[0],
             'item_id' : event[1]})
@@ -245,16 +245,19 @@ def get_signed_teams_list(user_id: int) -> list:
     Returns:
         list: список словарей на которые подписан пользователь
 
-    TODO: выдает полный список команд не сортируя их исходя из таблицы user_table
+    TODO: выдает список количество_элементов^2. проблема в строке 252
     """
     signed_teams_list = []
+
     teams = s.query(Team.name, Team.id)\
         .join(User.team)\
-            .filter(ass_user_team.c.user_id == user_id)
+            .filter(User.user_id == user_id)
     for team in teams:
         signed_teams_list.append(
-            {'name' : team[0],
-            'item_id' : team[1]}
+            {
+                'name':team[0],
+                'item_id':team[1]
+            }
         )
 
     return signed_teams_list
@@ -285,12 +288,15 @@ def get_signed_events_list(user_id: int) -> list:
         list: список словарей конкурсов на которые подписан пользователь
     """
     signed_events_list = []
-    for event in s.query(
-        Event.name,
-        Event.id).filter(
-            ass_user_event.c.user_id == user_id).all():
+
+    events = s.query(Event.name, Event.id)\
+        .join(User.event)\
+            .filter(User.user_id == user_id)
+
+    for event in events:
         signed_events_list.append(
-            {'name': event[0], 'item_id':event[1]})
+            {'name': event[0], 'item_id':event[1]}
+        )
 
     return signed_events_list
 
@@ -329,9 +335,11 @@ def set_sign_to_event(user_id:int, event_id:int):
         user_id (int): id пользователя
         event_id (int): id конкурса
     """
-    signed_event = ass_user_event.insert()\
-        .values(user_id = user_id, event_id = event_id)
-    s.add(signed_event)
+    s.execute(ass_user_event\
+        .insert()\
+            .values(
+                user_id = user_id,
+                event_id = event_id))
     s.commit()
 
 
@@ -343,7 +351,11 @@ def set_sign_to_team(user_id:int, team_id:int):
         team_id (int): id команды
     TODO: не добавляет данные. AttributeError: 'Session' object has no attribute 'comit'
     """
-    s.execute(ass_user_team.insert().values(user_id = user_id, team_id = team_id))
+    s.execute(ass_user_team\
+        .insert().\
+            values(
+                user_id = user_id,
+                team_id = team_id))
     s.commit()
 
 

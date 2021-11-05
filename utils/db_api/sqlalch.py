@@ -1,6 +1,7 @@
 """Модуль для подключения к БД и оределения класов таблиц БД"""
 # Данные для подключения к базе данных
-from sqlalchemy import Column, ForeignKey, Integer, \
+
+from sqlalchemy import Column, ForeignKey, Integer,\
     String, Float, Boolean, DateTime, engine
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -18,6 +19,7 @@ DB = config.DB
 engine =  create_engine(
     f"mysql+mysqlconnector://{USER}:{PASSWORD}@{HOST}/{DB}",
     echo=False)
+
 
 """
 engine =  create_engine(
@@ -95,5 +97,4 @@ class Results(Base):
     team_id = Column(Integer, ForeignKey('team.id'))
     place = Column(Integer)
 
-print("creat_all")
 Base.metadata.create_all(engine)

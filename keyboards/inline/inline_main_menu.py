@@ -221,10 +221,12 @@ async def signed_to_item(category:str, subcategory:str, user_id:int) -> InlineKe
         row_width=2
     )
     # Получение списка конкурсов или команд
-    if category == "event":
+    if subcategory == "sm_event":
         items_list = get_signed_events_list(user_id)
-    else:
+    elif subcategory == "sm_team":
         items_list = get_signed_teams_list(user_id)
+    else:
+        print("!!!! Что то пошло не так!!!!")
     for item in items_list:
         button_text = item['name']
         button_callback_data = make_callback_data(
@@ -273,10 +275,12 @@ async def unsigned_to_item(category:str, subcategory:str, user_id:int) -> Inline
     markup = InlineKeyboardMarkup(
         row_width=2
     )
-    if category == "event":
+    if subcategory == "sm_event":
+        items_list = get_unsigned_events_list(user_id)
+    elif subcategory == "sm_team":
         items_list = get_unsigned_events_list(user_id)
     else:
-        items_list = get_unsigned_teams_list(user_id)
+        print("!!!! Что то пошло не так !!!!")
     for item in items_list:
         button_text = item['name']
         button_callback_data = make_callback_data(

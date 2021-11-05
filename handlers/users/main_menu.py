@@ -271,17 +271,23 @@ async def show_subscriptions_manager_team(call: types.CallbackQuery, category, s
         call (types.CallbackQuery): callback_data пользователя
         category ([type]): выбранная категория
         subcategory ([type]): выбранная подкатегория
+    
+    TODO: Переписать. Должно выдовать одну клавиатуру, где команды на которые подписан пользователь будет помечен смайлом
+    TODO: Реализовать подсчет длины списка подписок. Формировать текст в зависимости от того на сколько команд подписан пользователь
     """
     await call.answer(cache_time=360)
     callback_data = call.data
     logging.info(f"{callback_data=}")
+
     user_id = call.from_user.id
     sing_markup = await signed_to_item(category, subcategory, user_id)
     unsing_markup = await unsigned_to_item(category, subcategory, user_id)
+
     await call.message.answer(
         text="Вы подписаны на следующие команды",
         reply_markup=sing_markup
     )
+
     await call.message.answer(
         text="Вы не подписаны на следующие команды",
         reply_markup=unsing_markup
@@ -295,6 +301,9 @@ async def show_subscriptions_manager_event(call: types.CallbackQuery, category, 
         call (types.CallbackQuery): callback_data пользователя
         category ([type]): выбранная категория
         subcategory ([type]): выбранная подкатегория
+    
+    TODO: Переписать. Должно выдовать одну клавиатуру, где комнкурсы на которые подписан пользователь будет помечен смайлом
+    TODO: Реализовать подсчет длины списка подписок. Формировать текст в зависимости от того на сколько команд подписан пользователь
     """
     await call.answer(cache_time=360)
     callback_data = call.data
@@ -307,7 +316,7 @@ async def show_subscriptions_manager_event(call: types.CallbackQuery, category, 
         reply_markup=sing_markup
     )
     await call.message.answer(
-        text="Вы не подписаны на следующие конкурся",
+        text="Вы не подписаны на следующие конкурсы",
         reply_markup=unsing_markup
     )
 
