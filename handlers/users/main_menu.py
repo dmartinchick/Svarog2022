@@ -125,14 +125,18 @@ async def show_what_next(
     else:
         # обращение к БД и получение ближайших мероприятий
         events_list = get_what_next(tdate)
-        await call.message.answer("В скором времени состоится")
+
         # запуск цикла обработки текущих событий
+        message_text = "В скором времени состоится\n"
         for event in events_list:
-            await call.message.answer(
-                                    f"'{event['name']}'\n"
-                                    f"Конкурс начнется "
-                                    f"{event['event_time_start'].strftime('%d.%m')} "
-                                    f"в {event['event_time_start'].strftime('%H:%M')}")
+            event_text = f"\nКонкурс '{event['name']}'\n"\
+                + "Начало "\
+                + f"{event['event_time_start'].strftime('%d.%m')} "\
+                + f"в {event['event_time_start'].strftime('%H:%M')}\n"\
+                + "- "*20 + "\n"
+            message_text = message_text + event_text
+
+        await call.message.answer(message_text)
 
 
 async def show_full_schedule(
