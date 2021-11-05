@@ -15,8 +15,7 @@ from utils.db_api.db_comands import get_date_start, get_date_end, \
 
 #Загрузка клавиатур
 from keyboards.inline.inline_main_menu import event_keyboard, main_menu_keyboard, \
-    result_keyboard, signed_to_item, \
-        subscriptions_manager_keyboard, team_keyboard, unsigned_to_item
+    result_keyboard, subscriptions_manager_keyboard, sm_item_keyboard, team_keyboard
 from keyboards.inline.callback_datas import main_menu_cb
 
 from loader import dp
@@ -368,10 +367,6 @@ async def show_subscriptions_manager_team(
         category ([type]): выбранная категория
         subcategory ([type]): выбранная подкатегория
 
-    TODO: Переписать. Должно выдовать одну клавиатуру, \
-        где команды на которые подписан пользователь будет помечен смайлом
-    TODO: Реализовать подсчет длины списка подписок. \
-        Формировать текст в зависимости от того на сколько команд подписан пользователь
     """
 
     await call.answer(cache_time=360)
@@ -379,18 +374,16 @@ async def show_subscriptions_manager_team(
     logging.info("callback_data='%s'", callback_data)
 
     user_id = call.from_user.id
-    sing_markup = await signed_to_item(category, subcategory, user_id)
-    unsing_markup = await unsigned_to_item(category, subcategory, user_id)
+
+    markup = await sm_item_keyboard(category, subcategory, user_id)
 
     await call.message.answer(
-        text="Вы подписаны на следующие команды",
-        reply_markup=sing_markup
+        text="Команды на которые вы уже подписаны помечены символом ✅\n"
+            "Для того, что бы подписаться/отписаться от команды, "
+            "нажмите на кнопку с её названием",
+        reply_markup=markup
     )
 
-    await call.message.answer(
-        text="Вы не подписаны на следующие команды",
-        reply_markup=unsing_markup
-    )
 
 
 async def show_subscriptions_manager_event(
@@ -406,10 +399,6 @@ async def show_subscriptions_manager_event(
         category ([type]): выбранная категория
         subcategory ([type]): выбранная подкатегория
 
-    TODO: Переписать. Должно выдовать одну клавиатуру, \
-        где комнкурсы на которые подписан пользователь будет помечен смайлом
-    TODO: Реализовать подсчет длины списка подписок. \
-        Формировать текст в зависимости от того на сколько команд подписан пользователь
     """
 
     await call.answer(cache_time=360)
@@ -417,17 +406,13 @@ async def show_subscriptions_manager_event(
     logging.info("callback_data='%s'", callback_data)
 
     user_id = call.from_user.id
-    sing_markup = await signed_to_item(category, subcategory, user_id)
-    unsing_markup = await unsigned_to_item(category, subcategory, user_id)
+    markup = await sm_item_keyboard(category, subcategory, user_id)
 
     await call.message.answer(
-        text="Вы подписаны на следующие конкурсы",
-        reply_markup=sing_markup
-    )
-
-    await call.message.answer(
-        text="Вы не подписаны на следующие конкурсы",
-        reply_markup=unsing_markup
+        text="Конкурсы на которые вы уже подписаны помечены символом ✅\n"
+            "Для того, что бы подписаться/отписаться от команды, "
+            "нажмите на кнопку с её названием",
+        reply_markup=markup
     )
 
 
@@ -574,9 +559,7 @@ async def function_with_item(
         subcategory (str): выброная подкатегория
         action (str): необходимое действи на item
         item_id (str): id элемента
-    TODO: Реализовать функцию отображения элемента
-    TODO: Реализовать функцию подписки на элемент subscription_manager
-    TODO: Реализовать функцию отписки от элемента
+
     """
 
     await call.answer(cache_time=360)

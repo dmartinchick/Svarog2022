@@ -1,9 +1,10 @@
 """Создание клавиатуры главного меню"""
+
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from utils.db_api.db_comands import get_events_list, get_signed_events_list
 from utils.db_api.db_comands import get_signed_teams_list, get_teams_list
-from utils.db_api.db_comands import get_unsigned_events_list, get_unsigned_teams_list
+# from utils.db_api.db_comands import get_unsigned_events_list, get_unsigned_teams_list
 from keyboards.inline.callback_datas import make_callback_data
 
 
@@ -19,16 +20,16 @@ async def main_menu_keyboard() -> InlineKeyboardMarkup:
         row_width=1
     )
     categories = [
-        {'name':"Что сейчас происходит", 'category_item':"what_now"},
-        {'name':"Ближайшие мероприятия",'category_item':"what_next"},
-        {'name':"Полное расписание",'category_item':"full_shedule"},
-        {'name':"Результаты",'category_item':"result"},
-        {'name':"Конкурсы",'category_item':"event"},
-        {'name':"Команды",'category_item':"team"},
-        {'name':"Менеджер подписок",'category_item':"sm"},
-        {'name':"Карта фестиваля",'category_item':"map"},
-        {'name':"Поделиться ссылкой",'category_item':"share"},
-        {'name':"Положение фестиваля",'category_item':"about"}
+        {'name':"🔎 Что сейчас происходит", 'category_item':"what_now"},
+        {'name':"🔎 Ближайшие мероприятия",'category_item':"what_next"},
+        {'name':"📅 Полное расписание",'category_item':"full_shedule"},
+        {'name':"🏆 Результаты",'category_item':"result"},
+        {'name':"🤼 Конкурсы",'category_item':"event"},
+        {'name':"🚩 Команды",'category_item':"team"},
+        {'name':"⚙ Менеджер подписок",'category_item':"sm"},
+        {'name':"🗺 Карта фестиваля",'category_item':"map"},
+        {'name':"🤳 Поделиться ссылкой",'category_item':"share"},
+        {'name':"📜 Положение фестиваля",'category_item':"about"}
     ]
     for category in categories:
         button_text = category['name']
@@ -204,8 +205,9 @@ async def subscriptions_manager_keyboard(category:str) -> InlineKeyboardMarkup:
     return markup
 
 
-async def signed_to_item(category:str, subcategory:str, user_id:int) -> InlineKeyboardMarkup:
-    """Создает клавиатуру с командами или конкурсами на которые подписан пользователь
+async def sm_item_keyboard(category:str, subcategory:str, user_id:int) -> InlineKeyboardMarkup:
+    """Создает клавиатуру с командами или конкурсами. \
+        Конкурсы или команды на которые подписан пользователь помечаются специфальным символом
 
     Args:
         category (str): раздел главного меню
@@ -213,86 +215,51 @@ async def signed_to_item(category:str, subcategory:str, user_id:int) -> InlineKe
         user_id (int): id пользователя
 
     Returns:
-        InlineKeyboardMarkup: Клавиатура со списком команд или конкурсов
-         на которые подписан пользователь
+        InlineKeyboardMarkup: Клавиатура со списком команд или конкурсов для менеджера подписок
     """
     curent_level = 2
     markup = InlineKeyboardMarkup(
         row_width=2
     )
-    # Получение списка конкурсов или команд
     if subcategory == "sm_event":
-        items_list = get_signed_events_list(user_id)
+        items_list = get_events_list()
+        signed_items_list = get_signed_events_list(user_id)
     elif subcategory == "sm_team":
-        items_list = get_signed_teams_list(user_id)
+        items_list = get_teams_list()
+        signed_items_list = get_signed_teams_list(user_id)
     else:
-        print("!!!! Что то пошло не так!!!!")
+        print(">>>> sm_itemskeyboard: ЧТО-ТО ПОШЛО НЕ ТАК!!!")
+
     for item in items_list:
-        button_text = item['name']
-        button_callback_data = make_callback_data(
-            level = curent_level + 1,
-            category=category,
-            subcategory=subcategory,
-            action="unsubscribe",
-            item_id=item["item_id"]
-        )
-        markup.insert(
-            InlineKeyboardButton(
-                text=button_text,
-                callback_data=button_callback_data
-            )
-        )
-    markup.row(
-        InlineKeyboardButton(
-            text = "Назад",
-            callback_data = make_callback_data(
-                level = curent_level - 1,
+
+        # Проверяем есть ли item в signed_items_list
+        # Если да то к тексту добавляем смайл, и формируем нужный callback
+        if item in signed_items_list:
+            button_text = f"✅ {item['name']}"
+            button_callback_data = make_callback_data(
+                level=curent_level + 1,
                 category=category,
-                subcategory=subcategory
+                subcategory=subcategory,
+                action="unsubscribe",
+                item_id = item['item_id']
             )
-        )
-    )
-    return markup
+        else:
+            button_text = item['name']
+            button_callback_data = make_callback_data(
+                level=curent_level + 1,
+                category=category,
+                subcategory=subcategory,
+                action="subscribe",
+                item_id=item['item_id']
+            )
 
-
-async def unsigned_to_item(category:str, subcategory:str, user_id:int) -> InlineKeyboardMarkup:
-    """Создает клавиатуру с командами или конкурсами на которые не подписан пользователь
-
-    Args:
-        category (str): раздел главного меню
-        subcategory (str): раздел меню менеджера подписок
-        user_id (int): id пользователя
-
-    Returns:
-        InlineKeyboardMarkup: Клавиатура со списком команд или конкурсов
-         на которые не подписан пользователь
-
-    """
-    curent_level = 2
-    markup = InlineKeyboardMarkup(
-        row_width=2
-    )
-    if subcategory == "sm_event":
-        items_list = get_unsigned_events_list(user_id)
-    elif subcategory == "sm_team":
-        items_list = get_unsigned_teams_list(user_id)
-    else:
-        print("!!!! Что то пошло не так !!!!")
-    for item in items_list:
-        button_text = item['name']
-        button_callback_data = make_callback_data(
-            level = curent_level + 1,
-            category=category,
-            subcategory=subcategory,
-            action="subscribe",
-            item_id=item["item_id"]
-        )
         markup.insert(
             InlineKeyboardButton(
                 text=button_text,
                 callback_data=button_callback_data
             )
         )
+
     markup.row(
         InlineKeyboardButton(
             text="Назад",
@@ -303,4 +270,5 @@ async def unsigned_to_item(category:str, subcategory:str, user_id:int) -> Inline
             )
         )
     )
+
     return markup
