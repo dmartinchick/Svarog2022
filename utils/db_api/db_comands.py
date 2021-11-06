@@ -30,7 +30,7 @@ rq = s.query(User).all()
 print(rq)
 """
 
-# методы извлечения данных
+# Функции извлечения данных
 
 def get_date_start():
     """Возвращает пользователю дату начала фестиваля
@@ -68,7 +68,7 @@ def get_what_now(tdate) -> list:
 
     Returns:
         now_event_list [list]: Список событий
-    TODO: добавить поля с картинкой, временем оканчания
+    TODO: добавить поля с картинкой
     """
     now_event_list = []
     for item in s.query(
@@ -82,7 +82,7 @@ def get_what_now(tdate) -> list:
         now_event_list.append(
             {'name':item[0],
             'event_id':item[1],
-            'event_time_end':item[2]})
+            'time_end':item[2]})
 
     return now_event_list
 
@@ -314,7 +314,7 @@ def get_unsigned_events_list(user_id:int) -> list:
     return unsigned_events_list
 
 
-# Методы добавления данных
+# Функции добавления данных
 def set_user(user_id):
     """Добавлеят пользователя в БД
 

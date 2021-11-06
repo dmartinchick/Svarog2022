@@ -14,8 +14,9 @@ from utils.db_api.db_comands import get_date_start, get_date_end, \
                     set_unsing_to_team
 
 #Загрузка клавиатур
-from keyboards.inline.inline_main_menu import event_keyboard, main_menu_keyboard, \
-    result_keyboard, subscriptions_manager_keyboard, sm_item_keyboard, team_keyboard
+from keyboards.inline.inline_main_menu import back_to_main_keyboard, event_keyboard,\
+    main_menu_keyboard, result_keyboard, subscriptions_manager_keyboard, \
+        sm_item_keyboard, team_keyboard
 from keyboards.inline.callback_datas import main_menu_cb
 
 from loader import dp
@@ -61,10 +62,12 @@ async def show_what_now(
 
     # текущее время и дата
     # tdate = datetime.now() + timedelta(hours=config.DELTA)
-    tdate = datetime(2021, 7, 18, 19, 29) + timedelta(hours=config.DELTA)
+    tdate = datetime(2021, 7, 18, 19, 45) + timedelta(hours=config.DELTA)
     dt_start = get_date_start()
     dt_end = get_date_end()
 
+    # Создаем клавиатуру
+    markup = await back_to_main_keyboard()
     # Проверка начался ли фестиваль
     if tdate < dt_start:
         await call.message.answer(
@@ -88,13 +91,20 @@ async def show_what_now(
             )
         else:
             for event in events_list:
-                # парсинг данных
-                event_name = event['name']
-                time_end = event['event_time_end'].strftime('%H:%M')
-                # отправка сообщения с информацией о конкурсе
-                await call.message.answer(
-                    text=f"Саейчас проходит конкурс '{event_name}'\n"
-                    f"Он закончиться в {time_end}"
+                # проверяем является ли событие последним в списке текущих
+                # Если да, то приклепляем к нему клавиатуру
+                if event != events_list[-1]:
+                    # отправка сообщения с информацией о конкурсе
+                    await call.message.answer(
+                        text=f"Саейчас проходит конкурс '{event['name']}'\n"\
+                            +f"Он закончиться в {event['time_end'].strftime('%H:%M')}"
+                    )
+                else:
+                    # отправка сообщения с информацией о конкурсе
+                    await call.message.answer(
+                        text=f"Саейчас проходит конкурс '{event['name']}'\n"\
+                            +f"Он закончиться в {event['time_end'].strftime('%H:%M')}",
+                        reply_markup=markup
                     )
 
 
@@ -104,6 +114,7 @@ async def show_what_next(
     ):
 
     """Возвращает пользователю ближайшее событие
+
     TODO: ????добавить обратный отсчет
     TODO: заменить tdate
     """
@@ -117,26 +128,39 @@ async def show_what_next(
     tdate = datetime(2021, 7, 18, 19, 29) + timedelta(hours=config.DELTA)
     dt_end = get_date_end()
 
+    # Создаем клавиатуру с кнокой 'Назад'
+    markup = await back_to_main_keyboard()
     # проверка не закончился ли фестиваль
     if tdate >= dt_end:
         await call.message.answer(
-            text="☹ К сожелению, фестиваль уже прошел.\nУвидимся в следующем году! 😁"
+            text="☹ К сожелению, фестиваль уже прошел.\nУвидимся в следующем году! 😁",
+            reply_markup=markup
             )
     else:
         # обращение к БД и получение ближайших мероприятий
         events_list = get_what_next(tdate)
 
         # запуск цикла обработки текущих событий
-        message_text = "В скором времени состоится\n"
-        for event in events_list:
-            event_text = f"\nКонкурс '{event['name']}'\n"\
-                + "Начало "\
-                + f"{event['event_time_start'].strftime('%d.%m')} "\
-                + f"в {event['event_time_start'].strftime('%H:%M')}\n"\
-                + "- "*20 + "\n"
-            message_text = message_text + event_text
+        await call.message.answer("В скором времени состоится")
 
-        await call.message.answer(message_text)
+        for event in events_list:
+            # Проверяем является ли событие последним
+            # Если да, то прикрепляем клавиатуру
+            if event != events_list[-1]:
+                await call.message.answer(
+                    text=f"\nКонкурс '{event['name']}'\n"\
+                        +"Начало "\
+                        + f"{event['event_time_start'].strftime('%d.%m')} "\
+                        + f"в {event['event_time_start'].strftime('%H:%M')}"
+                    )
+            else:
+                await call.message.answer(
+                    text=f"\nКонкурс '{event['name']}'\n"\
+                        +"Начало "\
+                        + f"{event['event_time_start'].strftime('%d.%m')} "\
+                        + f"в {event['event_time_start'].strftime('%H:%M')}",
+                    reply_markup=markup
+                    )
 
 
 async def show_full_schedule(
@@ -144,17 +168,14 @@ async def show_full_schedule(
     **kwargs # pylint: disable=unused-argument
     ):
 
-    """Возвращает пользователю полное расписание
-
-    TODO: Офрмить более красивый текст
-    """
+    """Возвращает пользователю полное расписание"""
 
     await call.answer(cache_time=360)
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
     full_schedule = get_full_shedule()
-
+    markup = await back_to_main_keyboard()
     # await call.message.answer("Вот полное расписание")
 
     message_text = "📅 Полное расписание\n\n"
@@ -165,7 +186,10 @@ async def show_full_schedule(
             + "- "*20 + "\n"
         message_text = message_text + event_text
 
-    await call.message.answer(text=message_text)
+    await call.message.answer(
+        text=message_text,
+        reply_markup=markup
+        )
 
 
 async def show_result_menu(
@@ -441,7 +465,12 @@ async def show_map(
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    await call.message.answer("Вот карта фестиваля")
+    markup = await back_to_main_keyboard()
+
+    await call.message.answer(
+        text = "Вот карта фестиваля",
+        reply_markup=markup
+        )
 
 
 async def show_share(
@@ -461,7 +490,12 @@ async def show_share(
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    await call.message.answer("Вот ссылка на телеграмм бота")
+    markup = await back_to_main_keyboard()
+
+    await call.message.answer(
+        text="Вот ссылка на телеграмм бота",
+        reply_markup=markup
+        )
 
 
 async def show_about(
@@ -481,7 +515,12 @@ async def show_about(
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    await call.message.answer("Положение туристического фестиваля Свароог2022")
+    markup = await back_to_main_keyboard()
+
+    await call.message.answer(
+        text="Положение туристического фестиваля Свароог2022",
+        reply_markup=markup
+        )
 
 
 async def navigate_to_category(
@@ -642,6 +681,7 @@ async def show_item_info(
 async def subscribe_to_item(
     call: types.CallbackQuery,
     user_id:int,
+    category:str,
     subcategory:str,
     item_id:str,
     **kwargs # pylint: disable=unused-argument
@@ -658,14 +698,24 @@ async def subscribe_to_item(
 
     if subcategory == "sm_event":
         set_sign_to_event(int(user_id), int(item_id))
-        await call.message.answer(
-            text="Подписка добавлена"
+        # Формруем клавиатуру заново
+        markup = await sm_item_keyboard(
+            category=category,
+            subcategory=subcategory,
+            user_id=user_id
         )
+        # Отправляем пользователю обновленную клавиатуру
+        await call.message.edit_reply_markup(markup)
     elif subcategory == "sm_team":
         set_sign_to_team(int(user_id), int(item_id))
-        await call.message.answer(
-            text="Подписка добавлена"
+        # Формруем клавиатуру заново
+        markup = await sm_item_keyboard(
+            category=category,
+            subcategory=subcategory,
+            user_id=user_id
         )
+        # заменяем клавитуру на обновленную
+        await call.message.edit_reply_markup(markup)
     else:
         await call.message.answer(
             text="Что то пошло не так"
@@ -675,6 +725,7 @@ async def subscribe_to_item(
 async def unsubscribe_to_item(
     call: types.CallbackQuery,
     user_id:int,
+    category: str,
     subcategory:str,
     item_id:str,
     **kwargs # pylint: disable=unused-argument
@@ -691,14 +742,24 @@ async def unsubscribe_to_item(
 
     if subcategory == "sm_event":
         set_unsing_to_event(int(user_id), int(item_id))
-        await call.message.answer(
-            text="Подписка отменена"
+        # Формруем клавиатуру заново
+        markup = await sm_item_keyboard(
+            category=category,
+            subcategory=subcategory,
+            user_id=user_id
         )
+        # заменяем клавитуру на обновленную
+        await call.message.edit_reply_markup(markup)
     elif subcategory == "sm_team":
         set_unsing_to_team(int(user_id), int(item_id))
-        await call.message.answer(
-            text="Подписка отменена"
+        # Формруем клавиатуру заново
+        markup = await sm_item_keyboard(
+            category=category,
+            subcategory=subcategory,
+            user_id=user_id
         )
+        # заменяем клавитуру на обновленную
+        await call.message.edit_reply_markup(markup)
     else:
         await call.message.answer(
             text="Что то пошло не так"
