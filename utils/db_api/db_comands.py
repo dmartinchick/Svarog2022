@@ -7,7 +7,6 @@ from sqlalchemy.orm.session import Session
 
 from utils.db_api.sqlalch import Event, Schedule, Team, User, \
     ass_user_event, ass_user_team
-from utils.misc.other import get_unsubs_list
 
 from data.config import USER, PASSWORD, HOST, DB
 
@@ -261,21 +260,6 @@ def get_signed_teams_list(user_id: int) -> list:
     return signed_teams_list
 
 
-def get_unsigned_teams_list(user_id:int) -> list:
-    """Возвращает список команд на которые не подписан пользователь
-
-    Args:
-        user_id (int): id пользователя
-
-    Returns:
-        list: список словарей на которые не подписан пользователь
-    """
-    team_list = get_teams_list()
-    signed_teams_list = get_signed_teams_list(user_id)
-    unsigned_teams_list = get_unsubs_list(team_list, signed_teams_list)
-    return unsigned_teams_list
-
-
 def get_signed_events_list(user_id: int) -> list:
     """Возвращает список конкурсов на которые подписан пользователь
 
@@ -297,21 +281,6 @@ def get_signed_events_list(user_id: int) -> list:
         )
 
     return signed_events_list
-
-
-def get_unsigned_events_list(user_id:int) -> list:
-    """Возвращает список конкурсов на которые не подписан пользователь
-
-    Args:
-        user_id (int): id пользователя
-
-    Returns:
-        list: список словарей на которые не подписан пользователь
-    """
-    events_list = get_events_list()
-    signed_events_list = get_signed_events_list(user_id)
-    unsigned_events_list = get_unsubs_list(events_list, signed_events_list)
-    return unsigned_events_list
 
 
 # Функции добавления данных
