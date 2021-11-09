@@ -14,8 +14,8 @@ from utils.db_api.db_comands import get_date_start, get_date_end, \
                     set_unsing_to_team
 
 #Загрузка клавиатур
-from keyboards.inline.inline_main_menu import back_to_main_keyboard, event_keyboard, item_keyboard,\
-    main_menu_keyboard, result_keyboard, subscriptions_manager_keyboard, \
+from keyboards.inline.inline_main_menu import back_item_keyboard, back_to_main_keyboard,\
+    event_keyboard, main_menu_keyboard, result_keyboard, subscriptions_manager_keyboard, \
         sm_item_keyboard, team_keyboard
 from keyboards.inline.callback_datas import main_menu_cb
 
@@ -91,19 +91,21 @@ async def show_what_now(
             )
         else:
             for event in events_list:
+                message_text = f"Саейчас проходит конкурс '{event['name']}'\n"\
+                    + f"Он закончиться в {event['time_end'].strftime('%H:%M')}"
                 # проверяем является ли событие последним в списке текущих
                 # Если да, то приклепляем к нему клавиатуру
                 if event != events_list[-1]:
                     # отправка сообщения с информацией о конкурсе
-                    await call.message.answer(
-                        text=f"Саейчас проходит конкурс '{event['name']}'\n"\
-                            +f"Он закончиться в {event['time_end'].strftime('%H:%M')}"
+                    await call.message.answer_photo(
+                        photo=open(event['adress_photo'], "rb"),
+                        caption=message_text
                     )
                 else:
                     # отправка сообщения с информацией о конкурсе
-                    await call.message.answer(
-                        text=f"Саейчас проходит конкурс '{event['name']}'\n"\
-                            +f"Он закончиться в {event['time_end'].strftime('%H:%M')}",
+                    await call.message.answer_photo(
+                        photo=open(event['adress_photo'], "rb"),
+                        caption=message_text,
                         reply_markup=markup
                     )
 
@@ -125,7 +127,7 @@ async def show_what_next(
 
     # получение текущей даты и времени, а так же даты и времени окончания фестиваля
     # tdate = datetime.now() + timedelta(hours=config.DELTA)
-    tdate = datetime(2021, 7, 18, 19, 29) + timedelta(hours=config.DELTA)
+    tdate = datetime(2021, 7, 18, 19, 45) + timedelta(hours=config.DELTA)
     dt_end = get_date_end()
 
     # Создаем клавиатуру с кнокой 'Назад'
@@ -144,23 +146,24 @@ async def show_what_next(
         await call.message.answer("В скором времени состоится")
 
         for event in events_list:
+            message_text = f"\nКонкурс '{event['name']}'\n"\
+                + "Начало "\
+                + f"{event['event_time_start'].strftime('%d.%m')} "\
+                + f"в {event['event_time_start'].strftime('%H:%M')}"
+            message_photo = open(event['adress_photo'], "rb")
             # Проверяем является ли событие последним
             # Если да, то прикрепляем клавиатуру
             if event != events_list[-1]:
-                await call.message.answer(
-                    text=f"\nКонкурс '{event['name']}'\n"\
-                        +"Начало "\
-                        + f"{event['event_time_start'].strftime('%d.%m')} "\
-                        + f"в {event['event_time_start'].strftime('%H:%M')}"
-                    )
+                await call.message.answer_photo(
+                    photo=message_photo,
+                    caption = message_text
+                )
             else:
-                await call.message.answer(
-                    text=f"\nКонкурс '{event['name']}'\n"\
-                        +"Начало "\
-                        + f"{event['event_time_start'].strftime('%d.%m')} "\
-                        + f"в {event['event_time_start'].strftime('%H:%M')}",
+                await call.message.answer_photo(
+                    photo=message_photo,
+                    caption=message_text,
                     reply_markup=markup
-                    )
+                )
 
 
 async def show_full_schedule(
@@ -467,10 +470,11 @@ async def show_map(
 
     markup = await back_to_main_keyboard()
 
-    await call.message.answer(
-        text = "Вот карта фестиваля",
+    await call.message.answer_photo(
+        photo=open(r'data/img/other/festival_map.jpg', "rb"),
+        caption="Карта фестиваля",
         reply_markup=markup
-        )
+    )
 
 
 async def show_share(
@@ -492,10 +496,12 @@ async def show_share(
 
     markup = await back_to_main_keyboard()
 
-    await call.message.answer(
-        text="Вот ссылка на телеграмм бота",
-        reply_markup=markup
-        )
+    await call.message.answer_photo(
+        photo=(open(r'data/img/other/share.jpg', "rb")),
+        caption="Вот QR-код телеграм бота."\
+            "Что бы поделиться ссылкой, просто отсканируйте данный код",
+            reply_markup=markup
+    )
 
 
 async def show_about(
@@ -517,10 +523,11 @@ async def show_about(
 
     markup = await back_to_main_keyboard()
 
-    await call.message.answer(
-        text="Положение туристического фестиваля Свароог2022",
+    await call.message.answer_document(
+        document=open(r'data/docs/svarog2021_rule.pdf', "rb"),
+        caption="Положение туристического фестиваля Сварог2022",
         reply_markup=markup
-        )
+    )
 
 
 async def navigate_to_category(
@@ -648,7 +655,7 @@ async def show_item_info(
         item_id (str): id конкурса или команды
     TODO: добавить кнопку "Подписаться" и "назад"
     """
-    markup = await item_keyboard(
+    markup = await back_item_keyboard(
         category=category
     )
     if category == "event":
@@ -666,10 +673,11 @@ async def show_item_info(
         + f"Состав представителей команд:\n{event_composition}\n\n"\
         + f"Время начала конкурса:\n{event_info['time_start'].strftime('%d.%m %H:%M')}\n\n"\
         + f"Правила конкурса:\n{event_info['rule']}"
-        await call.message.answer(
-            text=message_text,
-            reply_markup=markup
-        )
+
+        await call.message.answer_photo(
+            photo=open(event_info['adress_photo'], "rb"),
+            caption=message_text,
+            reply_markup=markup)
     else:
         team_info = get_team_info(int(item_id))
         if team_info['holding'] is True:

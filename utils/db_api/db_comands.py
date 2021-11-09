@@ -73,7 +73,8 @@ def get_what_now(tdate) -> list:
     for item in s.query(
         Event.name,
         Event.id,
-        Schedule.time_end).filter(
+        Schedule.time_end,
+        Event.address).filter(
             and_(
                 Schedule.event_id == Event.id,
                 Schedule.time_start < tdate,
@@ -81,7 +82,8 @@ def get_what_now(tdate) -> list:
         now_event_list.append(
             {'name':item[0],
             'event_id':item[1],
-            'time_end':item[2]})
+            'time_end':item[2],
+            'adress_photo':item[3]})
 
     return now_event_list
 
@@ -100,7 +102,8 @@ def get_what_next(tdate) -> list:
     for item in s.query(
         Event.name,
         Event.id,
-        Schedule.time_start).filter(
+        Schedule.time_start,
+        Event.address).filter(
             and_(
                 Schedule.event_id == Event.id,
                 Schedule.time_start > tdate)).order_by(
@@ -108,7 +111,8 @@ def get_what_next(tdate) -> list:
         next_event_list.append(
             {'name':item[0],
             'event_id':item[1],
-            'event_time_start':item[2]}
+            'event_time_start':item[2],
+            'adress_photo':item[3]}
             )
     return next_event_list
 
@@ -152,7 +156,8 @@ def get_event_info(event_id:int) -> dict:
         Event.coefficient,
         Event.rule,
         Event.composition,
-        Schedule.time_start).filter(
+        Schedule.time_start,
+        Event.address).filter(
             and_(
                 Schedule.event_id == Event.id,
                 Event.id ==event_id)).first()
@@ -162,7 +167,8 @@ def get_event_info(event_id:int) -> dict:
         'coefficient':event_info_request[2],
         'rule':event_info_request[3],
         'composition':event_info_request[4],
-        'time_start':event_info_request[5]
+        'time_start':event_info_request[5],
+        'adress_photo':event_info_request[6]
         }
     return event_info
 
