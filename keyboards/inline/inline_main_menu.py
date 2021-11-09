@@ -4,6 +4,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from utils.db_api.db_comands import get_events_list, get_signed_events_list
 from utils.db_api.db_comands import get_signed_teams_list, get_teams_list
+
 from keyboards.inline.callback_datas import make_callback_data
 
 
@@ -292,4 +293,30 @@ async def sm_item_keyboard(category:str, subcategory:str, user_id:int) -> Inline
         )
     )
 
+    return markup
+
+
+async def back_item_keyboard(category:str) -> InlineKeyboardMarkup:
+    """Кнопка назад из категорий event, team
+
+    Args:
+        category (str): раздел главного меню
+
+    Returns:
+        InlineKeyboardMarkup: кнопка 'Назад'
+    """
+    markup = InlineKeyboardMarkup(
+        row_width=1
+    )
+    curent_level = 3
+
+    markup.insert(
+        InlineKeyboardButton(
+            text="Назад",
+            callback_data=make_callback_data(
+                level= curent_level - 2,
+                category=category
+            )
+        )
+    )
     return markup

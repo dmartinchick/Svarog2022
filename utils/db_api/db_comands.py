@@ -155,7 +155,7 @@ def get_event_info(event_id:int) -> dict:
         Schedule.time_start).filter(
             and_(
                 Schedule.event_id == Event.id,
-                Event.id ==event_id)).one()
+                Event.id ==event_id)).first()
     event_info = {
         'name':event_info_request[0],
         'type':event_info_request[1],

@@ -14,7 +14,7 @@ from utils.db_api.db_comands import get_date_start, get_date_end, \
                     set_unsing_to_team
 
 #Загрузка клавиатур
-from keyboards.inline.inline_main_menu import back_to_main_keyboard, event_keyboard,\
+from keyboards.inline.inline_main_menu import back_to_main_keyboard, event_keyboard, item_keyboard,\
     main_menu_keyboard, result_keyboard, subscriptions_manager_keyboard, \
         sm_item_keyboard, team_keyboard
 from keyboards.inline.callback_datas import main_menu_cb
@@ -648,7 +648,9 @@ async def show_item_info(
         item_id (str): id конкурса или команды
     TODO: добавить кнопку "Подписаться" и "назад"
     """
-
+    markup = await item_keyboard(
+        category=category
+    )
     if category == "event":
         event_info = get_event_info(int(item_id))
 
@@ -658,13 +660,15 @@ async def show_item_info(
         else:
             event_composition = event_info['composition']
 
+        message_text = f"Конкурс '{event_info['name']}'\n"\
+        + f"{event_info['type']}\n\n"\
+        + f"Коэфициент сложности: {event_info['coefficient']}\n\n"\
+        + f"Состав представителей команд:\n{event_composition}\n\n"\
+        + f"Время начала конкурса:\n{event_info['time_start'].strftime('%d.%m %H:%M')}\n\n"\
+        + f"Правила конкурса:\n{event_info['rule']}"
         await call.message.answer(
-            text=f"Конкурс '{event_info['name']}'\n"
-            f"{event_info['type']}\n\n"
-            f"Коэфициент сложности: {event_info['coefficient']}\n\n"
-            f"Состав представителей команд:\n{event_composition}\n\n"
-            f"Время начала конкурса:\n{event_info['time_start'].strftime('%d.%m %H:%M')}\n\n"
-            f"Правила конкурса:\n{event_info['rule']}"
+            text=message_text,
+            reply_markup=markup
         )
     else:
         team_info = get_team_info(int(item_id))
@@ -672,9 +676,11 @@ async def show_item_info(
             holding_text = "Команда входит в состав холдинга БМК"
         else:
             holding_text = "Команда не входит в состав холдинга БМК"
-        await call.message.answer(
-            text=f"Команда '{team_info['name']}'\n"
+        message_text = f"Команда '{team_info['name']}'\n"\
             f"{holding_text}"
+        await call.message.answer(
+            text=message_text,
+            reply_markup=markup
         )
 
 
