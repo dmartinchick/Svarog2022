@@ -1,11 +1,31 @@
+"""Описание колбэков"""
 from aiogram.utils.callback_data import CallbackData
 
-main_menu_choice = CallbackData("main", "item_name")
-result_menu_choice = CallbackData("result", "item_name")
-contests_menu_choice = CallbackData("contests","item_name")
+main_menu_cb = CallbackData(
+    "main_menu",
+    "level",
+    "category",
+    "subcategory",
+    "action",
+    "item_id")
 
 
-menu_cd = CallbackData("show_menu", "user_id", "level", "category", "item_id")
-sing_item = CallbackData("sing", "user_id", "category", "item")
-unsing_item = CallbackData("unsing", "user_id","category", "item")
+def make_callback_data(
+    level,
+    category = "0",
+    subcategory = "0",
+    action = "0",
+    item_id = "0"):
+    """Формирует callback_data, подставля вместо отсутствующих значений '0'.
+    """
+    return main_menu_cb.new(
+        level = level,
+        category = category,
+        subcategory = subcategory,
+        action = action,
+        item_id = item_id
+    )
 
+
+sing_item = CallbackData("sing", "user_id", "category", "item_id")
+unsing_item = CallbackData("unsing", "user_id","category", "item_id")
