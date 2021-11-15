@@ -1,17 +1,11 @@
 """Хэндлеры управления админ панелью"""
 import logging
 from aiogram import types
+from keyboards.inline.inline_admin_panel import admin_panel_keyboard
 
 from loader import dp
 from data import config
 from utils.db_api.db_comands import get_admin_list
-"""Админ должен иметь возможность
-    TODO: Отправлять экстренные сообщения
-    TODO: добовлять результаты
-    TODO: изменять расписание
-"""
-
-
 
 
 @dp.message_handler(commands="admin_panel")
@@ -26,13 +20,13 @@ async def show_admin_panel(message: types.Message):
     admins_list = get_admin_list()
 
     if user_id in admins_list:
+        markup = admin_panel_keyboard()
         await message.answer(
-            text="Панель администратора"
+            text="Панель администратора",
+            reply_markup=markup
         )
     else:
         await message.answer(
             text="К сожалению у вас нет прав доступа. "\
                 + "Для получения прав администатора - "\
                     + "обратитесь к главному судье фестиваля")
-
-    pass
