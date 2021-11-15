@@ -230,7 +230,7 @@ def get_admin_list() -> list:
         list: список администраторов
     """
     admin_list = []
-    for admin in s.query(User.user_id).filter(User.admin is True).all():
+    for admin in s.query(User.user_id).filter(User.admin == 1).all():
         admin_list.append(admin[0])
     return admin_list
 

@@ -14,6 +14,7 @@ async def admin_panel_keyboard() -> InlineKeyboardMarkup:
     )
     categories = [
         {'name':"📝 Добавление результатов", 'category_item':"add_result"},
+        {'name':"✏ Изменение результатов", 'category_item':"change_result"},
         {'name':"🕑 Изменение расписания", 'category_item':"changing_shedule"},
         {'name':"⚡ Экстренное сообщение", 'category_item':"emergency_message"}
     ]
@@ -22,7 +23,7 @@ async def admin_panel_keyboard() -> InlineKeyboardMarkup:
         markup.insert(
             InlineKeyboardButton(
                 text=category['name'],
-                callback_data=make_callback_data_ap(category['categoty_item'])
+                callback_data=make_callback_data_ap(category['category_item'])
             )
         )
     return markup

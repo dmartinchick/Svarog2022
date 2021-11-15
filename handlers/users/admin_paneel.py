@@ -20,7 +20,7 @@ async def show_admin_panel(message: types.Message):
     admins_list = get_admin_list()
 
     if user_id in admins_list:
-        markup = admin_panel_keyboard()
+        markup = await admin_panel_keyboard()
         await message.answer(
             text="Панель администратора",
             reply_markup=markup
