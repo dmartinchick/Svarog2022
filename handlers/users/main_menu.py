@@ -1,4 +1,4 @@
-"""Хэндлеры управления меню"""
+"""Хэндлеры управления главного меню"""
 from datetime import datetime, timedelta
 import logging
 from typing import Union
@@ -461,7 +461,6 @@ async def show_map(
     Args:
         call (types.CallbackQuery): callback_data пользователя
 
-    TODO: реализовать отправку картинки с картой фестиваля
     """
 
     await call.answer(cache_time=360)
@@ -487,7 +486,6 @@ async def show_share(
     Args:
         call (types.CallbackQuery): callback_data пользователя
 
-    TODO: реализовать отправку картинки с QR-кодом
     """
 
     await call.answer(cache_time=360)
@@ -514,7 +512,6 @@ async def show_about(
     Args:
         call (types.CallbackQuery): callback_data пользователя
 
-    TODO: реализовать отправку файла с положением фестиваля
     """
 
     await call.answer(cache_time=360)
@@ -644,7 +641,8 @@ async def show_item_info(
     category:str,
     subcategory:str,
     item_id:str,
-    **kwargs # pylint: disable=unused-argument
+    **kwargs
+    # pylint: disable=unused-argument
     ):
 
     """Возвращет пользователю сообщение с информацией о конкурсе или команде
@@ -653,7 +651,7 @@ async def show_item_info(
         call (types.CallbackQuery): callback_data пользователя
         category (str): выбранная категория
         item_id (str): id конкурса или команды
-    TODO: добавить кнопку "Подписаться" и "назад"
+
     """
     markup = await back_item_keyboard(
         category=category

@@ -67,7 +67,7 @@ def get_what_now(tdate) -> list:
 
     Returns:
         now_event_list [list]: Список событий
-    TODO: добавить поля с картинкой
+
     """
     now_event_list = []
     for item in s.query(
@@ -96,7 +96,7 @@ def get_what_next(tdate) -> list:
 
     Returns:
         list: список из ближайших событий
-    TODO: добавить поля с картинкой, временем оканчания
+
     """
     next_event_list = []
     for item in s.query(
@@ -222,6 +222,17 @@ def get_users_list() -> list:
     for user in s.query(User.user_id).all():
         users_list.append(user[0])
     return users_list
+
+def get_admin_list() -> list:
+    """Функция возвращает список администраторов
+
+    Returns:
+        list: список администраторов
+    """
+    admin_list = []
+    for admin in s.query(User.user_id).filter(User.admin is True).all():
+        admin_list.append(admin[0])
+    return admin_list
 
 
 def get_teams_list() -> list:

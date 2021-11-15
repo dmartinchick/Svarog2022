@@ -46,6 +46,7 @@ class User(Base):
     __tablename__ = 'user'
 
     user_id = Column(Integer, primary_key=True, autoincrement=False)
+    admin = Column(Boolean, default=False)
     event = relationship('Event', secondary=ass_user_event, backref='user')
     team = relationship('Team', secondary=ass_user_team, backref='user')
 
