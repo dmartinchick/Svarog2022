@@ -12,7 +12,7 @@ main_menu_cb = CallbackData(
 
 admin_panel_cb = CallbackData(
     "admin_panel",
-    "category"
+    "what_to_do"
 )
 
 
@@ -34,9 +34,9 @@ def make_callback_data(
     )
 
 def make_callback_data_ap(
-    category):
+    what_to_do = "0"):
     """Формирует callback_data для панели администратора
     """
     return admin_panel_cb.new(
-        category = category
+        what_to_do = what_to_do
     )

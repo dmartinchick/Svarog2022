@@ -12,18 +12,21 @@ async def admin_panel_keyboard() -> InlineKeyboardMarkup:
     markup = InlineKeyboardMarkup(
         row_width=1
     )
-    categories = [
-        {'name':"📝 Добавление результатов", 'category_item':"add_result"},
-        {'name':"✏ Изменение результатов", 'category_item':"change_result"},
-        {'name':"🕑 Изменение расписания", 'category_item':"changing_shedule"},
-        {'name':"⚡ Экстренное сообщение", 'category_item':"emergency_message"}
+    to_do_list = [
+        {'name':"📝 Добавление результатов", 'what_to_do_item':"add_result"},
+        {'name': "Очиститть результаты конкруса", 'what_to_do_item':"claer_result"},
+        {'name':"✏ Изменение результатов команды", 'what_to_do_item':"change_result"},
+        {'name':"Добавить штраф", 'what_to_do_item':"set_fol"},
+        {'name':"🕑 Изменение расписания", 'what_to_do_item':"changing_shedule"},
+        {'name':"⚡ Экстренное сообщение", 'what_to_do_item':"emergency_message"}
     ]
 
-    for category in categories:
+    for to_do in to_do_list:
         markup.insert(
             InlineKeyboardButton(
-                text=category['name'],
-                callback_data=make_callback_data_ap(category['category_item'])
+                text=to_do['name'],
+                callback_data=make_callback_data_ap(
+                    what_to_do=to_do['what_to_do_item'])
             )
         )
     return markup
