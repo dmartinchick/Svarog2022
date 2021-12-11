@@ -1,7 +1,8 @@
 """Создание клавиатуры панели администратора"""
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from keyboards.inline.callback_datas import make_callback_data_ap
+from keyboards.inline.callback_datas import make_callback_data_ap, make_callback_data_app_add_result
+from utils.db_api.db_comands import get_events_list
 
 async def admin_panel_keyboard() -> InlineKeyboardMarkup:
     """Возвращает пользователю меню панели администратора
@@ -27,6 +28,27 @@ async def admin_panel_keyboard() -> InlineKeyboardMarkup:
                 text=to_do['name'],
                 callback_data=make_callback_data_ap(
                     what_to_do=to_do['what_to_do_item'])
+            )
+        )
+    return markup
+
+async def ap_event_keyboard() -> InlineKeyboardMarkup:
+    """Возвращает пользователю клавиатуру событий
+
+    Returns:
+        InlineKeyboardMarkup: Клавиатура событий
+    """
+    markup = InlineKeyboardMarkup(
+        row_width=1
+    )
+    events = get_events_list()
+    for event in events:
+        markup.insert(
+            InlineKeyboardButton(
+                text=event['name'],
+                callback_data=make_callback_data_app_add_result(
+                    item_id = event['item_id']
+                )
             )
         )
     return markup
