@@ -244,7 +244,7 @@ def get_teams_list() -> list:
     team_list = []
     for team in s.query(
         Team.name,
-        Team.id).all():
+        Team.id).order_by(Team.name).all():
         team_list.append(
             {'name':team[0],
             'item_id':team[1]})

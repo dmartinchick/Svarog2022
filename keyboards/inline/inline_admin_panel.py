@@ -47,7 +47,7 @@ async def ap_event_keyboard() -> InlineKeyboardMarkup:
             InlineKeyboardButton(
                 text=event['name'],
                 callback_data=make_callback_data_app_add_result(
-                    item_id = event['item_id']
+                    event_id = event['item_id']
                 )
             )
         )

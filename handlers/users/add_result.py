@@ -3,11 +3,10 @@ import logging
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import state
 from aiogram.dispatcher.filters.state import State, StatesGroup
+
 from keyboards.inline.inline_admin_panel import ap_event_keyboard
 
-from utils.db_api.db_comands import get_teams_list
 from loader import dp
 
 
@@ -17,12 +16,25 @@ class AddResult(StatesGroup):
     Args:
         StatesGroup ([type]): [description]
     """
-    waiting_for_event_name = State()
-    teams_list = get_teams_list()
-    for team in teams_list:
-        team['item_id'] = State()
+    event_name = State()
+    prokat_place = State()
+    gks_place = State()
+    stal_place = State()
+    razam_place = State()
+    belvtorcherme_place = State()
+    mpz_place = State()
+    zubry_place = State()
+    rmz_place = State()
+    bycord_place = State()
+    integral_place = State()
+    mzkt_place = State()
+    maz_place = State()
+    mogilevliftmash_place = State()
+    mmz_place = State()
+    save_results = State()
 
-@dp.callback_query_handler(text_contains = "add_result")
+
+@dp.callback_query_handler(text_contains = "add_result", state=None)
 async def ap_add_result_start(call: types.CallbackQuery):
     """Функция вызова меню добавления результатов
 
@@ -40,4 +52,44 @@ async def ap_add_result_start(call: types.CallbackQuery):
         text="Выберите конкурс результат которого вы хотите добавить",
         reply_markup=markup
     )
-    await AddResult.next()
+    await AddResult.event_name.set()
+
+
+@dp.callback_query_handler(state = AddResult.event_name)
+async def event_choosen(call: types.CallbackQuery, state: FSMContext):
+    """добавляет выбраный конкурс в FSM Storege
+
+    Args:
+        call (types.CallbackQuery): данные callback
+        state (FSMContext): [description]
+    """
+    await state.update_data(event_id = int(call.data.split(':')[1]))
+
+    await call.message.answer(
+        text="Какое место заняла команда Прокат?"
+    )
+
+    await AddResult.prokat_place.set()
+
+
+@dp.message_handler(state=AddResult.prokat_place)
+async def prokat_place_choosen(message: types.Message, state: FSMContext):
+    """добавляет в FSM Storege место которое заняла команда Прокат
+
+    Args:
+        message (types.Message): [description]
+        state (FSMContext): [description]
+    """
+    answer = int(message.text)
+
+    if answer > 0 and answer < 16:
+        await state.update_data(prokat_place = answer)
+        await AddResult.gks_place.set()
+    else:
+        await message.answer(
+            text="Вы ввели неверное чилсо. Введите число от 1 до 16"
+        )
+        await message.answer(
+            text="Какое место заняла команда Прокат?"
+        )
+        await AddResult.prokat_place.set()

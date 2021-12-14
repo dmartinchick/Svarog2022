@@ -15,9 +15,10 @@ admin_panel_cb = CallbackData(
     "what_to_do"
 )
 
-ap_add_result_event_cb = CallbackData(
+ap_add_result_cb = CallbackData(
     "ap_add_result",
-    "item_id"
+    "event_id",
+    "team_id",
 )
 
 
@@ -38,6 +39,7 @@ def make_callback_data(
         item_id = item_id
     )
 
+
 def make_callback_data_ap(
     what_to_do = "0"):
     """Формирует callback_data для панели администратора
@@ -48,8 +50,10 @@ def make_callback_data_ap(
 
 
 def make_callback_data_app_add_result(
-    item_id = "0"):
+    event_id = "0",
+    team_id = "0"):
     """Формирует callback_data для меню добавления результатотв"""
-    return ap_add_result_event_cb.new(
-        item_id = item_id
+    return ap_add_result_cb.new(
+        event_id = event_id,
+        team_id = team_id
     )
