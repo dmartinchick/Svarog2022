@@ -300,6 +300,30 @@ def get_signed_events_list(user_id: int) -> list:
     return signed_events_list
 
 
+def get_team_id(name_en: str) -> int:
+    """Возвращает id команды по обращению через name_en
+
+    Args:
+        name_en (str): название команды на английском языке
+
+    Returns:
+        int: id команды
+    """
+    team_id = s.query(Team.id)\
+        .filter(Team.name_en == name_en)\
+            .first()
+    return team_id[0]
+
+def count_teams() -> int:
+    """Возвращает количество команд на фестивале
+
+    Returns:
+        int: Кол-во команд
+    """
+    count = s.query(Team.id).count()
+    return count
+
+
 # Функции добавления данных
 def set_user(user_id):
     """Добавлеят пользователя в БД

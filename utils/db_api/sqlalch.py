@@ -76,6 +76,7 @@ class Team(Base):
     name = Column(String)
     holding = Column(Boolean)
     address = Column(String)
+    name_en = Column(String)
     results = relationship('Results')
 
 
