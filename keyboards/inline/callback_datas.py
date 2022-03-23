@@ -18,7 +18,7 @@ admin_panel_cb = CallbackData(
 ap_add_result_cb = CallbackData(
     "ap_add_result",
     "event_id",
-    "team_id",
+    "to_do"
 )
 
 
@@ -51,9 +51,9 @@ def make_callback_data_ap(
 
 def make_callback_data_app_add_result(
     event_id = "0",
-    team_id = "0"):
+    to_do = "0"):
     """Формирует callback_data для меню добавления результатотв"""
     return ap_add_result_cb.new(
         event_id = event_id,
-        team_id = team_id
+        to_do = to_do
     )

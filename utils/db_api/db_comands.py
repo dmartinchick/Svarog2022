@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import and_, desc
 from sqlalchemy.orm.session import Session
 
-from utils.db_api.sqlalch import Event, Schedule, Team, User, \
+from utils.db_api.sqlalch import Event, Results, Schedule, Team, User, \
     ass_user_event, ass_user_team
 
 from data.config import USER, PASSWORD, HOST, DB
@@ -314,6 +314,32 @@ def get_team_id(name_en: str) -> int:
             .first()
     return team_id[0]
 
+
+def get_team_name(team_id: int) -> str:
+    """Возвращает название команды по ID
+
+    Args:
+        team_id (int): ID команды
+
+    Returns:
+        str: Название команды
+    """
+    team_name = s.query(Team.name).filter(Team.id == team_id).first()
+    return team_name[0]
+
+
+def get_event_name(event_id: int) -> str:
+    """Возвращает название конкурса по ID
+
+    Args:
+        event_id (int): ID конкурса
+
+    Returns:
+        str: название конкруса
+    """
+    event_name = s.query(Event.name).filter(Event.id == event_id).first()
+    return event_name[0]
+
 def count_teams() -> int:
     """Возвращает количество команд на фестивале
 
@@ -364,6 +390,18 @@ def set_sign_to_team(user_id:int, team_id:int):
                 user_id = user_id,
                 team_id = team_id))
     s.commit()
+
+def set_results(results: dict):
+    """Добавляет результат в БД
+
+    Args:
+        event_id (int): id конкурса
+        team_id (int): id команды
+        place (int): место которое заняла команда
+
+    TODO: переделать через цикл
+    """
+    print(results)
 
 
 # Функции для удаления данных

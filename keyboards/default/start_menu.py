@@ -1,3 +1,4 @@
+"""Формирование клавиатуры главного меню"""
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
 menu = KeyboardButton(text="⠀Меню")

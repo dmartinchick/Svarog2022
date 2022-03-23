@@ -5,10 +5,11 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-from keyboards.inline.inline_admin_panel import ap_event_keyboard
+from keyboards.inline.inline_admin_panel import ap_chcek_result, ap_event_keyboard
 
 from loader import dp
-from utils.db_api.db_comands import count_teams, get_team_id
+from utils.db_api.db_comands import count_teams, get_event_name, get_team_id, \
+    get_team_name, set_results
 
 
 class AddResult(StatesGroup):
@@ -32,7 +33,7 @@ class AddResult(StatesGroup):
     maz_place = State()
     mogilevliftmash_place = State()
     mmz_place = State()
-    save_results = State()
+    check_result = State()
 
 
 @dp.callback_query_handler(text_contains = "add_result", state=None)
@@ -63,6 +64,10 @@ async def event_choosen(call: types.CallbackQuery, state: FSMContext):
         call (types.CallbackQuery): данные callback
         state (FSMContext): [description]
     """
+    await call.answer(cache_time=360)
+    callback_data = call.data
+    logging.info("callback_data='%s'", callback_data)
+
     await state.update_data(event_id = int(call.data.split(':')[1]))
 
     await call.message.answer(
@@ -435,27 +440,74 @@ async def mmz_place_choosen(message: types.Message, state: FSMContext):
     # Проверяем корректность ввода
     if answer > 0 and answer <= count:
         await state.update_data(mmz_place = {'team_id': team_id, 'place' : answer})
-        await AddResult.save_results.set()
+        results = await state.get_data()
+        results_text = make_text_result(results)
+        markup = await ap_chcek_result()
+        await message.answer(
+            text=results_text,
+            reply_markup=markup
+        )
     else:
         await message.answer(
-            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
-        )
+            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}")
         await message.answer(
-            text="Какое место заняла команда ММЗ?"
-        )
+            text="Какое место заняла команда ММЗ?")
         await AddResult.mmz_place.set()
+    await AddResult.check_result.set()
 
-@dp.message_handler(state=AddResult.save_results)
-async def save_results_menu(message: types.Message, state: FSMContext):
-    """Проверяет корректность ввода данных и сохраняет их при необходимости
+@dp.callback_query_handler(text_contains="save", state=AddResult.check_result)
+async def save_results(call:types.CallbackQuery, state: FSMContext):
+    """Сохранение результатов
 
     Args:
-        message (types.Message): [description]
+        call (types.CallbackQuery): [description]
         state (FSMContext): [description]
-    
-    TODO: Реализвоать проверку данных и сохранение
+    TODO: реализовать добавление результатов в БД
     """
     results = await state.get_data()
-    await message.answer(
-        text=results
+    set_results(results)
+    await call.message.answer(
+        text="Результаты сохранены"
     )
+    await state.finish()
+
+
+@dp.callback_query_handler(text_contains="repeat", state=AddResult.check_result)
+async def repeat_enter(call: types.CallbackQuery, state: FSMContext):
+    """[summary]
+
+    Args:
+        call (types.CallbackQuery): [description]
+        state (FSMContext): [description]
+    """
+    await call.answer(cache_time=360)
+    callback_data = call.data
+    logging.info("callback_data='%s'", callback_data)
+
+    await state.reset_state()
+    markup = await ap_event_keyboard()
+    await call.message.answer(
+        text="Выберите конкурс результат которого вы хотите добавить",
+        reply_markup=markup
+    )
+    await AddResult.event_name.set()
+
+
+def make_text_result(dic) -> str:
+    """Формирует текст для проверки результатов
+
+    Args:
+        dic ([type]): Словарь из FSMcontex
+
+    Returns:
+        str: текст для проверки результатов
+    """
+    event_id  = dic['event_id']
+    event_name = get_event_name(event_id)
+    rlist = list(dic.items())
+    result_list = rlist[1:]
+    text_result = f"Конкрс - {event_name}\n"
+    for item in result_list:
+        team_name = get_team_name(item[1]['team_id'])
+        text_result = text_result + f"{team_name} - {item[1]['place']}\n"
+    return text_result

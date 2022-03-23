@@ -52,3 +52,24 @@ async def ap_event_keyboard() -> InlineKeyboardMarkup:
             )
         )
     return markup
+
+
+async def ap_chcek_result() -> InlineKeyboardMarkup:
+    """Клавиатура для перехода к проверке введеных результатов
+
+    Returns:
+        InlineKeyboardMarkup: [description]
+    """
+    markup = InlineKeyboardMarkup(row_width=1)
+    to_do = [
+        {'name':"сохранить результаты", 'to_do_item':"save"},
+        {'name':"начать ввод заново",'to_do_item':"repeat"}
+    ]
+    for item in to_do:
+        markup.insert(
+            InlineKeyboardButton(
+                text=item['name'],
+                callback_data=make_callback_data_app_add_result(to_do=item['to_do_item'])
+            )
+        )
+    return markup
