@@ -398,10 +398,17 @@ def set_results(results: dict):
         event_id (int): id конкурса
         team_id (int): id команды
         place (int): место которое заняла команда
-
-    TODO: переделать через цикл
     """
-    print(results)
+    event_id = results['event_id']
+    results_list = list(results.items())[1:]
+    for item in results_list:
+        result = Results(
+            event_id = event_id,
+            team_id = item[1]['team_id'],
+            place = item[1]['place']
+        )
+        s.add(result)
+        s.commit()
 
 
 # Функции для удаления данных
