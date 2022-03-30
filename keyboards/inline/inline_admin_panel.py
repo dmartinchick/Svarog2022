@@ -2,7 +2,7 @@
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from keyboards.inline.callback_datas import make_callback_data_ap, make_callback_data_app_add_result
-from utils.db_api.db_comands import get_events_list
+from utils.db_api.db_comands import get_events_list, get_result_list
 
 async def admin_panel_keyboard() -> InlineKeyboardMarkup:
     """Возвращает пользователю меню панели администратора
@@ -38,19 +38,30 @@ async def ap_event_keyboard() -> InlineKeyboardMarkup:
     Returns:
         InlineKeyboardMarkup: Клавиатура событий
     """
+    result_list = get_result_list()
     markup = InlineKeyboardMarkup(
         row_width=1
     )
     events = get_events_list()
     for event in events:
-        markup.insert(
-            InlineKeyboardButton(
-                text=event['name'],
-                callback_data=make_callback_data_app_add_result(
-                    event_id = event['item_id']
+        if event['item_id'] in result_list:
+            markup.insert(
+                InlineKeyboardButton(
+                    text=event['name'] + " ✅",
+                    callback_data=make_callback_data_app_add_result(
+                        event_id=event['item_id']
+                    )
                 )
             )
-        )
+        else:
+            markup.insert(
+                InlineKeyboardButton(
+                    text=event['name'] + " 📝",
+                    callback_data=make_callback_data_app_add_result(
+                        event_id=event['item_id']
+                    )
+                )
+            )
     return markup
 
 

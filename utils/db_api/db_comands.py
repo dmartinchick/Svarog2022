@@ -1,6 +1,6 @@
 """Функции для работы с БД"""
 
-from sqlalchemy import create_engine, delete
+from sqlalchemy import create_engine, delete, distinct
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import and_, desc
 from sqlalchemy.orm.session import Session
@@ -340,6 +340,7 @@ def get_event_name(event_id: int) -> str:
     event_name = s.query(Event.name).filter(Event.id == event_id).first()
     return event_name[0]
 
+
 def count_teams() -> int:
     """Возвращает количество команд на фестивале
 
@@ -348,6 +349,20 @@ def count_teams() -> int:
     """
     count = s.query(Team.id).count()
     return count
+
+
+def get_result_list() -> list:
+    """возвращает список конкурсов на которые уже введены результаты
+
+    Returns:
+        list: Список конкурсов с внесенными результатами
+    """
+    result_list = []
+
+    for result in s.query(Results.event_id).distinct().all():
+        result_list.append(result[0])
+
+    return result_list
 
 
 # Функции добавления данных
@@ -390,6 +405,7 @@ def set_sign_to_team(user_id:int, team_id:int):
                 user_id = user_id,
                 team_id = team_id))
     s.commit()
+
 
 def set_results(results: dict):
     """Добавляет результат в БД

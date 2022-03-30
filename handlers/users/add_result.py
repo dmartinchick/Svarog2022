@@ -9,7 +9,7 @@ from keyboards.inline.inline_admin_panel import ap_chcek_result, ap_event_keyboa
 
 from loader import dp
 from utils.db_api.db_comands import count_teams, get_event_name, get_team_id, \
-    get_team_name, set_results
+    get_team_name, set_results, get_result_list
 
 
 class AddResult(StatesGroup):
@@ -48,6 +48,7 @@ async def ap_add_result_start(call: types.CallbackQuery):
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
+    result_list = get_result_list()
     markup = await ap_event_keyboard()
     await call.message.answer(
         text="Выберите конкурс результат которого вы хотите добавить",
