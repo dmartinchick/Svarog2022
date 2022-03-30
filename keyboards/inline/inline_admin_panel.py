@@ -47,7 +47,7 @@ async def ap_event_keyboard() -> InlineKeyboardMarkup:
         if event['item_id'] in result_list:
             markup.insert(
                 InlineKeyboardButton(
-                    text=event['name'] + " ✅",
+                    text="✅    " + event['name'],
                     callback_data=make_callback_data_app_add_result(
                         event_id=event['item_id']
                     )
@@ -56,7 +56,7 @@ async def ap_event_keyboard() -> InlineKeyboardMarkup:
         else:
             markup.insert(
                 InlineKeyboardButton(
-                    text=event['name'] + " 📝",
+                    text="📝    " + event['name'],
                     callback_data=make_callback_data_app_add_result(
                         event_id=event['item_id']
                     )

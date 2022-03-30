@@ -8,8 +8,8 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from keyboards.inline.inline_admin_panel import ap_chcek_result, ap_event_keyboard
 
 from loader import dp
-from utils.db_api.db_comands import count_teams, get_event_name, get_team_id, \
-    get_team_name, set_results, get_result_list
+from utils.db_api.db_comands import count_teams, get_event_name, get_result_list, get_team_id, \
+    get_team_name, set_results
 
 
 class AddResult(StatesGroup):
@@ -48,7 +48,6 @@ async def ap_add_result_start(call: types.CallbackQuery):
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    result_list = get_result_list()
     markup = await ap_event_keyboard()
     await call.message.answer(
         text="Выберите конкурс результат которого вы хотите добавить",
@@ -68,13 +67,24 @@ async def event_choosen(call: types.CallbackQuery, state: FSMContext):
     await call.answer(cache_time=360)
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
-
-    await state.update_data(event_id = int(call.data.split(':')[1]))
-
-    await call.message.answer(
-        text="Какое место заняла команда Прокат?"
-    )
-    await AddResult.prokat_place.set()
+    event = int(call.data.split(':')[1])
+    result_list = get_result_list()
+    if event in result_list:
+        await call.message.answer(
+            text="❗ Результат данного конкурса уже введен ❗"
+        )
+        markup = await ap_event_keyboard()
+        await call.message.answer(
+            text="Выберите конкурс результат которого вы хотите добавить",
+            reply_markup=markup
+        )
+        await AddResult.event_name.set()
+    else:
+        await state.update_data(event_id=event)
+        await call.message.answer(
+            text="Какое место заняла команда Прокат?"
+        )
+        await AddResult.prokat_place.set()
 
 
 @dp.message_handler(state=AddResult.prokat_place)

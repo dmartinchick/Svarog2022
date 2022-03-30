@@ -1,6 +1,6 @@
 """Функции для работы с БД"""
 
-from sqlalchemy import create_engine, delete, distinct
+from sqlalchemy import create_engine, delete
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import and_, desc
 from sqlalchemy.orm.session import Session

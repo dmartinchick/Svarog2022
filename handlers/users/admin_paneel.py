@@ -32,9 +32,6 @@ async def show_admin_panel(message: types.Message):
                     + "обратитесь к главному судье фестиваля")
 
 
-
-
-
 @dp.callback_query_handler(text_contains="claer_result")
 async def show_clear_result(call: types.CallbackQuery):
     """Функция вызова меню удаления результатов
