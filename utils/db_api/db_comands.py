@@ -356,6 +356,7 @@ def get_result_list() -> list:
 
     Returns:
         list: Список конкурсов с внесенными результатами
+    TODO: Добавить event_name
     """
     result_list = []
 

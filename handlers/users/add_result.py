@@ -8,7 +8,8 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from keyboards.inline.inline_admin_panel import ap_chcek_result, ap_event_keyboard
 
 from loader import dp
-from utils.db_api.db_comands import count_teams, get_event_name, get_result_list, get_team_id, \
+from utils.db_api.db_comands import count_teams, get_event_name, \
+    get_events_list, get_result_list, get_team_id, \
     get_team_name, set_results
 
 
@@ -36,7 +37,7 @@ class AddResult(StatesGroup):
     check_result = State()
 
 
-@dp.callback_query_handler(text_contains = "add_result", state=None)
+@dp.callback_query_handler(text_contains = "ap:add_result", state=None)
 async def ap_add_result_start(call: types.CallbackQuery):
     """Функция вызова меню добавления результатов
 
@@ -48,7 +49,13 @@ async def ap_add_result_start(call: types.CallbackQuery):
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    markup = await ap_event_keyboard()
+    events_list = get_events_list()
+    result_list = get_result_list()
+    markup = await ap_event_keyboard(
+        events_list,
+        result_list,
+        "add_result"
+    )
     await call.message.answer(
         text="Выберите конкурс результат которого вы хотите добавить",
         reply_markup=markup
@@ -67,20 +74,25 @@ async def event_choosen(call: types.CallbackQuery, state: FSMContext):
     await call.answer(cache_time=360)
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
-    event = int(call.data.split(':')[1])
+    event = int(call.data.split(':')[2])
     result_list = get_result_list()
     if event in result_list:
         await call.message.answer(
             text="❗ Результат данного конкурса уже введен ❗"
         )
-        markup = await ap_event_keyboard()
+        event_list = get_events_list()
+        markup = await ap_event_keyboard(
+            event_list,
+            result_list,
+            "add_result"
+        )
         await call.message.answer(
             text="Выберите конкурс результат которого вы хотите добавить",
             reply_markup=markup
         )
         await AddResult.event_name.set()
     else:
-        await state.update_data(event_id=event)
+        await state.update_data(event_id = event)
         await call.message.answer(
             text="Какое место заняла команда Прокат?"
         )
@@ -496,7 +508,12 @@ async def repeat_enter(call: types.CallbackQuery, state: FSMContext):
     logging.info("callback_data='%s'", callback_data)
 
     await state.reset_state()
-    markup = await ap_event_keyboard()
+
+    markup = await ap_event_keyboard(
+        events_list=get_events_list(),
+        results_list=get_result_list(),
+        to_do="add_result"
+    )
     await call.message.answer(
         text="Выберите конкурс результат которого вы хотите добавить",
         reply_markup=markup
@@ -512,6 +529,7 @@ def make_text_result(dic) -> str:
 
     Returns:
         str: текст для проверки результатов
+    TODO: Профести рефакторинг
     """
     event_id  = dic['event_id']
     event_name = get_event_name(event_id)
