@@ -5,7 +5,8 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-from keyboards.inline.inline_admin_panel import ap_chcek_result, ap_event_keyboard
+from keyboards.inline.inline_admin_panel import admin_panel_keyboard, \
+    ap_chcek_result, ap_event_keyboard
 
 from loader import dp
 from utils.db_api.db_comands import count_teams, get_event_name, \
@@ -94,7 +95,8 @@ async def event_choosen(call: types.CallbackQuery, state: FSMContext):
     else:
         await state.update_data(event_id = event)
         await call.message.answer(
-            text="Какое место заняла команда Прокат?"
+            text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                "Какое место заняла команда Прокат?"
         )
         await AddResult.prokat_place.set()
 
@@ -107,23 +109,34 @@ async def prokat_place_choosen(message: types.Message, state: FSMContext):
         message (types.Message): [description]
         state (FSMContext): [description]
     """
-    answer = int(message.text)
-    team_id = get_team_id(name_en='prokat')
-    count = count_teams()
-
-    # Проверяем корректность ввода
-    if answer > 0 and answer <= count:
-        await state.update_data(prokat_place = {'team_id': team_id, 'place' : answer})
-        await message.answer("Какое место заняла команда ГКС+Меттранс?")
-        await AddResult.gks_place.set()
+    if message.text == "СТОП":
+        await state.finish()
+        markup = await admin_panel_keyboard()
+        await message.answer(
+            text="Панель администратора",
+            reply_markup=markup
+        )
     else:
-        await message.answer(
-            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
-        )
-        await message.answer(
-            text="Какое место заняла команда Прокат?"
-        )
-        await AddResult.prokat_place.set()
+        answer = int(message.text)
+        team_id = get_team_id(name_en='prokat')
+        count = count_teams()
+
+        # Проверяем корректность ввода
+        if answer > 0 and answer <= count:
+            await state.update_data(prokat_place = {'team_id': team_id, 'place' : answer})
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда ГКС+Меттранс?")
+            await AddResult.gks_place.set()
+        else:
+            await message.answer(
+                text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
+            )
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда Прокат?"
+            )
+            await AddResult.prokat_place.set()
 
 
 @dp.message_handler(state=AddResult.gks_place)
@@ -134,23 +147,34 @@ async def gks_place_choosen(message: types.Message, state: FSMContext):
         message (types.Message): [description]
         state (FSMContext): [description]
     """
-    answer = int(message.text)
-    team_id = get_team_id(name_en='gks')
-    count = count_teams()
-
-    # Проверяем корректность ввода
-    if answer > 0 and answer <= count:
-        await state.update_data(gks_place = {'team_id': team_id, 'place' : answer})
-        await message.answer("Какое место заняла команда Сталь?")
-        await AddResult.stal_place.set()
+    if message.text == "СТОП":
+        await state.finish()
+        markup = await admin_panel_keyboard()
+        await message.answer(
+            text="Панель администратора",
+            reply_markup=markup
+        )
     else:
-        await message.answer(
-            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
-        )
-        await message.answer(
-            text="Какое место заняла команда ГКС+Меттранс?"
-        )
-        await AddResult.gks_place.set()
+        answer = int(message.text)
+        team_id = get_team_id(name_en='gks')
+        count = count_teams()
+
+        # Проверяем корректность ввода
+        if answer > 0 and answer <= count:
+            await state.update_data(gks_place = {'team_id': team_id, 'place' : answer})
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда Сталь?")
+            await AddResult.stal_place.set()
+        else:
+            await message.answer(
+                text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
+            )
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда ГКС+Меттранс?"
+            )
+            await AddResult.gks_place.set()
 
 
 @dp.message_handler(state=AddResult.stal_place)
@@ -161,23 +185,34 @@ async def stal_place_choosen(message: types.Message, state: FSMContext):
         message (types.Message): [description]
         state (FSMContext): [description]
     """
-    answer = int(message.text)
-    team_id = get_team_id(name_en='stal')
-    count = count_teams()
-
-    # Проверяем корректность ввода
-    if answer > 0 and answer <= count:
-        await state.update_data(stal_place = {'team_id': team_id, 'place' : answer})
-        await message.answer("Какое место заняла команда РАЗАМ?")
-        await AddResult.razam_place.set()
+    if message.text == "СТОП":
+        await state.finish()
+        markup = await admin_panel_keyboard()
+        await message.answer(
+            text="Панель администратора",
+            reply_markup=markup
+        )
     else:
-        await message.answer(
-            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
-        )
-        await message.answer(
-            text="Какое место заняла команда Сталь?"
-        )
-        await AddResult.stal_place.set()
+        answer = int(message.text)
+        team_id = get_team_id(name_en='stal')
+        count = count_teams()
+
+        # Проверяем корректность ввода
+        if answer > 0 and answer <= count:
+            await state.update_data(stal_place = {'team_id': team_id, 'place' : answer})
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда РАЗАМ?")
+            await AddResult.razam_place.set()
+        else:
+            await message.answer(
+                text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
+            )
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда Сталь?"
+            )
+            await AddResult.stal_place.set()
 
 
 @dp.message_handler(state=AddResult.razam_place)
@@ -188,23 +223,34 @@ async def razam_place_choosen(message: types.Message, state: FSMContext):
         message (types.Message): [description]
         state (FSMContext): [description]
     """
-    answer = int(message.text)
-    team_id = get_team_id(name_en='razam')
-    count = count_teams()
-
-    # Проверяем корректность ввода
-    if answer > 0 and answer <= count:
-        await state.update_data(razam_place = {'team_id': team_id, 'place' : answer})
-        await message.answer("Какое место заняла команда Белвторчермет?")
-        await AddResult.belvtorchermet_place.set()
+    if message.text == "СТОП":
+        await state.finish()
+        markup = await admin_panel_keyboard()
+        await message.answer(
+            text="Панель администратора",
+            reply_markup=markup
+        )
     else:
-        await message.answer(
-            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
-        )
-        await message.answer(
-            text="Какое место заняла команда РАЗАМ?"
-        )
-        await AddResult.razam_place.set()
+        answer = int(message.text)
+        team_id = get_team_id(name_en='razam')
+        count = count_teams()
+
+        # Проверяем корректность ввода
+        if answer > 0 and answer <= count:
+            await state.update_data(razam_place = {'team_id': team_id, 'place' : answer})
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда Белвторчермет?")
+            await AddResult.belvtorchermet_place.set()
+        else:
+            await message.answer(
+                text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
+            )
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда РАЗАМ?"
+            )
+            await AddResult.razam_place.set()
 
 
 @dp.message_handler(state=AddResult.belvtorchermet_place)
@@ -215,23 +261,34 @@ async def belvtorchermet_place_choosen(message: types.Message, state: FSMContext
         message (types.Message): [description]
         state (FSMContext): [description]
     """
-    answer = int(message.text)
-    team_id = get_team_id(name_en='belvtorchermet')
-    count = count_teams()
-
-    # Проверяем корректность ввода
-    if answer > 0 and answer <= count:
-        await state.update_data(belvtorchermet_place = {'team_id': team_id, 'place' : answer})
-        await message.answer("Какое место заняла команда МПЗ?")
-        await AddResult.mpz_place.set()
+    if message.text == "СТОП":
+        await state.finish()
+        markup = await admin_panel_keyboard()
+        await message.answer(
+            text="Панель администратора",
+            reply_markup=markup
+        )
     else:
-        await message.answer(
-            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
-        )
-        await message.answer(
-            text="Какое место заняла команда Белвторчермет?"
-        )
-        await AddResult.belvtorchermet_place.set()
+        answer = int(message.text)
+        team_id = get_team_id(name_en='belvtorchermet')
+        count = count_teams()
+
+        # Проверяем корректность ввода
+        if answer > 0 and answer <= count:
+            await state.update_data(belvtorchermet_place = {'team_id': team_id, 'place' : answer})
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда МПЗ?")
+            await AddResult.mpz_place.set()
+        else:
+            await message.answer(
+                text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
+            )
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда Белвторчермет?"
+            )
+            await AddResult.belvtorchermet_place.set()
 
 
 @dp.message_handler(state=AddResult.mpz_place)
@@ -242,23 +299,34 @@ async def mpz_place_choosen(message: types.Message, state: FSMContext):
         message (types.Message): [description]
         state (FSMContext): [description]
     """
-    answer = int(message.text)
-    team_id = get_team_id(name_en='mpz')
-    count = count_teams()
-
-    # Проверяем корректность ввода
-    if answer > 0 and answer <= count:
-        await state.update_data(mpz_place = {'team_id': team_id, 'place' : answer})
-        await message.answer("Какое место заняла команда ЗУбры?")
-        await AddResult.zubry_place.set()
+    if message.text == "СТОП":
+        await state.finish()
+        markup = await admin_panel_keyboard()
+        await message.answer(
+            text="Панель администратора",
+            reply_markup=markup
+        )
     else:
-        await message.answer(
-            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
-        )
-        await message.answer(
-            text="Какое место заняла команда МПЗ?"
-        )
-        await AddResult.mpz_place.set()
+        answer = int(message.text)
+        team_id = get_team_id(name_en='mpz')
+        count = count_teams()
+
+        # Проверяем корректность ввода
+        if answer > 0 and answer <= count:
+            await state.update_data(mpz_place = {'team_id': team_id, 'place' : answer})
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда ЗУбры?")
+            await AddResult.zubry_place.set()
+        else:
+            await message.answer(
+                text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
+            )
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда МПЗ?"
+            )
+            await AddResult.mpz_place.set()
 
 
 @dp.message_handler(state=AddResult.zubry_place)
@@ -269,23 +337,34 @@ async def zubry_place_choosen(message: types.Message, state: FSMContext):
         message (types.Message): [description]
         state (FSMContext): [description]
     """
-    answer = int(message.text)
-    team_id = get_team_id(name_en='zubry')
-    count = count_teams()
-
-    # Проверяем корректность ввода
-    if answer > 0 and answer <= count:
-        await state.update_data(zubry_place = {'team_id': team_id, 'place' : answer})
-        await message.answer("Какое место заняла команда РМЗ?")
-        await AddResult.rmz_place.set()
+    if message.text == "СТОП":
+        await state.finish()
+        markup = await admin_panel_keyboard()
+        await message.answer(
+            text="Панель администратора",
+            reply_markup=markup
+        )
     else:
-        await message.answer(
-            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
-        )
-        await message.answer(
-            text="Какое место заняла команда ЗУбры?"
-        )
-        await AddResult.zubry_place.set()
+        answer = int(message.text)
+        team_id = get_team_id(name_en='zubry')
+        count = count_teams()
+
+        # Проверяем корректность ввода
+        if answer > 0 and answer <= count:
+            await state.update_data(zubry_place = {'team_id': team_id, 'place' : answer})
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда РМЗ?")
+            await AddResult.rmz_place.set()
+        else:
+            await message.answer(
+                text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
+            )
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда ЗУбры?"
+            )
+            await AddResult.zubry_place.set()
 
 
 @dp.message_handler(state=AddResult.rmz_place)
@@ -296,23 +375,34 @@ async def rmz_place_choosen(message: types.Message, state: FSMContext):
         message (types.Message): [description]
         state (FSMContext): [description]
     """
-    answer = int(message.text)
-    team_id = get_team_id(name_en='rmz')
-    count = count_teams()
-
-    # Проверяем корректность ввода
-    if answer > 0 and answer <= count:
-        await state.update_data(rmz_place = {'team_id': team_id, 'place' : answer})
-        await message.answer("Какое место заняла команда ByCord?")
-        await AddResult.bycord_place.set()
+    if message.text == "СТОП":
+        await state.finish()
+        markup = await admin_panel_keyboard()
+        await message.answer(
+            text="Панель администратора",
+            reply_markup=markup
+        )
     else:
-        await message.answer(
-            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
-        )
-        await message.answer(
-            text="Какое место заняла команда РМЗ?"
-        )
-        await AddResult.rmz_place.set()
+        answer = int(message.text)
+        team_id = get_team_id(name_en='rmz')
+        count = count_teams()
+
+        # Проверяем корректность ввода
+        if answer > 0 and answer <= count:
+            await state.update_data(rmz_place = {'team_id': team_id, 'place' : answer})
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда ByCord?")
+            await AddResult.bycord_place.set()
+        else:
+            await message.answer(
+                text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
+            )
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда РМЗ?"
+            )
+            await AddResult.rmz_place.set()
 
 
 @dp.message_handler(state=AddResult.bycord_place)
@@ -323,23 +413,34 @@ async def bycord_place_choosen(message: types.Message, state: FSMContext):
         message (types.Message): [description]
         state (FSMContext): [description]
     """
-    answer = int(message.text)
-    team_id = get_team_id(name_en='bycord')
-    count = count_teams()
-
-    # Проверяем корректность ввода
-    if answer > 0 and answer <= count:
-        await state.update_data(bycord_place = {'team_id': team_id, 'place' : answer})
-        await message.answer("Какое место заняла команда Интеграл?")
-        await AddResult.integral_place.set()
+    if message.text == "СТОП":
+        await state.finish()
+        markup = await admin_panel_keyboard()
+        await message.answer(
+            text="Панель администратора",
+            reply_markup=markup
+        )
     else:
-        await message.answer(
-            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
-        )
-        await message.answer(
-            text="Какое место заняла команда ByCord?"
-        )
-        await AddResult.bycord_place.set()
+        answer = int(message.text)
+        team_id = get_team_id(name_en='bycord')
+        count = count_teams()
+
+        # Проверяем корректность ввода
+        if answer > 0 and answer <= count:
+            await state.update_data(bycord_place = {'team_id': team_id, 'place' : answer})
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда Интеграл?")
+            await AddResult.integral_place.set()
+        else:
+            await message.answer(
+                text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
+            )
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда ByCord?"
+            )
+            await AddResult.bycord_place.set()
 
 
 @dp.message_handler(state=AddResult.integral_place)
@@ -350,23 +451,34 @@ async def integral_place_choosen(message: types.Message, state: FSMContext):
         message (types.Message): [description]
         state (FSMContext): [description]
     """
-    answer = int(message.text)
-    team_id = get_team_id(name_en='integral')
-    count = count_teams()
-
-    # Проверяем корректность ввода
-    if answer > 0 and answer <= count:
-        await state.update_data(integral_place = {'team_id': team_id, 'place' : answer})
-        await message.answer("Какое место заняла команда МЗКТ?")
-        await AddResult.mzkt_place.set()
+    if message.text == "СТОП":
+        await state.finish()
+        markup = await admin_panel_keyboard()
+        await message.answer(
+            text="Панель администратора",
+            reply_markup=markup
+        )
     else:
-        await message.answer(
-            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
-        )
-        await message.answer(
-            text="Какое место заняла команда Интеграл?"
-        )
-        await AddResult.integral_place.set()
+        answer = int(message.text)
+        team_id = get_team_id(name_en='integral')
+        count = count_teams()
+
+        # Проверяем корректность ввода
+        if answer > 0 and answer <= count:
+            await state.update_data(integral_place = {'team_id': team_id, 'place' : answer})
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда МЗКТ?")
+            await AddResult.mzkt_place.set()
+        else:
+            await message.answer(
+                text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
+            )
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда Интеграл?"
+            )
+            await AddResult.integral_place.set()
 
 
 @dp.message_handler(state=AddResult.mzkt_place)
@@ -377,23 +489,34 @@ async def mzkt_place_choosen(message: types.Message, state: FSMContext):
         message (types.Message): [description]
         state (FSMContext): [description]
     """
-    answer = int(message.text)
-    team_id = get_team_id(name_en='mzkt')
-    count = count_teams()
-
-    # Проверяем корректность ввода
-    if answer > 0 and answer <= count:
-        await state.update_data(mzkt_place = {'team_id': team_id, 'place' : answer})
-        await message.answer("Какое место заняла команда МАЗ?")
-        await AddResult.maz_place.set()
+    if message.text == "СТОП":
+        await state.finish()
+        markup = await admin_panel_keyboard()
+        await message.answer(
+            text="Панель администратора",
+            reply_markup=markup
+        )
     else:
-        await message.answer(
-            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
-        )
-        await message.answer(
-            text="Какое место заняла команда МЗКТ?"
-        )
-        await AddResult.mzkt_place.set()
+        answer = int(message.text)
+        team_id = get_team_id(name_en='mzkt')
+        count = count_teams()
+
+        # Проверяем корректность ввода
+        if answer > 0 and answer <= count:
+            await state.update_data(mzkt_place = {'team_id': team_id, 'place' : answer})
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда МАЗ?")
+            await AddResult.maz_place.set()
+        else:
+            await message.answer(
+                text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
+            )
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда МЗКТ?"
+            )
+            await AddResult.mzkt_place.set()
 
 @dp.message_handler(state=AddResult.maz_place)
 async def maz_place_choosen(message: types.Message, state: FSMContext):
@@ -403,23 +526,34 @@ async def maz_place_choosen(message: types.Message, state: FSMContext):
         message (types.Message): [description]
         state (FSMContext): [description]
     """
-    answer = int(message.text)
-    team_id = get_team_id(name_en='maz')
-    count = count_teams()
-
-    # Проверяем корректность ввода
-    if answer > 0 and answer <= count:
-        await state.update_data(maz_place = {'team_id': team_id, 'place' : answer})
-        await message.answer("Какое место заняла команда МогилевЛифтМаш?")
-        await AddResult.mogilevliftmash_place.set()
+    if message.text == "СТОП":
+        await state.finish()
+        markup = await admin_panel_keyboard()
+        await message.answer(
+            text="Панель администратора",
+            reply_markup=markup
+        )
     else:
-        await message.answer(
-            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
-        )
-        await message.answer(
-            text="Какое место заняла команда МАЗ?"
-        )
-        await AddResult.maz_place.set()
+        answer = int(message.text)
+        team_id = get_team_id(name_en='maz')
+        count = count_teams()
+
+        # Проверяем корректность ввода
+        if answer > 0 and answer <= count:
+            await state.update_data(maz_place = {'team_id': team_id, 'place' : answer})
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда МогилевЛифтМаш?")
+            await AddResult.mogilevliftmash_place.set()
+        else:
+            await message.answer(
+                text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
+            )
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда МАЗ?"
+            )
+            await AddResult.maz_place.set()
 
 @dp.message_handler(state=AddResult.mogilevliftmash_place)
 async def mogilevliftmash_place_choosen(message: types.Message, state: FSMContext):
@@ -429,23 +563,34 @@ async def mogilevliftmash_place_choosen(message: types.Message, state: FSMContex
         message (types.Message): [description]
         state (FSMContext): [description]
     """
-    answer = int(message.text)
-    team_id = get_team_id(name_en='mogilevliftmash')
-    count = count_teams()
-
-    # Проверяем корректность ввода
-    if answer > 0 and answer <= count:
-        await state.update_data(mogilevliftmash_place = {'team_id': team_id, 'place' : answer})
-        await message.answer("Какое место заняла команда ММЗ?")
-        await AddResult.mmz_place.set()
+    if message.text == "СТОП":
+        await state.finish()
+        markup = await admin_panel_keyboard()
+        await message.answer(
+            text="Панель администратора",
+            reply_markup=markup
+        )
     else:
-        await message.answer(
-            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
-        )
-        await message.answer(
-            text="Какое место заняла команда МогилевЛифтМаш?"
-        )
-        await AddResult.mogilevliftmash_place.set()
+        answer = int(message.text)
+        team_id = get_team_id(name_en='mogilevliftmash')
+        count = count_teams()
+
+        # Проверяем корректность ввода
+        if answer > 0 and answer <= count:
+            await state.update_data(mogilevliftmash_place = {'team_id': team_id, 'place' : answer})
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда ММЗ?")
+            await AddResult.mmz_place.set()
+        else:
+            await message.answer(
+                text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
+            )
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда МогилевЛифтМаш?"
+            )
+            await AddResult.mogilevliftmash_place.set()
 
 
 @dp.message_handler(state=AddResult.mmz_place)
@@ -456,27 +601,37 @@ async def mmz_place_choosen(message: types.Message, state: FSMContext):
         message (types.Message): [description]
         state (FSMContext): [description]
     """
-    answer = int(message.text)
-    team_id = get_team_id(name_en='mmz')
-    count = count_teams()
-
-    # Проверяем корректность ввода
-    if answer > 0 and answer <= count:
-        await state.update_data(mmz_place = {'team_id': team_id, 'place' : answer})
-        results = await state.get_data()
-        results_text = make_text_result(results)
-        markup = await ap_chcek_result()
+    if message.text == "СТОП":
+        await state.finish()
+        markup = await admin_panel_keyboard()
         await message.answer(
-            text=results_text,
+            text="Панель администратора",
             reply_markup=markup
         )
     else:
-        await message.answer(
-            text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}")
-        await message.answer(
-            text="Какое место заняла команда ММЗ?")
-        await AddResult.mmz_place.set()
-    await AddResult.check_result.set()
+        answer = int(message.text)
+        team_id = get_team_id(name_en='mmz')
+        count = count_teams()
+
+        # Проверяем корректность ввода
+        if answer > 0 and answer <= count:
+            await state.update_data(mmz_place = {'team_id': team_id, 'place' : answer})
+            results = await state.get_data()
+            results_text = make_text_result(results)
+            markup = await ap_chcek_result()
+            await message.answer(
+                text=results_text,
+                reply_markup=markup
+            )
+        else:
+            await message.answer(
+                text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}")
+            await message.answer(
+                text="Для прекращения остановки ввода введите 'СТОП'\n"\
+                    "Какое место заняла команда ММЗ?")
+            await AddResult.mmz_place.set()
+        await AddResult.check_result.set()
+
 
 @dp.callback_query_handler(text_contains="save", state=AddResult.check_result)
 async def save_results(call:types.CallbackQuery, state: FSMContext):
@@ -485,7 +640,6 @@ async def save_results(call:types.CallbackQuery, state: FSMContext):
     Args:
         call (types.CallbackQuery): [description]
         state (FSMContext): [description]
-    TODO: реализовать добавление результатов в БД
     """
     results = await state.get_data()
     set_results(results)

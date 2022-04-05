@@ -65,25 +65,6 @@ def make_callback_data_ap(
     )
 
 
-def make_callback_data_app_add_result(
-    event_id = "0",
-    to_do = "0"):
-    """Формирует callback_data для меню добавления результатотв"""
-    return ap_add_result_cb.new(
-        event_id = event_id,
-        to_do = to_do
-    )
-
-
-def make_callback_data_app_clear_result(
-    event_id = "0",
-    to_do = "0"):
-    """Формирует callback_data для меню удаления результатотв"""
-    return ap_clear_reslt_cb.new(
-        event_id = event_id,
-        to_do = to_do
-    )
-
 def make_callback_data_ap_events(
     to_do = "0",
     event_id = "0") -> CallbackData:

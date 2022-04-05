@@ -65,3 +65,4 @@ async def event_choosen(call:types.CallbackQuery, state: FSMContext):
     logging.info("callback_data='%s'", callback_data)
     event = int(call.data.split(':')[2])
     await state.update_data(event_id = event)
+    await ClearResult.check_delete.set()
