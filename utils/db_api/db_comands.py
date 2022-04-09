@@ -469,3 +469,15 @@ def set_unsing_to_team(user_id:int, team_id:int):
 
     s.execute(unsigned_team)
     s.commit()
+
+
+def delete_event_result(event_id:int):
+    """Удаляет результаты конкурса из БД
+
+    Args:
+        event_id (int): id конкурса
+    """
+    delete_event = delete(Results).\
+        where(Results.event_id == event_id)
+    s.execute(delete_event)
+    s.commit()

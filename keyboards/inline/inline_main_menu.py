@@ -5,7 +5,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from utils.db_api.db_comands import get_events_list, get_signed_events_list
 from utils.db_api.db_comands import get_signed_teams_list, get_teams_list
 
-from keyboards.inline.callback_datas import make_callback_data
+from keyboards.inline.callback_datas import make_callback_data_mm
 
 
 async def main_menu_keyboard() -> InlineKeyboardMarkup:
@@ -33,7 +33,7 @@ async def main_menu_keyboard() -> InlineKeyboardMarkup:
     ]
     for category in categories:
         button_text = category['name']
-        button_callback_data = make_callback_data(
+        button_callback_data = make_callback_data_mm(
             level=curent_level + 1,
             category=category['category_item'])
         markup.insert(
@@ -58,7 +58,7 @@ async def back_to_main_keyboard() -> InlineKeyboardMarkup:
     markup.insert(
         InlineKeyboardButton(
             text="Назад",
-            callback_data=make_callback_data(
+            callback_data=make_callback_data_mm(
                 level=curent_level - 1
             )
         )
@@ -88,7 +88,7 @@ async def result_keyboard(category:str) -> InlineKeyboardMarkup:
     ]
     for subcategory in result_subcategories:
         button_text = subcategory['name']
-        button_callback_data = make_callback_data(
+        button_callback_data = make_callback_data_mm(
             level = curent_level + 1,
             category = category,
             subcategory = subcategory['subcategory'])
@@ -101,7 +101,7 @@ async def result_keyboard(category:str) -> InlineKeyboardMarkup:
     markup.row(
         InlineKeyboardButton(
             text="Назад",
-            callback_data=make_callback_data(
+            callback_data=make_callback_data_mm(
                 level = curent_level-1)
         )
     )
@@ -124,7 +124,7 @@ async def event_keyboard(category:str) -> InlineKeyboardMarkup:
     events = get_events_list()
     for event in events:
         button_text = event['name']
-        button_callback_data = make_callback_data(
+        button_callback_data = make_callback_data_mm(
             level= curent_level + 2, # +2, т.к. необходимо перейти к выводу информации
             category=category,
             action="show",
@@ -139,7 +139,7 @@ async def event_keyboard(category:str) -> InlineKeyboardMarkup:
     markup.row(
         InlineKeyboardButton(
             text="Назад",
-            callback_data=make_callback_data(
+            callback_data=make_callback_data_mm(
                 level=curent_level - 1
             )
         )
@@ -163,7 +163,7 @@ async def team_keyboard(category:str) -> InlineKeyboardMarkup:
     teams = get_teams_list()
     for team in teams:
         button_text = team['name']
-        button_callback_data = make_callback_data(
+        button_callback_data = make_callback_data_mm(
             level=curent_level + 2, # +2, т.к. необходимо перейти выводу информации
             category= category,
             action="show",
@@ -178,7 +178,7 @@ async def team_keyboard(category:str) -> InlineKeyboardMarkup:
     markup.row(
         InlineKeyboardButton(
             text="Назад",
-            callback_data=make_callback_data(
+            callback_data=make_callback_data_mm(
                 level = curent_level - 1
             )
         )
@@ -205,7 +205,7 @@ async def subscriptions_manager_keyboard(category:str) -> InlineKeyboardMarkup:
     ]
     for subcategory in subscriptions_manager_subcategories:
         button_text=subcategory['name']
-        button_callback_data = make_callback_data(
+        button_callback_data = make_callback_data_mm(
             level=curent_level + 1,
             category=category,
             subcategory=subcategory['subcategory']
@@ -219,7 +219,7 @@ async def subscriptions_manager_keyboard(category:str) -> InlineKeyboardMarkup:
     markup.row(
         InlineKeyboardButton(
             text="Назад",
-            callback_data=make_callback_data(
+            callback_data=make_callback_data_mm(
                 level = curent_level - 1
             )
         )
@@ -258,7 +258,7 @@ async def sm_item_keyboard(category:str, subcategory:str, user_id:int) -> Inline
         # Если да то к тексту добавляем смайл, и формируем нужный callback
         if item in signed_items_list:
             button_text = f"✅ {item['name']}"
-            button_callback_data = make_callback_data(
+            button_callback_data = make_callback_data_mm(
                 level=curent_level + 1,
                 category=category,
                 subcategory=subcategory,
@@ -267,7 +267,7 @@ async def sm_item_keyboard(category:str, subcategory:str, user_id:int) -> Inline
             )
         else:
             button_text = item['name']
-            button_callback_data = make_callback_data(
+            button_callback_data = make_callback_data_mm(
                 level=curent_level + 1,
                 category=category,
                 subcategory=subcategory,
@@ -285,7 +285,7 @@ async def sm_item_keyboard(category:str, subcategory:str, user_id:int) -> Inline
     markup.row(
         InlineKeyboardButton(
             text="Назад",
-            callback_data=make_callback_data(
+            callback_data=make_callback_data_mm(
                 level=curent_level -1,
                 category=category,
                 subcategory=subcategory
@@ -313,7 +313,7 @@ async def back_item_keyboard(category:str) -> InlineKeyboardMarkup:
     markup.insert(
         InlineKeyboardButton(
             text="Назад",
-            callback_data=make_callback_data(
+            callback_data=make_callback_data_mm(
                 level= curent_level - 2,
                 category=category
             )

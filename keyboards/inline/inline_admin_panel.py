@@ -1,7 +1,7 @@
 """Создание клавиатуры панели администратора"""
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from keyboards.inline.callback_datas import make_callback_data_ap, make_callback_data_ap_events
+from keyboards.inline.callback_datas import make_callback_data_ap
 
 async def admin_panel_keyboard() -> InlineKeyboardMarkup:
     """Возвращает пользователю меню панели администратора
@@ -30,6 +30,7 @@ async def admin_panel_keyboard() -> InlineKeyboardMarkup:
             )
         )
     return markup
+
 
 async def ap_event_keyboard(
     events_list:list,
@@ -63,40 +64,33 @@ async def ap_event_keyboard(
             markup.insert(
                 InlineKeyboardButton(
                     text="📝    " + event['name'],
-                    callback_data = make_callback_data_ap_events(
+                    callback_data = make_callback_data_ap(
                         to_do=to_do,
                         event_id = event['item_id']
                     )
                 )
             )
-    markup.insert(
-        InlineKeyboardButton(
-            text="Назад",
-            callback_data=make_callback_data_ap()
-        )
-    )
     return markup
 
 
-
-
-async def ap_chcek_result() -> InlineKeyboardMarkup:
+async def ap_chcek_result(to_do:str) -> InlineKeyboardMarkup:
     """Клавиатура для перехода к проверке введеных результатов
 
     Returns:
         InlineKeyboardMarkup: [description]
     """
     markup = InlineKeyboardMarkup(row_width=1)
-    to_do = [
-        {'name':"Все верно", 'to_do':"save"},
-        {'name':"начать ввод заново",'to_do':"repeat"}
+    confirmed = [
+        {'name':"Все верно", 'confirmed':"save"},
+        {'name':"начать ввод заново",'confirmed':"repeat"}
     ]
-    for item in to_do:
+    for item in confirmed:
         markup.insert(
             InlineKeyboardButton(
                 text=item['name'],
                 callback_data=make_callback_data_ap(
-                    to_do=item['to_do']
+                    to_do=to_do,
+                    confirmed=item['confirmed']
                 )
             )
         )

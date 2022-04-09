@@ -38,6 +38,58 @@ class AddResult(StatesGroup):
     check_result = State()
 
 
+@dp.callback_query_handler(text_contains="ap:add_result:save", state=AddResult.check_result)
+async def save_results(call:types.CallbackQuery, state: FSMContext):
+    """Сохранение результатов в БД
+
+    Args:
+        call (types.CallbackQuery): [description]
+        state (FSMContext): [description]
+    """
+    await call.answer(cache_time=360)
+    callback_data = call.data
+    logging.info("callback_data='%s'", callback_data)
+
+    results = await state.get_data()
+    set_results(results)
+    await state.finish()
+
+    markup = await admin_panel_keyboard()
+    await call.message.answer(
+        text="Результаты сохранены\n"\
+            "Панель администратора",
+        reply_markup=markup
+    )
+
+
+@dp.callback_query_handler(text_contains="ap:add_result:repeat", state=AddResult.check_result)
+async def repeat_enter(call: types.CallbackQuery, state: FSMContext):
+    """Повторный ввод результатов
+
+    Args:
+        call (types.CallbackQuery): [description]
+        state (FSMContext): [description]
+    """
+    await call.answer(cache_time=360)
+    callback_data = call.data
+    logging.info("callback_data='%s'", callback_data)
+
+    to_do = call.data.split(':')[1]
+
+    await state.reset_state()
+
+    markup = await ap_event_keyboard(
+        events_list=get_events_list(),
+        results_list=get_result_list(),
+        to_do = to_do
+    )
+    await call.message.answer(
+        text="Выберите конкурс результат которого вы хотите добавить",
+        reply_markup=markup
+    )
+    await AddResult.event_name.set()
+
+
 @dp.callback_query_handler(text_contains = "ap:add_result", state=None)
 async def ap_add_result_start(call: types.CallbackQuery):
     """Функция вызова меню добавления результатов
@@ -49,16 +101,17 @@ async def ap_add_result_start(call: types.CallbackQuery):
     await call.answer(cache_time=360)
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
+    to_do = call.data.split(':')[1]
 
     events_list = get_events_list()
     result_list = get_result_list()
     markup = await ap_event_keyboard(
         events_list,
         result_list,
-        "add_result"
+        to_do = to_do
     )
     await call.message.answer(
-        text="Выберите конкурс результат которого вы хотите добавить",
+        text="Выберите конкурс, результат которого хотите добавить",
         reply_markup=markup
     )
     await AddResult.event_name.set()
@@ -75,7 +128,10 @@ async def event_choosen(call: types.CallbackQuery, state: FSMContext):
     await call.answer(cache_time=360)
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
-    event = int(call.data.split(':')[2])
+
+    to_do = call.data.split(':')[1]
+    event = int(call.data.split(':')[3])
+
     result_list = get_result_list()
     if event in result_list:
         await call.message.answer(
@@ -85,7 +141,7 @@ async def event_choosen(call: types.CallbackQuery, state: FSMContext):
         markup = await ap_event_keyboard(
             event_list,
             result_list,
-            "add_result"
+            to_do = to_do
         )
         await call.message.answer(
             text="Выберите конкурс результат которого вы хотите добавить",
@@ -618,7 +674,7 @@ async def mmz_place_choosen(message: types.Message, state: FSMContext):
             await state.update_data(mmz_place = {'team_id': team_id, 'place' : answer})
             results = await state.get_data()
             results_text = make_text_result(results)
-            markup = await ap_chcek_result()
+            markup = await ap_chcek_result(to_do="add_result")
             await message.answer(
                 text=results_text,
                 reply_markup=markup
@@ -631,48 +687,6 @@ async def mmz_place_choosen(message: types.Message, state: FSMContext):
                     "Какое место заняла команда ММЗ?")
             await AddResult.mmz_place.set()
         await AddResult.check_result.set()
-
-
-@dp.callback_query_handler(text_contains="save", state=AddResult.check_result)
-async def save_results(call:types.CallbackQuery, state: FSMContext):
-    """Сохранение результатов
-
-    Args:
-        call (types.CallbackQuery): [description]
-        state (FSMContext): [description]
-    """
-    results = await state.get_data()
-    set_results(results)
-    await call.message.answer(
-        text="Результаты сохранены"
-    )
-    await state.finish()
-
-
-@dp.callback_query_handler(text_contains="repeat", state=AddResult.check_result)
-async def repeat_enter(call: types.CallbackQuery, state: FSMContext):
-    """[summary]
-
-    Args:
-        call (types.CallbackQuery): [description]
-        state (FSMContext): [description]
-    """
-    await call.answer(cache_time=360)
-    callback_data = call.data
-    logging.info("callback_data='%s'", callback_data)
-
-    await state.reset_state()
-
-    markup = await ap_event_keyboard(
-        events_list=get_events_list(),
-        results_list=get_result_list(),
-        to_do="add_result"
-    )
-    await call.message.answer(
-        text="Выберите конкурс результат которого вы хотите добавить",
-        reply_markup=markup
-    )
-    await AddResult.event_name.set()
 
 
 def make_text_result(dic) -> str:
