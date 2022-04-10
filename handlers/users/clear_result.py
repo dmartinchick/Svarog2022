@@ -47,7 +47,7 @@ async def save_delete_result(call: types.CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(text_contains = "ap:claer_result:repeat", state=ClearResult.check_delete)
 async def repeat_delete_result(call: types.CallbackQuery, state: FSMContext):
-    """Повторный выбор результата конкурса для удаления
+    """Повторный выбор конкурса для удаления результата
 
     Args:
         call (types.CallbackQuery): _description_

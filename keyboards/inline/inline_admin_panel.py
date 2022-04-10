@@ -82,7 +82,7 @@ async def ap_chcek_result(to_do:str) -> InlineKeyboardMarkup:
     markup = InlineKeyboardMarkup(row_width=1)
     confirmed = [
         {'name':"Все верно", 'confirmed':"save"},
-        {'name':"начать ввод заново",'confirmed':"repeat"}
+        {'name':"Начать ввод заново",'confirmed':"repeat"}
     ]
     for item in confirmed:
         markup.insert(

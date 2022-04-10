@@ -518,3 +518,16 @@ def delete_event_result(event_id:int):
         where(Results.event_id == event_id)
     s.execute(delete_event)
     s.commit()
+
+
+# Функции изменения данных
+def set_update_result(result_id:int, place:int):
+    """Обновляет результат команды в таблице Results
+
+    Args:
+        reslt_id (int): id результата
+        place (int): обновленное место команды
+    """
+    s.query(Results).where(Results.id == result_id).\
+        update({Results.place : place}, synchronize_session = False)
+    s.commit()
