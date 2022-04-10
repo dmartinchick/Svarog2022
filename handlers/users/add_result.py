@@ -118,7 +118,7 @@ async def ap_add_result_start(call: types.CallbackQuery):
 
 
 @dp.callback_query_handler(state = AddResult.event_name)
-async def event_choosen(call: types.CallbackQuery, state: FSMContext):
+async def event_add_choosen(call: types.CallbackQuery, state: FSMContext):
     """добавляет выбраный конкурс в FSM Storege
 
     Args:
