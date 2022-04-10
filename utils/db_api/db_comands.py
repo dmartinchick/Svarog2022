@@ -223,6 +223,7 @@ def get_users_list() -> list:
         users_list.append(user[0])
     return users_list
 
+
 def get_admin_list() -> list:
     """Функция возвращает список администраторов
 
@@ -365,6 +366,42 @@ def get_result_list() -> list:
 
     return result_list
 
+def get_event_results(event_id:int) -> list:
+    """Возвращает пользователю словарь с результатами выбранного конкурса
+
+    Args:
+        event_id (int): id конкурса
+
+    Returns:
+        list: список словарей с результатами конкурса
+    """
+    event_results = []
+    for result in s.query(Results.id ,Results.team_id, Results.place).\
+        where(Results.event_id == event_id).all():
+        event_results.append(
+            {
+                'result_id' : result[0],
+                'team_name' : get_team_name(result[1]),
+                'place' : result[2]
+            }
+        )
+    return event_results
+
+
+def get_team_name_from_result(reslt_id:int) -> str:
+    """Возвращает название команды по id результата
+
+    Args:
+        reslt_id (int): id результата
+
+    Returns:
+        str: название команды
+    """
+    team_id = s.query(Results.team_id).\
+        where(Results.id == reslt_id).one()
+    team_name = get_team_name(int(team_id[0]))
+    return team_name
+
 
 # Функции добавления данных
 def set_user(user_id):
@@ -480,4 +517,17 @@ def delete_event_result(event_id:int):
     delete_event = delete(Results).\
         where(Results.event_id == event_id)
     s.execute(delete_event)
+    s.commit()
+
+
+# Функции изменения данных
+def set_update_result(result_id:int, place:int):
+    """Обновляет результат команды в таблице Results
+
+    Args:
+        reslt_id (int): id результата
+        place (int): обновленное место команды
+    """
+    s.query(Results).where(Results.id == result_id).\
+        update({Results.place : place}, synchronize_session = False)
     s.commit()

@@ -13,11 +13,11 @@ async def admin_panel_keyboard() -> InlineKeyboardMarkup:
         row_width=1
     )
     to_do_list = [
-        {'name':"📝 Добавление результатов", 'to_do_item':"add_result"},
-        {'name': "Очиститть результаты конкруса", 'to_do_item':"claer_result"},
-        {'name':"✏ Изменение результатов команды", 'to_do_item':"change_result"},
+        {'name':"📝 Добавить результат конкурса", 'to_do_item':"add_result"},
+        {'name': "Удалить результат конкруса", 'to_do_item':"claer_result"},
+        {'name':"✏ Обновить результат конкурса", 'to_do_item':"update_result"},
         {'name':"Добавить штраф", 'to_do_item':"set_fol"},
-        {'name':"🕑 Изменение расписания", 'to_do_item':"changing_shedule"},
+        {'name':"🕑 Измененить расписания", 'to_do_item':"changing_shedule"},
         {'name':"⚡ Экстренное сообщение", 'to_do_item':"emergency_message"}
     ]
 
@@ -34,14 +34,14 @@ async def admin_panel_keyboard() -> InlineKeyboardMarkup:
 
 async def ap_event_keyboard(
     events_list:list,
-    results_list:list = None,
-    to_do = "0") -> InlineKeyboardMarkup:
+    results_list:list,
+    to_do:str) -> InlineKeyboardMarkup:
     """Возвращает пользователю клавитуру событий
 
     Args:
         events_list (list): список событий
         results_list (list, optional): список прошедших событий. Defaults to None.
-        to_do (str, optional): что нужно сделать с конкурсом. Defaults to "0".
+        to_do (str): что нужно сделать с конкурсом.
 
     Returns:
         InlineKeyboardMarkup: Клавитура событий
@@ -82,7 +82,7 @@ async def ap_chcek_result(to_do:str) -> InlineKeyboardMarkup:
     markup = InlineKeyboardMarkup(row_width=1)
     confirmed = [
         {'name':"Все верно", 'confirmed':"save"},
-        {'name':"начать ввод заново",'confirmed':"repeat"}
+        {'name':"Начать ввод заново",'confirmed':"repeat"}
     ]
     for item in confirmed:
         markup.insert(
@@ -91,6 +91,35 @@ async def ap_chcek_result(to_do:str) -> InlineKeyboardMarkup:
                 callback_data=make_callback_data_ap(
                     to_do=to_do,
                     confirmed=item['confirmed']
+                )
+            )
+        )
+    return markup
+
+
+async def ap_result_keyboard(
+    event_results_list:list,
+    to_do:str,
+    event_id:str) -> InlineKeyboardMarkup:
+    """возвращает пользователю клавитуру результатов
+
+    Args:
+        event_results_list (list): _description_
+        to_do (str): что нужно сделать с конкурсом.
+        event_id (str): id конкурса
+
+    Returns:
+        InlineKeyboardMarkup: Клавиатура результатов
+    """
+    markup = InlineKeyboardMarkup(row_width=1)
+    for result in event_results_list:
+        markup.insert(
+            InlineKeyboardButton(
+                text=f"Команда: {result['team_name']} - место:{result['place']}",
+                callback_data=make_callback_data_ap(
+                    to_do=to_do,
+                    event_id=event_id,
+                    result_id=result['result_id']
                 )
             )
         )

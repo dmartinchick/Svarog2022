@@ -1,4 +1,4 @@
-"""Пакет управления функцией администратора 'удалить результат'"""
+"""Пакет управления функцией администратора 'Удалить результат конкруса'"""
 import logging
 
 from aiogram import types
@@ -47,7 +47,7 @@ async def save_delete_result(call: types.CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(text_contains = "ap:claer_result:repeat", state=ClearResult.check_delete)
 async def repeat_delete_result(call: types.CallbackQuery, state: FSMContext):
-    """Повторный выбор результата конкурса для удаления
+    """Повторный выбор конкурса для удаления результата
 
     Args:
         call (types.CallbackQuery): _description_
@@ -108,14 +108,14 @@ async def ap_clear_result_start(call: types.CallbackQuery):
         to_do = to_do
     )
     await call.message.answer(
-        text="Выбирите конкурс, резьтат которого ходите удалить",
+        text="Выбирите конкурс, резьтат которого хотите удалить",
         reply_markup=markup
     )
     await ClearResult.event_name.set()
 
 
 @dp.callback_query_handler(state=ClearResult.event_name)
-async def event_choosen(call: types.CallbackQuery, state:FSMContext):
+async def event_delete_choosen(call: types.CallbackQuery, state:FSMContext):
     """Добавляет выбранный конкурс в FSMContex
 
     Args:
