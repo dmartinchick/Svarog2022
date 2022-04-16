@@ -45,23 +45,6 @@ async def show_set_fol(call: types.CallbackQuery):
     )
 
 
-@dp.callback_query_handler(text_contains="changing_shedule")
-async def show_changing_shedule(call: types.CallbackQuery):
-    """Функция вызова меню изменения расписания
-
-    Args:
-        call (types.CallbackQuery): [description]
-    """
-
-    await call.answer(cache_time=360)
-    callback_data = call.data
-    logging.info("callback_data='%s'", callback_data)
-
-    await call.message.answer(
-        text="Меню изменения расписания"
-    )
-
-
 @dp.callback_query_handler(text_contains="emergency_message")
 async def show_emergency_message(call: types.CallbackQuery):
     """Функция вызова меню отправки экстренных сообщений

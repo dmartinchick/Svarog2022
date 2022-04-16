@@ -1,5 +1,6 @@
 """Функции для работы с БД"""
 
+from datetime import datetime
 from sqlalchemy import create_engine, delete
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import and_, desc
@@ -366,6 +367,7 @@ def get_result_list() -> list:
 
     return result_list
 
+
 def get_event_results(event_id:int) -> list:
     """Возвращает пользователю словарь с результатами выбранного конкурса
 
@@ -401,6 +403,43 @@ def get_team_name_from_result(reslt_id:int) -> str:
         where(Results.id == reslt_id).one()
     team_name = get_team_name(int(team_id[0]))
     return team_name
+
+
+def get_schedule_list() -> list:
+    """Возвращает пользователю список словорей с данными о расписании
+
+    Returns:
+        list: список словарей с данными о расписании
+    TODO: Реализовать функцию
+    """
+    schedule_list = []
+    for event in s.query(
+        Schedule.id,
+        Schedule.event_id,
+        Schedule.time_start,
+        Schedule.time_end).all():
+        schedule_list.append(
+            {'schedule_id' : event[0],
+            'event_id' : event[1],
+            'event_name' : get_event_name(event[1]),
+            'start' : event[2].strftime("%d.%m %H:%M"),
+            'end' : event[3].strftime("%d.%m %H:%M")}
+        )
+    return schedule_list
+
+
+def get_schedule_event_name(schedule_id:int) -> str:
+    """Возвращает названия мероприятия из расписания
+
+    Args:
+        schedule_id (int): id пункта расписания
+
+    Returns:
+        str: названия мероприятия
+    """
+    event_id = s.query(Schedule.event_id).where(Schedule.id == schedule_id).one()
+    event_name = s.query(Event.name).where(Event.id == event_id[0]).one()
+    return event_name[0]
 
 
 # Функции добавления данных
@@ -530,4 +569,18 @@ def set_update_result(result_id:int, place:int):
     """
     s.query(Results).where(Results.id == result_id).\
         update({Results.place : place}, synchronize_session = False)
+    s.commit()
+
+
+def set_update_schedule(schedule_id:int, star:datetime, end:datetime):
+    """Обновляет время начала и окончания мероприятия
+
+    Args:
+        schedule_id (int): id мероприятия
+        star (datetime): обновленная дата и время начала мероприятия
+        end (datetime): обновленная дата и время окончания мероприятия
+    """
+    s.query(Schedule).where(Schedule.id == schedule_id).\
+        update({Schedule.time_start : star,
+        Schedule.time_end :end}, synchronize_session = False)
     s.commit()
