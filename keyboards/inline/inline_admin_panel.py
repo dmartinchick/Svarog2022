@@ -17,7 +17,7 @@ async def admin_panel_keyboard() -> InlineKeyboardMarkup:
         {'name': "Удалить результат конкруса", 'to_do_item':"claer_result"},
         {'name':"✏ Обновить результат конкурса", 'to_do_item':"update_result"},
         {'name':"Добавить штраф", 'to_do_item':"set_fol"},
-        {'name':"🕑 Измененить расписания", 'to_do_item':"changing_shedule"},
+        {'name':"🕑 Измененить расписания", 'to_do_item':"update_schedule"},
         {'name':"⚡ Экстренное сообщение", 'to_do_item':"emergency_message"}
     ]
 
@@ -120,6 +120,30 @@ async def ap_result_keyboard(
                     to_do=to_do,
                     event_id=event_id,
                     result_id=result['result_id']
+                )
+            )
+        )
+    return markup
+
+
+async def ap_schedule_keyboard(schedule_list: list, to_do:str) -> InlineKeyboardMarkup:
+    """Возврщает пользователю клавиатуру с рассписанием
+
+    Args:
+        schedule_list (list): список словарей с информацие о расписании
+        to_do (str): Что делать
+
+    Returns:
+        InlineKeyboardMarkup: клавиатура расписаний
+    """
+    markup = InlineKeyboardMarkup(row_width=1)
+    for event in schedule_list:
+        markup.insert(
+            InlineKeyboardButton(
+                text=f"{event['event_name'][0:10]}...: {event['start']} - {event['end']}",
+                callback_data=make_callback_data_ap(
+                    to_do=to_do,
+                    event_id=event['schedule_id']
                 )
             )
         )
