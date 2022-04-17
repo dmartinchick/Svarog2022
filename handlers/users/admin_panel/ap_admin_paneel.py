@@ -39,24 +39,6 @@ async def show_set_fol(call: types.CallbackQuery):
     await call.answer(cache_time=360)
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
-
     await call.message.answer(
         text="Меню добавления штрафов"
-    )
-
-
-@dp.callback_query_handler(text_contains="emergency_message")
-async def show_emergency_message(call: types.CallbackQuery):
-    """Функция вызова меню отправки экстренных сообщений
-
-    Args:
-        call (types.CallbackQuery): [description]
-    """
-
-    await call.answer(cache_time=360)
-    callback_data = call.data
-    logging.info("callback_data='%s'", callback_data)
-
-    await call.message.answer(
-        text="Меню отправки экстренного сообщения"
     )

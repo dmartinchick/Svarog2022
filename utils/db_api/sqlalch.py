@@ -42,7 +42,9 @@ ass_user_team = Table('user_team', Base.metadata,
 
 
 class User(Base):
-    """Определение класса User"""
+    """Определение класса User
+    TODO: изменить поле admin на statute"""
+
     __tablename__ = 'user'
 
     user_id = Column(Integer, primary_key=True, autoincrement=False)
