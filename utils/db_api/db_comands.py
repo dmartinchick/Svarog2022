@@ -441,6 +441,69 @@ def get_schedule_event_name(schedule_id:int) -> str:
     return event_name[0]
 
 
+def get_result(cup:str = None, holding:bool=None) -> list:
+    """Возвращает список словарей с результатами и вспомогательными данными
+
+    Returns:
+        list: список словарей
+    """
+    result_list = []
+    # Проверяем переданно ли значение cup
+    if cup is None:
+        if holding is None:
+            # Проверяем переданно ли значение holding
+            results = s.query(
+                Results.event_id,
+                Event.name,
+                Event.event_type,
+                Event.coefficient,
+                Results.team_id,
+                Team.name,
+                Team.holding,
+                Results.place
+            ).join(Event, Event.id == Results.event_id).\
+                join(Team, Team.id == Results.team_id).all()
+        else:
+            results = s.query(
+                Results.event_id,
+                Event.name,
+                Event.event_type,
+                Event.coefficient,
+                Results.team_id,
+                Team.name,
+                Team.holding,
+                Results.place
+            ).join(Event, Event.id == Results.event_id).\
+                join(Team, Team.id == Results.team_id).\
+                    filter(Team.holding).all()
+    else:
+        results = s.query(
+            Results.event_id,
+            Event.name,
+            Event.event_type,
+            Event.coefficient,
+            Results.team_id,
+            Team.name,
+            Team.holding,
+            Results.place
+        ).join(Event, Event.id == Results.event_id).\
+            join(Team, Team.id == Results.team_id).\
+                filter(Event.event_type == cup).all()
+
+    for result in results:
+        result_list.append(
+            {'event_id' : result[0],
+            'event_name' : result[1],
+            'cup' : result[2],
+            'event_coefficient' : result[3],
+            'team_id' : result[4],
+            'team_name' : result[5],
+            'team_holding' : result[6],
+            'place' : result[7]}
+        )
+    return result_list
+
+
 # Функции добавления данных
 def set_user(user_id):
     """Добавлеят пользователя в БД
