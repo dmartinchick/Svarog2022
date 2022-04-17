@@ -30,7 +30,6 @@ async def save_update_schedule(call:types.CallbackQuery, state: FSMContext):
     Args:
         call (types.CallbackQuery): _description_
         state (FSMContext): _description_
-    TODO: Реализовать функцию
     """
     await call.answer(cache_time=360)
     callback_data = call.data
@@ -67,13 +66,14 @@ async def repeat_update_schedule(call:types.CallbackQuery, state: FSMContext):
 
     data = await state.get_data()
     to_do = data['to_do']
-    await state.reset_data()
     schedule_list = get_schedule_list()
     markup = await ap_schedule_keyboard(schedule_list, to_do)
     await call.message.answer(
         text="Выбирите мероприятие, которое необходимо изменить",
         reply_markup=markup
     )
+    await state.reset_data()
+    await UpdateShedule.event_name.set()
 
 
 @dp.callback_query_handler(text_contains="ap:update_schedule", state=None)
@@ -130,15 +130,25 @@ async def update_datetime_start(message: types.Message, state: FSMContext):
     Args:
         message (types.Message): _description_
         state (FSMContext): _description_
-    TODO: Добавить проверку корректности ввода формата даты и времени
     """
-    updated_datetime_start = datetime.strptime(message.text, "%d.%m.%Y %H:%M")
+    try:
+        updated_datetime_start = datetime.strptime(message.text, "%d.%m.%Y %H:%M")
+    except ValueError:
+        data = await state.get_data()
+        await message.answer(
+            text="‼ Вы указали неверную дату ‼\n"\
+                "Укажите дату и время начала меропрития "\
+                f"{get_schedule_event_name(data['schedule_id'])}"\
+                    " в формате дд.мм.гггг чч:мм"
+        )
+        await UpdateShedule.updated_datetime_start.set()
+
     await state.update_data(
         datetime_start = updated_datetime_start
     )
     data = await state.get_data()
     await message.answer(
-        text="Укажите дату и время окончания меропрития"\
+        text="Укажите дату и время окончания меропрития "\
             f"{get_schedule_event_name(data['schedule_id'])}"\
                 " в формате дд.мм.гггг чч:мм"
     )
@@ -152,14 +162,23 @@ async def update_datetime_end(message: types.Message, state: FSMContext):
     Args:
         message (types.Message): _description_
         state (FSMContext): _description_
-    TODO: Добавить проверку корректности ввода формата даты и времени
     """
-    updated_datetime_end = datetime.strptime(message.text, "%d.%m.%Y %H:%M")
+    try:
+        updated_datetime_end = datetime.strptime(message.text, "%d.%m.%Y %H:%M")
+    except ValueError:
+        data = await state.get_data()
+        await message.answer(
+            text="‼ Вы указали неверную дату ‼\n"\
+                "Укажите дату и время окончания меропрития "\
+                f"{get_schedule_event_name(data['schedule_id'])}"\
+                " в формате дд.мм.гггг чч:мм"
+        )
+        await UpdateShedule.updated_datetime_end.set()
+
     await state.update_data(
         datetime_end = updated_datetime_end
     )
     data = await state.get_data()
-    print(data)
     markup = await ap_chcek_result(data['to_do'])
     await message.answer(
         text=f"{get_schedule_event_name(data['schedule_id'])}\n"\

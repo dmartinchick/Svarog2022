@@ -410,7 +410,6 @@ def get_schedule_list() -> list:
 
     Returns:
         list: список словарей с данными о расписании
-    TODO: Реализовать функцию
     """
     schedule_list = []
     for event in s.query(
