@@ -8,15 +8,15 @@ from aiogram import types
 # Подгрузка команд для управления БД
 from utils.db_api.db_comands import get_date_start, get_date_end, \
     get_event_info, get_full_shedule, \
-        get_team_info, get_what_next, \
-            get_what_now, set_sign_to_event, \
-                set_sign_to_team, set_unsing_to_event, \
-                    set_unsing_to_team
+    get_team_info, get_what_next, \
+    get_what_now, set_sign_to_event, \
+    set_sign_to_team, set_unsing_to_event, \
+    set_unsing_to_team
 
 #Загрузка клавиатур
 from keyboards.inline.inline_main_menu import back_item_keyboard, back_to_main_keyboard,\
     event_keyboard, main_menu_keyboard, result_keyboard, subscriptions_manager_keyboard, \
-        sm_item_keyboard, team_keyboard
+    sm_item_keyboard, team_keyboard
 from keyboards.inline.callback_datas import main_menu_cb
 
 from loader import dp
@@ -239,7 +239,6 @@ async def show_holding_cup_result(
     call: types.CallbackQuery,
     **kwargs # pylint: disable=unused-argument
     ):
-
     """Возвращает пользователю результаты кубка холдинга
 
     Args:
