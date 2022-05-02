@@ -7,7 +7,7 @@ from aiogram import types
 
 # Подгрузка команд для управления БД
 from utils.db_api.db_comands import get_date_start, get_date_end, \
-    get_event_info, get_full_shedule, get_result, \
+    get_event_info, get_full_shedule, \
     get_team_info, get_what_next, \
     get_what_now, set_sign_to_event, \
     set_sign_to_team, set_unsing_to_event, \
@@ -230,11 +230,6 @@ async def show_festival_cup_result(
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    # нзвние команды, место, название конкурса, коэфициент сложности
-    datas = get_result()
-    for data in datas:
-        print(data)
-    print(len(datas))
     await call.message.answer(
         text="Вот результат кубка фестиваля"
     )
@@ -254,10 +249,6 @@ async def show_holding_cup_result(
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    datas = get_result(holding = True)
-    for data in datas:
-        print(data)
-    print(len(datas))
     await call.message.answer(
         text="Вот результат кубка ходинга"
     )
@@ -278,9 +269,6 @@ async def show_tourism_cup_result(
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    datas = get_result("Кубок туризма")
-    for data in datas:
-        print(data)
     await call.message.answer(
         text="Вот результат кубка туризма"
     )
@@ -301,9 +289,6 @@ async def show_sport_cup_result(
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    datas = get_result("Кубок спорт")
-    for data in datas:
-        print(data)
     await call.message.answer(
         text="Вот результат кубка туризма"
     )
@@ -324,9 +309,6 @@ async def show_culture_cup_result(
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    datas = get_result("Кубок культуры")
-    for data in datas:
-        print(data)
     await call.message.answer(
         text="Вот результат кубка культуры"
     )

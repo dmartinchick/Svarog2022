@@ -343,6 +343,23 @@ def get_event_name(event_id: int) -> str:
     return event_name[0]
 
 
+def get_event_name_by_cup(event_type:str) -> list:
+    """Возвращает список конкурсов по кубку
+
+    Args:
+        event_type (str): Название кубка
+
+    Returns:
+        list: список конкурсов
+    """
+    event_list = []
+    for event_name in s.query(Event.name).\
+        where(Event.event_type == event_type).all():
+        event_list.append(event_name[0])
+    return event_list
+
+
+
 def count_teams() -> int:
     """Возвращает количество команд на фестивале
 
@@ -441,7 +458,19 @@ def get_schedule_event_name(schedule_id:int) -> str:
     return event_name[0]
 
 
-def get_result(cup:str = None, holding:bool=None) -> list:
+def get_event_cup(event_id:int) -> str:
+    """Возвращает пользователю название кубка кункурса
+
+    Args:
+        event_id (int): id конкурса
+
+    Returns:
+        str: название кубка, к которому относится конкурс
+    """
+    return s.query(Event.event_type).where(Event.id == event_id).one()[0]
+
+
+def get_result() -> list:
     """Возвращает список словарей с результатами и вспомогательными данными
 
     Returns:
@@ -449,57 +478,28 @@ def get_result(cup:str = None, holding:bool=None) -> list:
     """
     result_list = []
     # Проверяем переданно ли значение cup
-    if cup is None:
-        if holding is None:
-            # Проверяем переданно ли значение holding
-            results = s.query(
-                Results.event_id,
-                Event.name,
-                Event.event_type,
-                Event.coefficient,
-                Results.team_id,
-                Team.name,
-                Team.holding,
-                Results.place
-            ).join(Event, Event.id == Results.event_id).\
-                join(Team, Team.id == Results.team_id).all()
-        else:
-            results = s.query(
-                Results.event_id,
-                Event.name,
-                Event.event_type,
-                Event.coefficient,
-                Results.team_id,
-                Team.name,
-                Team.holding,
-                Results.place
-            ).join(Event, Event.id == Results.event_id).\
-                join(Team, Team.id == Results.team_id).\
-                    filter(Team.holding).all()
-    else:
-        results = s.query(
-            Results.event_id,
-            Event.name,
-            Event.event_type,
-            Event.coefficient,
-            Results.team_id,
-            Team.name,
-            Team.holding,
-            Results.place
-        ).join(Event, Event.id == Results.event_id).\
-            join(Team, Team.id == Results.team_id).\
-                filter(Event.event_type == cup).all()
-
-    for result in results:
+    for result in s.query(
+        Results.event_id,
+        Event.name,
+        Event.event_type,
+        Event.coefficient,
+        Results.team_id,
+        Team.name,
+        Team.holding,
+        Results.place
+    ).join(Event, Event.id == Results.event_id).\
+        join(Team, Team.id == Results.team_id).all():
         result_list.append(
-            {'event_id' : result[0],
-            'event_name' : result[1],
-            'cup' : result[2],
-            'event_coefficient' : result[3],
-            'team_id' : result[4],
-            'team_name' : result[5],
-            'team_holding' : result[6],
-            'place' : result[7]}
+            {
+                'event_id' : result[0],
+                'event_name' : result[1],
+                'cup' : result[2],
+                'event_coefficient' : result[3],
+                'team_id' : result[4],
+                'team_name' : result[5],
+                'team_holding' : result[6],
+                'place' : result[7]
+            }
         )
     return result_list
 

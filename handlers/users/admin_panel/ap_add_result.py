@@ -9,9 +9,10 @@ from keyboards.inline.inline_admin_panel import admin_panel_keyboard, \
     ap_chcek_result, ap_event_keyboard
 
 from loader import dp
-from utils.db_api.db_comands import count_teams, get_event_name, \
+from utils.db_api.db_comands import count_teams, get_event_cup, get_event_name, \
     get_events_list, get_result_list, get_team_id, \
     get_team_name, set_results
+from utils.misc.pillower import update_result_table
 
 
 class AddResult(StatesGroup):
@@ -53,6 +54,9 @@ async def save_results(call:types.CallbackQuery, state: FSMContext):
     results = await state.get_data()
     set_results(results)
     await state.finish()
+
+    # Обновляем картинку с результатами
+    update_result_table(event_type=get_event_cup(results['event_id']))
 
     markup = await admin_panel_keyboard()
     await call.message.answer(
