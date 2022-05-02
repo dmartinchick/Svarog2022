@@ -10,30 +10,30 @@ class TableResult:
     """Создание таблиц с результатами"""
 
     def __init__(
-        self,
-        background_img = 'data/img/results_new/background.jpg',
-        title_font_way = 'data/fonts/Montserrat-Regular.ttf',
-        title_font_size = 47,
-        table_header_font_way = 'data/fonts/Montserrat-Regular.ttf',
-        table_header_font_size = 23,
-        table_datas_font_way = 'data/fonts/Montserrat-Light.ttf',
-        table_datas_font_size = 18,
-        footer_font_way = 'data/fonts/Montserrat-LightItalic.ttf',
-        footer_font_size = 14,
-        title_pading = (25, 25, 25, 25),
-        table_pading = (0, 25, 25, 0),
-        header_pading = (0, 0, 0, 10),
-        first_column_pading = (0, 0, 25,0),
-        footer_pading = (25, 25, 25, 25),
-        point_x0 = 0,
-        point_x1 = 0,
-        point_y0 = 0,
-        point_y1 = 0,
-        size_x = 0,
-        size_y = 0,
-        max_size_x = 0,
-        max_size_y = 0
-        ) -> None:
+            self,
+            background_img='data/img/results_new/background.jpg',
+            title_font_way='data/fonts/Montserrat-Regular.ttf',
+            title_font_size=47,
+            table_header_font_way='data/fonts/Montserrat-Regular.ttf',
+            table_header_font_size=23,
+            table_data_font_way='data/fonts/Montserrat-Light.ttf',
+            table_data_font_size=18,
+            footer_font_way='data/fonts/Montserrat-LightItalic.ttf',
+            footer_font_size=14,
+            title_padding=(25, 25, 25, 25),
+            table_padding=(0, 25, 25, 0),
+            header_padding=(0, 0, 0, 10),
+            first_column_padding=(0, 0, 25, 0),
+            footer_padding=(25, 25, 25, 25),
+            point_x0=0,
+            point_x1=0,
+            point_y0=0,
+            point_y1=0,
+            size_x=0,
+            size_y=0,
+            max_size_x=0,
+            max_size_y=0
+    ) -> None:
 
         self.table_background = Image.open(background_img)
         self.canvas = ImageDraw.Draw(self.table_background)
@@ -41,35 +41,35 @@ class TableResult:
         self.title_font_way = title_font_way
         self.title_font_size = title_font_size
         self.title_font = ImageFont.truetype(
-            font= self.title_font_way,
+            font=self.title_font_way,
             size=self.title_font_size)
 
         self.table_header_font_way = table_header_font_way
         self.table_header_font_size = table_header_font_size
         self.table_header_font = ImageFont.truetype(
-            font = self.table_header_font_way,
-            size = self.table_header_font_size
+            font=self.table_header_font_way,
+            size=self.table_header_font_size
         )
 
-        self.table_datas_font_way = table_datas_font_way
-        self.table_datas_font_size = table_datas_font_size
-        self.table_datas_font = ImageFont.truetype(
-            font = self.table_datas_font_way,
-            size = self.table_datas_font_size
+        self.table_data_font_way = table_data_font_way
+        self.table_data_font_size = table_data_font_size
+        self.table_data_font = ImageFont.truetype(
+            font=self.table_data_font_way,
+            size=self.table_data_font_size
         )
 
         self.footer_font_way = footer_font_way
         self.footer_font_size = footer_font_size
         self.footer_font = ImageFont.truetype(
-            font= self.footer_font_way,
+            font=self.footer_font_way,
             size=self.footer_font_size
         )
 
-        self.title_pading = title_pading
-        self.table_pading = table_pading
-        self.header_pading = header_pading
-        self.first_column_pading = first_column_pading
-        self.footer_pading = footer_pading
+        self.title_padding = title_padding
+        self.table_padding = table_padding
+        self.header_padding = header_padding
+        self.first_column_padding = first_column_padding
+        self.footer_padding = footer_padding
 
         self.point_x0, self.point_x1 = point_x0, point_x1
         self.point_y0, self.point_y1 = point_y0, point_y1
@@ -80,8 +80,7 @@ class TableResult:
         self.point_y0 = 0
         self.point_y1 = self.table_background.size[1]
 
-
-    def find_max_size(self, text_list:list, font:ImageFont):
+    def find_max_size(self, text_list: list, font: ImageFont):
         """Вычисляет максимальный размер из элементов списка
 
         Args:
@@ -96,19 +95,17 @@ class TableResult:
                 self.max_size_x = self.canvas.textsize(item, font)[0]
             if self.max_size_y <= self.canvas.textsize(item, font)[1]:
                 self.max_size_y = self.canvas.textsize(item, font)[1]
-        return (self.max_size_x, self.max_size_y)
 
-
-    def calcelate_point(
-        self,
-        area:tuple,
-        textsize,
-        anchor:str = 'la') -> tuple:
+    def calculate_point(
+            self,
+            area: tuple,
+            text_size,
+            anchor: str = 'la') -> tuple:
         """Вычисляет точку начала текста
 
         Args:
             area (tuple): область текста.(x0, y0, ширина области, высота области)
-            textsize (_type_): размер текста
+            text_size (_type_): размер текста
             anchor (str, optional): якорь. По умолчанию 'la'.
 
         Returns:
@@ -119,32 +116,31 @@ class TableResult:
         point_y = area[1]
         width = area[2]
         height = area[3]
-        text_width = textsize[0]
-        text_height = textsize[1]
+        text_width = text_size[0]
+        text_height = text_size[1]
         if anchor == 'la':
-            return(point_x,point_y)
+            return point_x, point_y
         elif anchor == 'ma':
-            return(point_x + width/2 - text_width/2, point_y)
+            return point_x + width / 2 - text_width / 2, point_y
         elif anchor == 'ra':
-            return(width - text_width, point_y)
+            return width - text_width, point_y
         elif anchor == 'lm':
-            return (point_x, point_y + height/2 - text_height/2)
+            return point_x, point_y + height / 2 - text_height / 2
         elif anchor == 'mm':
-            return(point_x + width/2 - text_width/2, point_y + height/2 - text_height/2)
+            return point_x + width / 2 - text_width / 2, point_y + height / 2 - text_height / 2
         elif anchor == 'rm':
-            return(width - text_width, point_y + height/2 - text_height/2)
+            return width - text_width, point_y + height / 2 - text_height / 2
         elif anchor == 'lb':
-            return(point_x, height - text_height)
+            return point_x, height - text_height
         elif anchor == 'mb':
-            return(point_x + width/2 - text_width/2, height - text_height)
+            return point_x + width / 2 - text_width / 2, height - text_height
         elif anchor == 'rb':
-            return(width - text_width, height - text_height)
+            return width - text_width, height - text_height
         else:
-            print("Unknow position for text")
-            return (point_x,point_y)
+            print("Unknown position for text")
+            return point_x, point_y
 
-
-    def set_backgrond(self, way:str):
+    def set_background(self, way: str):
         """устанавливает фон для картинки с результатами
 
         Args:
@@ -152,8 +148,7 @@ class TableResult:
         """
         self.canvas = ImageDraw.Draw(Image.open(way))
 
-
-    def set_title_font(self, way:str, size:int):
+    def set_title_font(self, way: str, size: int):
         """Устанавливает шрифт для заголовка
 
         Args:
@@ -162,8 +157,7 @@ class TableResult:
         """
         self.title_font = ImageFont.truetype(font=way, size=size)
 
-
-    def set_title_font_way(self, way:str):
+    def set_title_font_way(self, way: str):
         """Устанавливает шрифт для заголовка
 
         Args:
@@ -175,8 +169,7 @@ class TableResult:
             size=self.title_font_size
         )
 
-
-    def set_title_font_size(self, size:int):
+    def set_title_font_size(self, size: int):
         """Устанавливает размер шрифта для заголовка
 
         Args:
@@ -188,8 +181,7 @@ class TableResult:
             size=self.title_font_size
         )
 
-
-    def set_table_header_font(self, way:str, size:int):
+    def set_table_header_font(self, way: str, size: int):
         """Устанавливает шрифт для заголовка таблицы
 
         Args:
@@ -198,8 +190,7 @@ class TableResult:
         """
         self.table_header_font = ImageFont.truetype(font=way, size=size)
 
-
-    def set_table_header_font_way(self, way:str):
+    def set_table_header_font_way(self, way: str):
         """Устанавливает шрифт для заголовков таблицы
 
         Args:
@@ -211,8 +202,7 @@ class TableResult:
             size=self.table_header_font_size
         )
 
-
-    def set_table_header_font_size(self, size:int):
+    def set_table_header_font_size(self, size: int):
         """Устанавливает размер шрифта для заголовков таблицы
 
         Args:
@@ -224,44 +214,40 @@ class TableResult:
             size=self.table_header_font_size
         )
 
-
-    def set_table_datas_font(self, way:str, size:int):
+    def set_table_data_font(self, way: str, size: int):
         """Устанавливает шрифт для данных таблицы
 
         Args:
             way (str): месторасоположение шрифта
             size (int): размер шрифта
         """
-        self.table_datas_font = ImageFont.truetype(font=way, size=size)
+        self.table_data_font = ImageFont.truetype(font=way, size=size)
 
-
-    def set_table_datas_font_way(self, way:str):
+    def set_table_data_font_way(self, way: str):
         """Устанавливает шрифт для результатов таблицы
 
         Args:
             way (str): месторасоположение шрифта
         """
-        self.table_datas_font_way = way
-        self.table_datas_font = ImageFont.truetype(
-            font=self.table_datas_font_way,
-            size=self.table_datas_font_size
+        self.table_data_font_way = way
+        self.table_data_font = ImageFont.truetype(
+            font=self.table_data_font_way,
+            size=self.table_data_font_size
         )
 
-
-    def set_table_datas_font_size(self, size:int):
+    def set_table_data_font_size(self, size: int):
         """Устанавливает размер шрифта для результатов таблицы
 
         Args:
             size (int): размер шрифта
         """
-        self.table_datas_font_size = size
-        self.table_datas_font = ImageFont.truetype(
-            font=self.table_datas_font_way,
-            size=self.table_datas_font_size
+        self.table_data_font_size = size
+        self.table_data_font = ImageFont.truetype(
+            font=self.table_data_font_way,
+            size=self.table_data_font_size
         )
 
-
-    def set_footer_font(self, way:str, size:int):
+    def set_footer_font(self, way: str, size: int):
         """Устанавливает шрифт для футера
 
         Args:
@@ -270,8 +256,7 @@ class TableResult:
         """
         self.footer_font = ImageFont.truetype(font=way, size=size)
 
-
-    def set_footer_font_way(self, way:str):
+    def set_footer_font_way(self, way: str):
         """Устанавливает шрифт для футура
 
         Args:
@@ -283,8 +268,7 @@ class TableResult:
             size=self.footer_font_size
         )
 
-
-    def set_footer_font_size(self, size:int):
+    def set_footer_font_size(self, size: int):
         """Устанавливает размер шрифта для футура
 
         Args:
@@ -296,8 +280,7 @@ class TableResult:
             size=self.footer_font_size
         )
 
-
-    def set_title_pading(self, top:int, left:int, right:int, bottom:int):
+    def set_title_padding(self, top: int, left: int, right: int, bottom: int):
         """Устанавливает отсутупы для загалова
 
         Args:
@@ -306,10 +289,9 @@ class TableResult:
             right (int): отсутуп справа
             bottom (int): отсутуп снизу
         """
-        self.title_pading = (top, left, right, bottom)
+        self.title_padding = (top, left, right, bottom)
 
-
-    def set_table_pading(self, top:int, left:int, right:int, bottom:int):
+    def set_table_padding(self, top: int, left: int, right: int, bottom: int):
         """Устанавливает отсутупы для таблицы
 
         Args:
@@ -318,10 +300,9 @@ class TableResult:
             right (int): отсутуп справа
             bottom (int): отсутуп снизу
         """
-        self.table_pading = (top, left, right, bottom)
+        self.table_padding = (top, left, right, bottom)
 
-
-    def set_first_column_pading(self, top:int, left:int, right:int, bottom:int):
+    def set_first_column_padding(self, top: int, left: int, right: int, bottom: int):
         """Устанавливает отсутупы для первой колонки таблицы
 
         Args:
@@ -330,10 +311,9 @@ class TableResult:
             right (int): отсутуп справа
             bottom (int): отсутуп снизу
         """
-        self.first_column_pading = (top, left, right, bottom)
+        self.first_column_padding = (top, left, right, bottom)
 
-
-    def set_footer_pading(self, top:int, left:int, right:int, bottom:int):
+    def set_footer_padding(self, top: int, left: int, right: int, bottom: int):
         """Устанавливает отсутупы для футера
 
         Args:
@@ -342,26 +322,24 @@ class TableResult:
             right (int): отсутуп справа
             bottom (int): отсутуп снизу
         """
-        self.footer_pading = (top, left, right, bottom)
+        self.footer_padding = (top, left, right, bottom)
 
-
-    def set_title(self, title_text:str):
+    def set_title(self, title_text: str):
         """Устанавливает заголовок
 
         Args:
             title_text (str): текст заголовка
         """
         self.canvas.text(
-            xy=(0 + self.title_pading[1], 0 + self.title_pading[0]),
+            xy=(0 + self.title_padding[1], 0 + self.title_padding[0]),
             text=title_text,
             font=self.title_font
         )
-        self.point_y0 = self.title_pading[0] +\
-            self.canvas.textsize(title_text, self.title_font)[1] +\
-                self.title_pading[3]
+        self.point_y0 = self.title_padding[0] \
+            + self.canvas.textsize(title_text, self.title_font)[1] \
+            + self.title_padding[3]
 
-
-    def set_footer(self, footer_text:str):
+    def set_footer(self, footer_text: str):
         """Устанавливает футер
 
         Args:
@@ -369,52 +347,51 @@ class TableResult:
         """
         self.canvas.text(
             xy=(
-                self.footer_pading[1],
-                self.table_background.size[1] - \
-                    self.footer_pading[3] - \
-                        self.canvas.textsize(footer_text, self.footer_font)[1]
+                self.footer_padding[1],
+                self.table_background.size[1]
+                - self.footer_padding[3]
+                - self.canvas.textsize(footer_text, self.footer_font)[1]
             ),
             text=footer_text,
             font=self.footer_font
         )
-        self.point_y1 = self.table_background.size[1] - \
-            self.footer_pading[3] - \
-                self.canvas.textsize(footer_text, self.footer_font)[1] - \
-                    self.footer_pading[0]
+        self.point_y1 = self.table_background.size[1]\
+            - self.footer_padding[3]\
+            - self.canvas.textsize(footer_text, self.footer_font)[1]\
+            - self.footer_padding[0]
 
-
-    def set_header(self, columns_list:list):
+    def set_header(self, columns_list: list):
         """Устанавливает заголовки таблицы
 
         Args:
             columns_list (list): список заголовков
         """
-        self.size_x = (self.table_background.size[0] -\
-            self.header_pading[1] - self.header_pading[2] -\
-                self.first_column_pading[2])/len(columns_list)
+        self.size_x = (self.table_background.size[0] -
+                       self.header_padding[1] - self.header_padding[2] -
+                       self.first_column_padding[2]) / len(columns_list)
         self.size_y = 0
 
         for column in columns_list:
             if self.size_y <= self.canvas.textsize(
-                text=column,
-                font=self.table_header_font)[1]:
+                    text=column,
+                    font=self.table_header_font)[1]:
                 self.size_y = self.canvas.textsize(
                     text=column,
                     font=self.table_header_font)[1]
 
-        self.point_x0 = self.table_pading[1]
+        self.point_x0 = self.table_padding[1]
 
         for column in columns_list:
             if column == "Команда":
                 self.canvas.text(
-                    xy=self.calcelate_point(
+                    xy=self.calculate_point(
                         area=(
                             self.point_x0, self.point_y0,
                             self.size_x, self.size_y
                         ),
-                        textsize=self.canvas.textsize(
-                            text = column,
-                            font = self.table_header_font
+                        text_size=self.canvas.textsize(
+                            text=column,
+                            font=self.table_header_font
                         ),
                         anchor='lm'
                     ),
@@ -422,17 +399,17 @@ class TableResult:
                     font=self.table_header_font,
                     align='left'
                 )
-                self.point_x0 += self.first_column_pading[2]
+                self.point_x0 += self.first_column_padding[2]
             else:
                 self.canvas.text(
-                    xy=self.calcelate_point(
+                    xy=self.calculate_point(
                         area=(
                             self.point_x0, self.point_y0,
                             self.size_x, self.size_y
                         ),
-                        textsize=self.canvas.textsize(
-                            text = column,
-                            font = self.table_header_font
+                        text_size=self.canvas.textsize(
+                            text=column,
+                            font=self.table_header_font
                         ),
                         anchor='mm'
                     ),
@@ -441,59 +418,57 @@ class TableResult:
                     align='center'
                 )
             self.point_x0 += self.size_x
-        self.point_y0 += self.size_y + self.header_pading[3]
+        self.point_y0 += self.size_y + self.header_padding[3]
 
-
-    def set_results(self, results_list:list):
+    def set_results(self, results_list: list):
         """Устанавливает таблицу с результатами
 
         Args:
             results_list (list): список списков результатов
         """
-        self.size_y = (self.point_y1- self.point_y0) / len(results_list)
-        self.point_x0 = self.table_pading[1]
-        self.point_x1 = self.table_background.size[0] - self.table_pading[2]
+        self.size_y = (self.point_y1 - self.point_y0) / len(results_list)
+        self.point_x0 = self.table_padding[1]
+        self.point_x1 = self.table_background.size[0] - self.table_padding[2]
         for row in results_list:
-            self.point_x0 = self.table_pading[1]
+            self.point_x0 = self.table_padding[1]
             for column in row:
-                if self.point_x0 == self.first_column_pading[2]:
+                if self.point_x0 == self.first_column_padding[2]:
                     self.canvas.text(
-                        xy=self.calcelate_point(
+                        xy=self.calculate_point(
                             area=(
                                 self.point_x0, self.point_y0,
                                 self.size_x, self.size_y
                             ),
-                            textsize=self.canvas.textsize(
+                            text_size=self.canvas.textsize(
                                 text=column,
-                                font=self.table_datas_font
+                                font=self.table_data_font
                             ),
                             anchor='lm'
                         ),
                         text=column,
-                        font=self.table_datas_font
+                        font=self.table_data_font
                     )
-                    self.point_x0 += self.first_column_pading[2]
+                    self.point_x0 += self.first_column_padding[2]
                 else:
                     self.canvas.text(
-                        xy=self.calcelate_point(
+                        xy=self.calculate_point(
                             area=(
                                 self.point_x0, self.point_y0,
                                 self.size_x, self.size_y
                             ),
-                            textsize=self.canvas.textsize(
+                            text_size=self.canvas.textsize(
                                 text=column,
-                                font=self.table_datas_font
+                                font=self.table_data_font
                             ),
                             anchor='mm'
                         ),
                         text=column,
-                        font=self.table_datas_font
+                        font=self.table_data_font
                     )
                 self.point_x0 += self.size_x
             self.point_y0 += self.size_y
 
-
-    def save_table(self, file_name:str):
+    def save_table(self, file_name: str):
         """Сохраняет изображением с таблицей результатов
 
         Args:
@@ -501,13 +476,12 @@ class TableResult:
         """
         self.table_background.save(fp=file_name)
 
-
     def show_table(self):
         """ Открытие изображения"""
         self.table_background.show()
 
 
-def set_result_of_tourism_table(event_type:str, results:list):
+def set_result_of_tourism_table(event_type: str, results: list):
     """Обновление таблицы кубка туризма
 
     Args:
@@ -515,7 +489,7 @@ def set_result_of_tourism_table(event_type:str, results:list):
         results (list): список результатов
     """
 
-    # Создаем экземпляр класса TbaleResult для кубка туризма
+    # Создаем экземпляр класса TableResult для кубка туризма
     tourism_table = TableResult()
 
     # Устанавливаем заголовок
@@ -523,8 +497,8 @@ def set_result_of_tourism_table(event_type:str, results:list):
 
     # Устанавливаем футер
     tourism_table.set_footer(
-        footer_text="Послендее обновление таблицы: " +\
-            datetime.now().strftime('%d.%m %H:%M')
+        footer_text="Послендее обновление таблицы: "
+                    + datetime.now().strftime('%d.%m %H:%M')
     )
 
     # Устанавливаем заголовки таблицы
@@ -539,13 +513,13 @@ def set_result_of_tourism_table(event_type:str, results:list):
 
     # Устанавливаем таблицу с результатами
 
-    tourism_table.set_results(results_list=results) #TODO: реализовать получение результатов
+    tourism_table.set_results(results_list=results)  # TODO: реализовать получение результатов
 
     # Сохраняем таблицу с результатами
     tourism_table.save_table(file_name='data/img/results_new/tourism_result.jpg')
 
 
-def set_result_of_sport_table(event_type:str, results:list):
+def set_result_of_sport_table(event_type: str, results: list):
     """Обновление таблицы кубка туризма
 
     Args:
@@ -553,7 +527,7 @@ def set_result_of_sport_table(event_type:str, results:list):
         results (list): список результатов
     """
 
-    # Создаем экземпляр класса TbaleResult для кубка туризма
+    # Создаем экземпляр класса TableResult для кубка туризма
     sport_table = TableResult()
 
     # Устанавливаем заголовок
@@ -561,8 +535,8 @@ def set_result_of_sport_table(event_type:str, results:list):
 
     # Устанавливаем футер
     sport_table.set_footer(
-        footer_text="Послендее обновление таблицы: " +\
-            datetime.now().strftime('%d.%m %H:%M')
+        footer_text="Послендее обновление таблицы: "
+                    + datetime.now().strftime('%d.%m %H:%M')
     )
 
     # Устанавливаем заголовки таблицы
@@ -577,13 +551,13 @@ def set_result_of_sport_table(event_type:str, results:list):
 
     # Устанавливаем таблицу с результатами
 
-    sport_table.set_results(results_list=results) #TODO: реализовать получение результатов
+    sport_table.set_results(results_list=results)  # TODO: реализовать получение результатов
 
     # Сохраняем таблицу с результатами
     sport_table.save_table(file_name='data/img/results_new/sport_result.jpg')
 
 
-def set_result_of_culture_table(event_type:str, results:list):
+def set_result_of_culture_table(event_type: str, results: list):
     """Обновление таблицы кубка туризма
 
     Args:
@@ -591,7 +565,7 @@ def set_result_of_culture_table(event_type:str, results:list):
         results (list): список результатов
     """
 
-    # Создаем экземпляр класса TbaleResult для кубка туризма
+    # Создаем экземпляр класса TableResult для кубка туризма
     culture_table = TableResult()
 
     # Устанавливаем заголовок
@@ -599,8 +573,8 @@ def set_result_of_culture_table(event_type:str, results:list):
 
     # Устанавливаем футер
     culture_table.set_footer(
-        footer_text="Послендее обновление таблицы: " +\
-            datetime.now().strftime('%d.%m %H:%M')
+        footer_text="Послендее обновление таблицы: "
+                    + datetime.now().strftime('%d.%m %H:%M')
     )
 
     # Устанавливаем заголовки таблицы
@@ -614,13 +588,13 @@ def set_result_of_culture_table(event_type:str, results:list):
 
     # Устанавливаем таблицу с результатами
 
-    culture_table.set_results(results_list=results) #TODO: реализовать получение результатов
+    culture_table.set_results(results_list=results)  # TODO: реализовать получение результатов
 
     # Сохраняем таблицу с результатами
     culture_table.save_table(file_name='data/img/results_new/culture_result.jpg')
 
 
-def set_result_festival_table(event_type:str, results:list):
+def set_result_festival_table(event_type: str, results: list):
     """Обновление кубка фестиваля
 
     Args:
@@ -628,7 +602,7 @@ def set_result_festival_table(event_type:str, results:list):
         results (list): таблица результатов
     """
 
-     # Создаем экземпляр класса TbaleResult для кубка туризма
+    # Создаем экземпляр класса TableResult для кубка туризма
     festival_table = TableResult()
 
     # Устанавливаем заголовок
@@ -636,8 +610,8 @@ def set_result_festival_table(event_type:str, results:list):
 
     # Устанавливаем футер
     festival_table.set_footer(
-        footer_text="Послендее обновление таблицы: " +\
-            datetime.now().strftime('%d.%m %H:%M')
+        footer_text="Послендее обновление таблицы: "
+                    + datetime.now().strftime('%d.%m %H:%M')
     )
 
     # Устанавливаем заголовки таблицы
@@ -653,13 +627,13 @@ def set_result_festival_table(event_type:str, results:list):
 
     # Устанавливаем таблицу с результатами
 
-    festival_table.set_results(results_list=results) #TODO: реализовать получение результатов
+    festival_table.set_results(results_list=results)  # TODO: реализовать получение результатов
 
     # Сохраняем таблицу с результатами
     festival_table.save_table(file_name='data/img/results_new/festival_result.jpg')
 
 
-def set_result_holding_table(event_type:str, results:list):
+def set_result_holding_table(event_type: str, results: list):
     """Обновление кубка холдинга
 
     Args:
@@ -667,7 +641,7 @@ def set_result_holding_table(event_type:str, results:list):
         results (list): таблица результатов
     """
 
-     # Создаем экземпляр класса TbaleResult для кубка туризма
+    # Создаем экземпляр класса TableResult для кубка туризма
     holding_table = TableResult()
 
     # Устанавливаем заголовок
@@ -675,8 +649,8 @@ def set_result_holding_table(event_type:str, results:list):
 
     # Устанавливаем футер
     holding_table.set_footer(
-        footer_text="Послендее обновление таблицы: " +\
-            datetime.now().strftime('%d.%m %H:%M')
+        footer_text="Послендее обновление таблицы: "
+                    + datetime.now().strftime('%d.%m %H:%M')
     )
 
     # Устанавливаем заголовки таблицы
@@ -692,37 +666,37 @@ def set_result_holding_table(event_type:str, results:list):
 
     # Устанавливаем таблицу с результатами
 
-    holding_table.set_results(results_list=results) #TODO: реализовать получение результатов
+    holding_table.set_results(results_list=results)  # TODO: реализовать получение результатов
 
     # Сохраняем таблицу с результатами
     holding_table.save_table(file_name='data/img/results_new/holding_result.jpg')
 
 
-def update_result_table(event_type:str):
+def update_result_table(event_type: str):
     """обновление таблиц результатов
 
     Args:
-        evet_type (str): название кубка, результат которого был обновлен
+        event_type (str): название кубка, результат которого был обновлен
     TODO: Рассмотреть реализацию timezone из библиотеки pytz
     """
     # Обновление кубка
     if event_type == 'Кубок туризма':
 
         results_list_tourism = [
-            ["Прокат","1/50", "1/50", "1/50", "1/50", "1/50", "150", "1"],
-            ["ГКС+Меттранс","2/51", "2/51", "2/51", "2/51", "2/51", "153", "2"],
-            ["Сталь","3/54", "3/54", "3/54", "3/54", "3/54", "162", "3"],
-            ["РАЗАМ","3/54", "3/54", "3/54","3/54", "3/54", "162", "3"],
-            ["Белвторчермет","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "5"],
-            ["МПЗ","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "6"],
-            ["ЗУбры","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "7"],
-            ["РМЗ","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "8"],
-            ["ByCord","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "9"],
-            ["Интеграл","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "10"],
-            ["МЗКТ","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "11"],
-            ["МАЗ","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "12"],
-            ["Могилевлифтмаш","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "13"],
-            ["ММЗ","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "14"]
+            ["Прокат", "1/50", "1/50", "1/50", "1/50", "1/50", "150", "1"],
+            ["ГКС+Меттранс", "2/51", "2/51", "2/51", "2/51", "2/51", "153", "2"],
+            ["Сталь", "3/54", "3/54", "3/54", "3/54", "3/54", "162", "3"],
+            ["РАЗАМ", "3/54", "3/54", "3/54", "3/54", "3/54", "162", "3"],
+            ["Белвторчермет", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "5"],
+            ["МПЗ", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "6"],
+            ["ЗУбры", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "7"],
+            ["РМЗ", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "8"],
+            ["ByCord", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "9"],
+            ["Интеграл", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "10"],
+            ["МЗКТ", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "11"],
+            ["МАЗ", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "12"],
+            ["Могилевлифтмаш", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "13"],
+            ["ММЗ", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "14"]
         ]
 
         set_result_of_tourism_table(
@@ -731,20 +705,20 @@ def update_result_table(event_type:str):
         )
     elif event_type == 'Кубок спорта':
         results_list_sport = [
-            ["Прокат","1/50", "1/50", "1/50", "1/50", "1/50", "1/50", "150", "1"],
-            ["ГКС+Меттранс","2/51", "2/51", "2/51", "2/51", "2/51", "1/50", "153", "2"],
-            ["Сталь","3/54", "3/54", "3/54", "3/54", "3/54", "1/50", "162", "3"],
-            ["РАЗАМ","3/54", "3/54", "3/54","3/54", "3/54", "1/50", "162", "3"],
-            ["Белвторчермет","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "5"],
-            ["МПЗ","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "6"],
-            ["ЗУбры","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "7"],
-            ["РМЗ","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "8"],
-            ["ByCord","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "9"],
-            ["Интеграл","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "10"],
-            ["МЗКТ","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "11"],
-            ["МАЗ","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "12"],
-            ["Могилевлифтмаш","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "13"],
-            ["ММЗ","-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "14"]
+            ["Прокат", "1/50", "1/50", "1/50", "1/50", "1/50", "1/50", "150", "1"],
+            ["ГКС+Меттранс", "2/51", "2/51", "2/51", "2/51", "2/51", "1/50", "153", "2"],
+            ["Сталь", "3/54", "3/54", "3/54", "3/54", "3/54", "1/50", "162", "3"],
+            ["РАЗАМ", "3/54", "3/54", "3/54", "3/54", "3/54", "1/50", "162", "3"],
+            ["Белвторчермет", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "5"],
+            ["МПЗ", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "6"],
+            ["ЗУбры", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "7"],
+            ["РМЗ", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "8"],
+            ["ByCord", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "9"],
+            ["Интеграл", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "10"],
+            ["МЗКТ", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "11"],
+            ["МАЗ", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "12"],
+            ["Могилевлифтмаш", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "13"],
+            ["ММЗ", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "-//-", "14"]
         ]
         set_result_of_sport_table(
             event_type=event_type,
@@ -752,20 +726,20 @@ def update_result_table(event_type:str):
         )
     elif event_type == 'Кубок культуры':
         results_list_culture = [
-            ["Прокат","1/50", "1/50", "1/50", "1/50", "150", "1"],
-            ["ГКС+Меттранс","2/51", "2/51", "2/51", "1/50", "153", "2"],
-            ["Сталь","3/54", "3/54", "3/54", "3/54", "162", "3"],
-            ["РАЗАМ","3/54", "3/54", "3/54","3/54", "162", "3"],
-            ["Белвторчермет","-//-", "-//-", "-//-", "-//-", "-//-", "5"],
-            ["МПЗ","-//-", "-//-", "-//-", "-//-", "-//-", "6"],
-            ["ЗУбры","-//-", "-//-", "-//-", "-//-", "-//-", "7"],
-            ["РМЗ","-//-", "-//-", "-//-", "-//-", "-//-", "8"],
-            ["ByCord","-//-", "-//-", "-//-", "-//-", "-//-", "9"],
-            ["Интеграл","-//-", "-//-", "-//-", "-//-", "-//-", "10"],
-            ["МЗКТ","-//-", "-//-", "-//-", "-//-", "-//-", "11"],
-            ["МАЗ","-//-", "-//-", "-//-", "-//-", "-//-", "12"],
-            ["Могилевлифтмаш","-//-", "-//-", "-//-", "-//-", "-//-", "13"],
-            ["ММЗ","-//-", "-//-", "-//-", "-//-", "-//-", "14"]
+            ["Прокат", "1/50", "1/50", "1/50", "1/50", "150", "1"],
+            ["ГКС+Меттранс", "2/51", "2/51", "2/51", "1/50", "153", "2"],
+            ["Сталь", "3/54", "3/54", "3/54", "3/54", "162", "3"],
+            ["РАЗАМ", "3/54", "3/54", "3/54", "3/54", "162", "3"],
+            ["Белвторчермет", "-//-", "-//-", "-//-", "-//-", "-//-", "5"],
+            ["МПЗ", "-//-", "-//-", "-//-", "-//-", "-//-", "6"],
+            ["ЗУбры", "-//-", "-//-", "-//-", "-//-", "-//-", "7"],
+            ["РМЗ", "-//-", "-//-", "-//-", "-//-", "-//-", "8"],
+            ["ByCord", "-//-", "-//-", "-//-", "-//-", "-//-", "9"],
+            ["Интеграл", "-//-", "-//-", "-//-", "-//-", "-//-", "10"],
+            ["МЗКТ", "-//-", "-//-", "-//-", "-//-", "-//-", "11"],
+            ["МАЗ", "-//-", "-//-", "-//-", "-//-", "-//-", "12"],
+            ["Могилевлифтмаш", "-//-", "-//-", "-//-", "-//-", "-//-", "13"],
+            ["ММЗ", "-//-", "-//-", "-//-", "-//-", "-//-", "14"]
         ]
         set_result_of_culture_table(
             event_type=event_type,
@@ -776,38 +750,38 @@ def update_result_table(event_type:str):
 
     # Обновление кубка фестиваля
     results_list_festival = [
-            ["Прокат","1/50", "1/50", "1/50", "150", "1"],
-            ["ГКС+Меттранс","2/51", "2/51", "2/51", "153", "2"],
-            ["Сталь","3/54", "3/54", "3/54", "162", "3"],
-            ["РАЗАМ","3/54", "3/54", "3/54", "162", "3"],
-            ["Белвторчермет","-//-", "-//-", "-//-", "-//-", "5"],
-            ["МПЗ","-//-", "-//-", "-//-", "-//-", "6"],
-            ["ЗУбры","-//-", "-//-", "-//-", "-//-", "7"],
-            ["РМЗ","-//-", "-//-", "-//-", "-//-", "8"],
-            ["ByCord","-//-", "-//-", "-//-", "-//-", "9"],
-            ["Интеграл","-//-", "-//-", "-//-", "-//-", "10"],
-            ["МЗКТ","-//-", "-//-", "-//-", "-//-", "11"],
-            ["МАЗ","-//-", "-//-", "-//-", "-//-", "12"],
-            ["Могилевлифтмаш","-//-", "-//-", "-//-", "-//-", "13"],
-            ["ММЗ","-//-", "-//-", "-//-", "-//-", "14"]
-        ]
-    set_result_festival_table(event_type="Кубок фестиваля",results=results_list_festival)
+        ["Прокат", "1/50", "1/50", "1/50", "150", "1"],
+        ["ГКС+Меттранс", "2/51", "2/51", "2/51", "153", "2"],
+        ["Сталь", "3/54", "3/54", "3/54", "162", "3"],
+        ["РАЗАМ", "3/54", "3/54", "3/54", "162", "3"],
+        ["Белвторчермет", "-//-", "-//-", "-//-", "-//-", "5"],
+        ["МПЗ", "-//-", "-//-", "-//-", "-//-", "6"],
+        ["ЗУбры", "-//-", "-//-", "-//-", "-//-", "7"],
+        ["РМЗ", "-//-", "-//-", "-//-", "-//-", "8"],
+        ["ByCord", "-//-", "-//-", "-//-", "-//-", "9"],
+        ["Интеграл", "-//-", "-//-", "-//-", "-//-", "10"],
+        ["МЗКТ", "-//-", "-//-", "-//-", "-//-", "11"],
+        ["МАЗ", "-//-", "-//-", "-//-", "-//-", "12"],
+        ["Могилевлифтмаш", "-//-", "-//-", "-//-", "-//-", "13"],
+        ["ММЗ", "-//-", "-//-", "-//-", "-//-", "14"]
+    ]
+    set_result_festival_table(event_type="Кубок фестиваля", results=results_list_festival)
 
     # Обновление кубка холдинга
     results_list_holding = [
-            ["Прокат","1/50", "1/50", "1/50", "150", "1"],
-            ["ГКС+Меттранс","2/51", "2/51", "2/51", "153", "2"],
-            ["Сталь","3/54", "3/54", "3/54", "162", "3"],
-            ["РАЗАМ","3/54", "3/54", "3/54", "162", "3"],
-            ["Белвторчермет","-//-", "-//-", "-//-", "-//-", "5"],
-            ["МПЗ","-//-", "-//-", "-//-", "-//-", "6"],
-            ["ЗУбры","-//-", "-//-", "-//-", "-//-", "7"],
-            ["РМЗ","-//-", "-//-", "-//-", "-//-", "8"],
-            ["ByCord","-//-", "-//-", "-//-", "-//-", "9"],
-            ["Интеграл","-//-", "-//-", "-//-", "-//-", "10"],
-            ["МЗКТ","-//-", "-//-", "-//-", "-//-", "11"],
-            ["МАЗ","-//-", "-//-", "-//-", "-//-", "12"],
-            ["Могилевлифтмаш","-//-", "-//-", "-//-", "-//-", "13"],
-            ["ММЗ","-//-", "-//-", "-//-", "-//-", "14"]
-        ]
-    set_result_holding_table(event_type="Кубок фестиваля",results=results_list_holding)
+        ["Прокат", "1/50", "1/50", "1/50", "150", "1"],
+        ["ГКС+Меттранс", "2/51", "2/51", "2/51", "153", "2"],
+        ["Сталь", "3/54", "3/54", "3/54", "162", "3"],
+        ["РАЗАМ", "3/54", "3/54", "3/54", "162", "3"],
+        ["Белвторчермет", "-//-", "-//-", "-//-", "-//-", "5"],
+        ["МПЗ", "-//-", "-//-", "-//-", "-//-", "6"],
+        ["ЗУбры", "-//-", "-//-", "-//-", "-//-", "7"],
+        ["РМЗ", "-//-", "-//-", "-//-", "-//-", "8"],
+        ["ByCord", "-//-", "-//-", "-//-", "-//-", "9"],
+        ["Интеграл", "-//-", "-//-", "-//-", "-//-", "10"],
+        ["МЗКТ", "-//-", "-//-", "-//-", "-//-", "11"],
+        ["МАЗ", "-//-", "-//-", "-//-", "-//-", "12"],
+        ["Могилевлифтмаш", "-//-", "-//-", "-//-", "-//-", "13"],
+        ["ММЗ", "-//-", "-//-", "-//-", "-//-", "14"]
+    ]
+    set_result_holding_table(event_type="Кубок фестиваля", results=results_list_holding)
