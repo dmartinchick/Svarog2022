@@ -5,6 +5,7 @@ from keyboards.inline.inline_admin_panel import admin_panel_keyboard
 
 from loader import dp
 from utils.db_api.db_comands import get_admin_list
+from utils.misc.results_processing import show_test_data
 
 
 @dp.message_handler(commands="admin_panel")
@@ -39,6 +40,8 @@ async def show_set_fol(call: types.CallbackQuery):
     await call.answer(cache_time=360)
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
+
+    show_test_data()
     await call.message.answer(
         text="Меню добавления штрафов"
     )

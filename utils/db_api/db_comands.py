@@ -4,7 +4,6 @@ from datetime import datetime
 from sqlalchemy import create_engine, delete
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import and_, desc
-from sqlalchemy.orm.session import Session
 
 from utils.db_api.sqlalch import Event, Results, Schedule, Team, User, \
     ass_user_event, ass_user_team
@@ -42,8 +41,8 @@ def get_date_start():
         Schedule.time_start
         ).order_by(
             Schedule.time_start
-            ).first()
-    return dt_start_request[0]
+            ).first()[0]
+    return dt_start_request
 
 
 def get_date_end():
@@ -56,8 +55,8 @@ def get_date_end():
         Schedule.time_end
         ).order_by(
             desc(Schedule.time_end)
-            ).first()
-    return dt_end_request[0]
+            ).first()[0]
+    return dt_end_request
 
 
 def get_what_now(tdate) -> list:
@@ -195,7 +194,7 @@ def get_team_info(team_id:int) ->dict:
     return team_info
 
 
-def get_events_list() -> list:
+def get_events_list(cup=None) -> list:
     """Возвращает пользователю список конкурсов
 
     Returns:
@@ -203,13 +202,26 @@ def get_events_list() -> list:
 
     """
     event_list = []
-    for event in s.query(
-        Event.name,
-        Event.id).filter(
-            Event.event_type != "Прочее"):
-        event_list.append(
-            {'name' : event[0],
-            'item_id' : event[1]})
+    if cup is None:
+        for event in s.query(
+            Event.name,
+            Event.id).filter(
+                Event.event_type != "Прочее"):
+            event_list.append(
+                {
+                    'name' : event[0],
+                    'item_id' : event[1]
+                }
+            )
+    else:
+        for event in s.query(Event.name,Event.id).filter(Event.event_type == cup):
+            event_list.append(
+                {
+                    'name': event[0],
+                    'item_id': event[1]
+                }
+            )
+
     return event_list
 
 
@@ -237,20 +249,35 @@ def get_admin_list() -> list:
     return admin_list
 
 
-def get_teams_list() -> list:
+def get_teams_list(holding=False) -> list:
     """Возвращает спискок всех команд
 
     Returns:
         list: список словарей все команд
     """
-    team_list = []
-    for team in s.query(
-        Team.name,
-        Team.id).order_by(Team.name).all():
-        team_list.append(
-            {'name':team[0],
-            'item_id':team[1]})
-    return team_list
+    # pylint: disable=singleton-comparison
+    teams = []
+    if holding is True:
+        for team in s.query(Team.name, Team.id).\
+            filter(Team.holding == True).order_by(Team.name).all():
+
+            teams.append(
+                {
+                    'name': team[0],
+                    'item_id': team[1]
+                }
+            )
+    else:
+        for team in s.query(Team.name,Team.id).order_by(Team.name).all():
+
+            teams.append(
+                {
+                    'name': team[0],
+                    'item_id': team[1]
+                }
+            )
+
+    return teams
 
 
 def get_signed_teams_list(user_id: int) -> list:
@@ -313,9 +340,8 @@ def get_team_id(name_en: str) -> int:
     """
     team_id = s.query(Team.id)\
         .filter(Team.name_en == name_en)\
-            .first()
-    return team_id[0]
-
+            .first()[0]
+    return team_id
 
 def get_team_name(team_id: int) -> str:
     """Возвращает название команды по ID
@@ -326,8 +352,8 @@ def get_team_name(team_id: int) -> str:
     Returns:
         str: Название команды
     """
-    team_name = s.query(Team.name).filter(Team.id == team_id).first()
-    return team_name[0]
+    team_name = s.query(Team.name).filter(Team.id == team_id).one()[0]
+    return team_name
 
 
 def get_event_name(event_id: int) -> str:
@@ -339,8 +365,8 @@ def get_event_name(event_id: int) -> str:
     Returns:
         str: название конкруса
     """
-    event_name = s.query(Event.name).filter(Event.id == event_id).first()
-    return event_name[0]
+    event_name = s.query(Event.name).filter(Event.id == event_id).one()[0]
+    return event_name
 
 
 def get_event_name_by_cup(event_type:str) -> list:
@@ -357,6 +383,8 @@ def get_event_name_by_cup(event_type:str) -> list:
         where(Event.event_type == event_type).all():
         event_list.append(event_name[0])
     return event_list
+
+
 
 
 
@@ -488,7 +516,7 @@ def get_result() -> list:
         Team.holding,
         Results.place
     ).join(Event, Event.id == Results.event_id).\
-        join(Team, Team.id == Results.team_id).all():
+            join(Team, Team.id == Results.team_id).all():
         result_list.append(
             {
                 'event_id' : result[0],
@@ -503,6 +531,34 @@ def get_result() -> list:
         )
     return result_list
 
+# Новые функции
+def get_event_coefficient(event_id):
+    """Возвращает коэффициент сложности конкурса
+
+    Args:
+        event_id (_type_): id конкурса
+
+    Returns:
+        float: Коэффициент сложности
+    """
+    return s.query(Event.coefficient).filter(Event.id == event_id).one()[0]
+
+def get_place(team, event):
+    """Возвращает результат команды в конкурсе"""
+    events_results = get_result_list()
+    if event in events_results:
+        return s.query(Results.place).\
+            filter(and_(Results.event_id == event, Results.team_id == team)).one()[0]
+    else:
+        return '-'
+
+def get_cups():
+    """Возвращает список кубков"""
+    cups = []
+    for cup in s.query(Event.event_type).all():
+        if cup[0] != 'Прочее' and cup[0] not in cups:
+            cups.append(cup[0])
+    return cups
 
 # Функции добавления данных
 def set_user(user_id):

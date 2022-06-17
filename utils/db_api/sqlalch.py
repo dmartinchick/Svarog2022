@@ -20,7 +20,6 @@ engine =  create_engine(
     f"mysql+mysqlconnector://{USER}:{PASSWORD}@{HOST}/{DB}",
     echo=False)
 
-
 """
 engine =  create_engine(
     f"mysql+mysqlconnector://dmartinchick:samsungLX40@localhost/svarog2022_db",
@@ -100,5 +99,6 @@ class Results(Base):
     event_id = Column(Integer, ForeignKey('event.id'))
     team_id = Column(Integer, ForeignKey('team.id'))
     place = Column(Integer)
+
 
 Base.metadata.create_all(engine)

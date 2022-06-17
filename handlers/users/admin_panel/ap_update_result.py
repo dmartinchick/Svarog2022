@@ -11,6 +11,7 @@ from keyboards.inline.inline_admin_panel import admin_panel_keyboard, ap_chcek_r
 from loader import dp
 from utils.db_api.db_comands import count_teams, get_event_name, get_event_results, \
     get_result_list, get_team_name_from_result, set_update_result
+from utils.misc.pillower_new import UpdateTables
 
 class UpdateResult(StatesGroup):
     """Класс для обновления результатов
@@ -41,6 +42,10 @@ async def save_update(call: types.CallbackQuery, state: FSMContext):
         result_id=data['result_id'],
         place=data['update_place'])
     await state.finish()
+
+    # Обновляем картинки с результатами
+    UpdateTables()
+
     markup = await admin_panel_keyboard()
     await call.message.answer(
         text="Обновленный результат сохранен",

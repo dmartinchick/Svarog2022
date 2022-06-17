@@ -10,6 +10,7 @@ from keyboards.inline.inline_admin_panel import admin_panel_keyboard, \
 
 from loader import dp
 from utils.db_api.db_comands import delete_event_result, get_event_name, get_result_list
+from utils.misc.pillower_new import UpdateTables
 
 class ClearResult(StatesGroup):
     """Класс для удаления результатов
@@ -37,6 +38,10 @@ async def save_delete_result(call: types.CallbackQuery, state: FSMContext):
     event_id = int(data['event_id'])
     delete_event_result(event_id=event_id)
     await state.finish()
+
+    # Обновляем картинки с результатами
+    UpdateTables()
+
     markup = await admin_panel_keyboard()
     await call.message.answer(
         text="Результаты удалены\n"\
