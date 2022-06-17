@@ -96,8 +96,8 @@ class TableResult:
             if self.max_size_y <= self.canvas.textsize(item, font)[1]:
                 self.max_size_y = self.canvas.textsize(item, font)[1]
 
+    @staticmethod
     def calculate_point(
-            self,
             area: tuple,
             text_size,
             anchor: str = 'la') -> tuple:
@@ -110,6 +110,8 @@ class TableResult:
 
         Returns:
             tuple: координаты начала текста (x, y)
+        TODO: переписать в соответствии с PEP8
+            https://vald-phoenix.github.io/pylint-errors/plerr/errors/design/R0911.html
         """
 
         point_x = area[0]
