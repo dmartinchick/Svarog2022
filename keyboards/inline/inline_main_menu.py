@@ -26,7 +26,7 @@ async def main_menu_keyboard() -> InlineKeyboardMarkup:
         {'name':"🏆 Результаты",'category_item':"result"},
         {'name':"🤼 Конкурсы",'category_item':"event"},
         {'name':"🚩 Команды",'category_item':"team"},
-        {'name':"⚙ Менеджер подписок",'category_item':"sm"},
+        # {'name':"⚙ Менеджер подписок",'category_item':"sm"},
         {'name':"🗺 Карта фестиваля",'category_item':"map"},
         {'name':"🤳 Поделиться ссылкой",'category_item':"share"},
         {'name':"📜 Положение фестиваля",'category_item':"about"}

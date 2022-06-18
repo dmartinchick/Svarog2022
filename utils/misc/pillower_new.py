@@ -1,6 +1,7 @@
 """Пакет работы с таблицами результатов ver2.0"""
 
 from datetime import datetime
+
 from PIL import Image, ImageFont, ImageDraw
 
 from utils.misc.results_processing import CupResults, FestivalResult

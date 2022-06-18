@@ -9,7 +9,7 @@ from keyboards.inline.inline_admin_panel import admin_panel_keyboard, \
     ap_chcek_result, ap_event_keyboard
 
 from loader import dp
-from utils.db_api.db_comands import count_teams, get_event_cup, get_event_name, \
+from utils.db_api.db_comands import count_teams, get_event_name, \
     get_events_list, get_result_list, get_team_id, \
     get_team_name, set_results
 from utils.misc.pillower_new import UpdateTables
@@ -23,7 +23,7 @@ class AddResult(StatesGroup):
     """
     event_name = State()
     prokat_place = State()
-    gks_place = State()
+    emergency_place = State()
     stal_place = State()
     razam_place = State()
     belvtorchermet_place = State()
@@ -34,8 +34,8 @@ class AddResult(StatesGroup):
     integral_place = State()
     mzkt_place = State()
     maz_place = State()
-    mogilevliftmash_place = State()
-    mmz_place = State()
+    belshina_place = State()
+    iron_vikings_place = State()
     check_result = State()
 
 
@@ -187,8 +187,8 @@ async def prokat_place_choosen(message: types.Message, state: FSMContext):
             await state.update_data(prokat_place = {'team_id': team_id, 'place' : answer})
             await message.answer(
                 text="Для прекращения остановки ввода введите 'СТОП'\n"\
-                    "Какое место заняла команда ГКС+Меттранс?")
-            await AddResult.gks_place.set()
+                    "Какое место заняла команда EMERGENCY?")
+            await AddResult.emergency_place.set()
         else:
             await message.answer(
                 text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
@@ -200,8 +200,8 @@ async def prokat_place_choosen(message: types.Message, state: FSMContext):
             await AddResult.prokat_place.set()
 
 
-@dp.message_handler(state=AddResult.gks_place)
-async def gks_place_choosen(message: types.Message, state: FSMContext):
+@dp.message_handler(state=AddResult.emergency_place)
+async def emergency_place_choosen(message: types.Message, state: FSMContext):
     """добавляет в FSM Storege место которое заняла команда ГКС+Меттранс
 
     Args:
@@ -217,12 +217,12 @@ async def gks_place_choosen(message: types.Message, state: FSMContext):
         )
     else:
         answer = int(message.text)
-        team_id = get_team_id(name_en='gks')
+        team_id = get_team_id(name_en='emergency')
         count = count_teams()
 
         # Проверяем корректность ввода
         if answer > 0 and answer <= count:
-            await state.update_data(gks_place = {'team_id': team_id, 'place' : answer})
+            await state.update_data(emergency_place = {'team_id': team_id, 'place' : answer})
             await message.answer(
                 text="Для прекращения остановки ввода введите 'СТОП'\n"\
                     "Какое место заняла команда Сталь?")
@@ -233,9 +233,9 @@ async def gks_place_choosen(message: types.Message, state: FSMContext):
             )
             await message.answer(
                 text="Для прекращения остановки ввода введите 'СТОП'\n"\
-                    "Какое место заняла команда ГКС+Меттранс?"
+                    "Какое место заняла команда EMERGENCY?"
             )
-            await AddResult.gks_place.set()
+            await AddResult.emergency_place.set()
 
 
 @dp.message_handler(state=AddResult.stal_place)
@@ -604,8 +604,8 @@ async def maz_place_choosen(message: types.Message, state: FSMContext):
             await state.update_data(maz_place = {'team_id': team_id, 'place' : answer})
             await message.answer(
                 text="Для прекращения остановки ввода введите 'СТОП'\n"\
-                    "Какое место заняла команда МогилевЛифтМаш?")
-            await AddResult.mogilevliftmash_place.set()
+                    "Какое место заняла команда Белшина?")
+            await AddResult.belshina_place.set()
         else:
             await message.answer(
                 text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
@@ -616,8 +616,8 @@ async def maz_place_choosen(message: types.Message, state: FSMContext):
             )
             await AddResult.maz_place.set()
 
-@dp.message_handler(state=AddResult.mogilevliftmash_place)
-async def mogilevliftmash_place_choosen(message: types.Message, state: FSMContext):
+@dp.message_handler(state=AddResult.belshina_place)
+async def belshina_place_choosen(message: types.Message, state: FSMContext):
     """добавляет в FSM Storege место которое заняла команда МогилевЛифтМаш
 
     Args:
@@ -633,29 +633,29 @@ async def mogilevliftmash_place_choosen(message: types.Message, state: FSMContex
         )
     else:
         answer = int(message.text)
-        team_id = get_team_id(name_en='mogilevliftmash')
+        team_id = get_team_id(name_en='belshina')
         count = count_teams()
 
         # Проверяем корректность ввода
         if answer > 0 and answer <= count:
-            await state.update_data(mogilevliftmash_place = {'team_id': team_id, 'place' : answer})
+            await state.update_data(belshina_place = {'team_id': team_id, 'place' : answer})
             await message.answer(
                 text="Для прекращения остановки ввода введите 'СТОП'\n"\
                     "Какое место заняла команда ММЗ?")
-            await AddResult.mmz_place.set()
+            await AddResult.iron_vikings_place.set()
         else:
             await message.answer(
                 text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
             )
             await message.answer(
                 text="Для прекращения остановки ввода введите 'СТОП'\n"\
-                    "Какое место заняла команда МогилевЛифтМаш?"
+                    "Какое место заняла команда Белшина?"
             )
-            await AddResult.mogilevliftmash_place.set()
+            await AddResult.belshina_place.set()
 
 
-@dp.message_handler(state=AddResult.mmz_place)
-async def mmz_place_choosen(message: types.Message, state: FSMContext):
+@dp.message_handler(state=AddResult.iron_vikings_place)
+async def iron_vikings_place_choosen(message: types.Message, state: FSMContext):
     """добавляет в FSM Storege место которое заняла команда ММЗ
 
     Args:
@@ -671,12 +671,12 @@ async def mmz_place_choosen(message: types.Message, state: FSMContext):
         )
     else:
         answer = int(message.text)
-        team_id = get_team_id(name_en='mmz')
+        team_id = get_team_id(name_en='iron_vikings')
         count = count_teams()
 
         # Проверяем корректность ввода
         if answer > 0 and answer <= count:
-            await state.update_data(mmz_place = {'team_id': team_id, 'place' : answer})
+            await state.update_data(iron_vikings_place = {'team_id': team_id, 'place' : answer})
             results = await state.get_data()
             results_text = make_text_result(results)
             markup = await ap_chcek_result(to_do="add_result")
@@ -689,8 +689,8 @@ async def mmz_place_choosen(message: types.Message, state: FSMContext):
                 text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}")
             await message.answer(
                 text="Для прекращения остановки ввода введите 'СТОП'\n"\
-                    "Какое место заняла команда ММЗ?")
-            await AddResult.mmz_place.set()
+                    "Какое место заняла команда iron_vikings?")
+            await AddResult.iron_vikings_place.set()
         await AddResult.check_result.set()
 
 
