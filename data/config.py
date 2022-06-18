@@ -1,4 +1,6 @@
+"""Модуль конфигурации"""
 from environs import Env
+from pytz import timezone
 
 # Теперь используем вместо библиотеки python-dotenv библиотеку environs
 env = Env()
@@ -18,3 +20,6 @@ DB = env.str("DB")
 
 # Данные кореекции временной зоны
 DELTA = env.int("DELTA")
+
+# Данные timezone
+TZ = timezone('Europe/Minsk')

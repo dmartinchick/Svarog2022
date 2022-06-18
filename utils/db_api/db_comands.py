@@ -44,7 +44,6 @@ def get_date_start():
             ).first()[0]
     return dt_start_request
 
-
 def get_date_end():
     """Возвращает пользователю дату и время конца фестиваля
 
@@ -57,7 +56,6 @@ def get_date_end():
             desc(Schedule.time_end)
             ).first()[0]
     return dt_end_request
-
 
 def get_what_now(tdate) -> list:
     """Возвращает пользователю список событий, которые происходят в настоящий момент
@@ -87,7 +85,6 @@ def get_what_now(tdate) -> list:
 
     return now_event_list
 
-
 def get_what_next(tdate) -> list:
     """Возвращает пользователю список словарей 2-х ближайших событий
 
@@ -116,12 +113,13 @@ def get_what_next(tdate) -> list:
             )
     return next_event_list
 
-
 def get_full_shedule() -> list:
     """Возвращает пользователю полное расписание
 
     Returns:
         list: список словарей с полным расписанием
+
+    TODO: Подумать над необходимостью отображения исключительно конкурсов. Убрать фильтр != Прочее
 
     """
     event_list = []
@@ -131,7 +129,7 @@ def get_full_shedule() -> list:
         Schedule.time_end).filter(
             and_(
                 Schedule.event_id == Event.id,
-                Event.event_type != "Прочее")).all():
+                Event.event_type != "Прочее")).order_by(Schedule.time_start).all():
         event_dict = {
             'name':event[0],
             'time_start':event[1],
@@ -139,7 +137,6 @@ def get_full_shedule() -> list:
             }
         event_list.append(event_dict)
     return event_list
-
 
 def get_event_info(event_id:int) -> dict:
     """Возвращает пользователю информацию о событии
@@ -172,7 +169,6 @@ def get_event_info(event_id:int) -> dict:
         }
     return event_info
 
-
 def get_team_info(team_id:int) ->dict:
     """Возвращает пользователю информацию о команде
 
@@ -192,7 +188,6 @@ def get_team_info(team_id:int) ->dict:
         'holding' : team_info_request[1]
     }
     return team_info
-
 
 def get_events_list(cup=None) -> list:
     """Возвращает пользователю список конкурсов
@@ -224,7 +219,6 @@ def get_events_list(cup=None) -> list:
 
     return event_list
 
-
 def get_users_list() -> list:
     """Возвращает список пользователей
 
@@ -236,7 +230,6 @@ def get_users_list() -> list:
         users_list.append(user[0])
     return users_list
 
-
 def get_admin_list() -> list:
     """Функция возвращает список администраторов
 
@@ -247,7 +240,6 @@ def get_admin_list() -> list:
     for admin in s.query(User.user_id).filter(User.admin == 1).all():
         admin_list.append(admin[0])
     return admin_list
-
 
 def get_teams_list(holding=False) -> list:
     """Возвращает спискок всех команд
@@ -279,7 +271,6 @@ def get_teams_list(holding=False) -> list:
 
     return teams
 
-
 def get_signed_teams_list(user_id: int) -> list:
     """Возвращает список команд на которые подписан пользователь
 
@@ -305,7 +296,6 @@ def get_signed_teams_list(user_id: int) -> list:
 
     return signed_teams_list
 
-
 def get_signed_events_list(user_id: int) -> list:
     """Возвращает список конкурсов на которые подписан пользователь
 
@@ -327,7 +317,6 @@ def get_signed_events_list(user_id: int) -> list:
         )
 
     return signed_events_list
-
 
 def get_team_id(name_en: str) -> int:
     """Возвращает id команды по обращению через name_en
@@ -355,7 +344,6 @@ def get_team_name(team_id: int) -> str:
     team_name = s.query(Team.name).filter(Team.id == team_id).one()[0]
     return team_name
 
-
 def get_event_name(event_id: int) -> str:
     """Возвращает название конкурса по ID
 
@@ -367,7 +355,6 @@ def get_event_name(event_id: int) -> str:
     """
     event_name = s.query(Event.name).filter(Event.id == event_id).one()[0]
     return event_name
-
 
 def get_event_name_by_cup(event_type:str) -> list:
     """Возвращает список конкурсов по кубку
@@ -384,10 +371,6 @@ def get_event_name_by_cup(event_type:str) -> list:
         event_list.append(event_name[0])
     return event_list
 
-
-
-
-
 def count_teams() -> int:
     """Возвращает количество команд на фестивале
 
@@ -396,7 +379,6 @@ def count_teams() -> int:
     """
     count = s.query(Team.id).count()
     return count
-
 
 def get_result_list() -> list:
     """возвращает список конкурсов на которые уже введены результаты
@@ -411,7 +393,6 @@ def get_result_list() -> list:
         result_list.append(result[0])
 
     return result_list
-
 
 def get_event_results(event_id:int) -> list:
     """Возвращает пользователю словарь с результатами выбранного конкурса
@@ -434,7 +415,6 @@ def get_event_results(event_id:int) -> list:
         )
     return event_results
 
-
 def get_team_name_from_result(reslt_id:int) -> str:
     """Возвращает название команды по id результата
 
@@ -448,7 +428,6 @@ def get_team_name_from_result(reslt_id:int) -> str:
         where(Results.id == reslt_id).one()
     team_name = get_team_name(int(team_id[0]))
     return team_name
-
 
 def get_schedule_list() -> list:
     """Возвращает пользователю список словорей с данными о расписании
@@ -471,7 +450,6 @@ def get_schedule_list() -> list:
         )
     return schedule_list
 
-
 def get_schedule_event_name(schedule_id:int) -> str:
     """Возвращает названия мероприятия из расписания
 
@@ -485,7 +463,6 @@ def get_schedule_event_name(schedule_id:int) -> str:
     event_name = s.query(Event.name).where(Event.id == event_id[0]).one()
     return event_name[0]
 
-
 def get_event_cup(event_id:int) -> str:
     """Возвращает пользователю название кубка кункурса
 
@@ -496,7 +473,6 @@ def get_event_cup(event_id:int) -> str:
         str: название кубка, к которому относится конкурс
     """
     return s.query(Event.event_type).where(Event.id == event_id).one()[0]
-
 
 def get_result() -> list:
     """Возвращает список словарей с результатами и вспомогательными данными
@@ -571,7 +547,6 @@ def set_user(user_id):
     s.add(user)
     s.commit()
 
-
 def set_sign_to_event(user_id:int, event_id:int):
     """Добавляет подписку на события
 
@@ -586,7 +561,6 @@ def set_sign_to_event(user_id:int, event_id:int):
                 event_id = event_id))
     s.commit()
 
-
 def set_sign_to_team(user_id:int, team_id:int):
     """Добавляет подписку на команды
 
@@ -600,7 +574,6 @@ def set_sign_to_team(user_id:int, team_id:int):
                 user_id = user_id,
                 team_id = team_id))
     s.commit()
-
 
 def set_results(results: dict):
     """Добавляет результат в БД
@@ -620,7 +593,6 @@ def set_results(results: dict):
         )
         s.add(result)
         s.commit()
-
 
 # Функции для удаления данных
 def set_unsing_to_event(user_id: int, event_id:int):
@@ -643,7 +615,6 @@ def set_unsing_to_event(user_id: int, event_id:int):
     s.execute(unsigned_event)
     s.commit()
 
-
 def set_unsing_to_team(user_id:int, team_id:int):
     """Удаляет запись о подписке на команду из БД
 
@@ -664,7 +635,6 @@ def set_unsing_to_team(user_id:int, team_id:int):
     s.execute(unsigned_team)
     s.commit()
 
-
 def delete_event_result(event_id:int):
     """Удаляет результаты конкурса из БД
 
@@ -675,7 +645,6 @@ def delete_event_result(event_id:int):
         where(Results.event_id == event_id)
     s.execute(delete_event)
     s.commit()
-
 
 # Функции изменения данных
 def set_update_result(result_id:int, place:int):
@@ -688,7 +657,6 @@ def set_update_result(result_id:int, place:int):
     s.query(Results).where(Results.id == result_id).\
         update({Results.place : place}, synchronize_session = False)
     s.commit()
-
 
 def set_update_schedule(schedule_id:int, star:datetime, end:datetime):
     """Обновляет время начала и окончания мероприятия

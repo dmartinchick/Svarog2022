@@ -1,0 +1,55 @@
+Кубок культуры:
+	Боди–арт
+	Бивуак
+	Творческий конкурс
+	SUPER-QUIZ
+
+Кубок спорта:
+	Ловкость рук
+	Борьба за мужика
+	Молот Тора
+	Волейбол
+	Перетягивание каната
+	Выбивалы
+
+Кубок туризма:
+	Многоборье
+	Туристский маршрут
+	Фигурное вождение
+	Кросс-поход
+
+
+data/img/event/
+data/img/event/closure.jpg
+
+class AddResult(StatesGroup):
+    """Класс добавления результатов конкурсов
+
+    Args:
+        StatesGroup ([type]): [description]
+    """
+    event_name = State()
+    prokat_place = State()
+    emergency_place = State()
+    stal_place = State()
+    razam_place = State()
+    belvtorchermet_place = State()
+    mpz_place = State()
+    zubry_place = State()
+    rmz_place = State()
+    bycord_place = State()
+    integral_place = State()
+    mzkt_place = State()
+    maz_place = State()
+    belshina_place = State()
+    iron_vikings_place = State()
+    check_result = State()
+
+На старт команда прибывает на своих велосипедах, в своих шлемах. Соревнования проводятся в соответствии с Правилами  соревнований по спортивной дисциплине «Туристско-прикладное  многоборье. Техника велосипедного туризма» (Кросс-поход: длительное прохождение определенного маршрута с преодолением этапов велотуристской техники). Информация подробнее о данном виде – в приложении 2.
+
+
+
+
+
+
+

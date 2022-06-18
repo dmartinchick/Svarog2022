@@ -1,5 +1,6 @@
 """Хэндлеры управления главного меню"""
-from datetime import datetime, timedelta
+# from datetime import timedelta
+from datetime import datetime
 import logging
 from typing import Union
 
@@ -18,6 +19,7 @@ from keyboards.inline.inline_main_menu import back_item_keyboard, back_to_main_k
     event_keyboard, main_menu_keyboard, result_keyboard, subscriptions_manager_keyboard, \
     sm_item_keyboard, team_keyboard
 from keyboards.inline.callback_datas import main_menu_cb
+
 
 from loader import dp
 from data import config
@@ -45,7 +47,6 @@ async def show_main_menu(
             reply_markup=markup
         )
 
-
 async def show_what_now(
     call: types.CallbackQuery,
     **kwargs # pylint: disable=unused-argument
@@ -61,8 +62,8 @@ async def show_what_now(
     logging.info("callback_data='%s'", callback_data)
 
     # текущее время и дата
-    # tdate = datetime.now() + timedelta(hours=config.DELTA)
-    tdate = datetime(2021, 7, 18, 19, 45) + timedelta(hours=config.DELTA)
+    tdate = datetime.now(config.TZ).utcnow()
+    # tdate = datetime(2021, 7, 18, 19, 45) + timedelta(hours=config.DELTA)
     dt_start = get_date_start()
     dt_end = get_date_end()
 
@@ -71,7 +72,7 @@ async def show_what_now(
     # Проверка начался ли фестиваль
     if tdate < dt_start:
         await call.message.answer(
-            text="😁 Фестиваль еще не начался, \nЗагляни сюда 18 июня!"
+            text="😁 Фестиваль еще не начался, \nЗагляни сюда 24 июня!"
             )
     elif tdate > dt_end:
         await call.message.answer(
@@ -109,7 +110,6 @@ async def show_what_now(
                         reply_markup=markup
                     )
 
-
 async def show_what_next(
     call: types.CallbackQuery,
     **kwargs # pylint: disable=unused-argument
@@ -126,8 +126,8 @@ async def show_what_next(
     logging.info("callback_data='%s'", callback_data)
 
     # получение текущей даты и времени, а так же даты и времени окончания фестиваля
-    # tdate = datetime.now() + timedelta(hours=config.DELTA)
-    tdate = datetime(2021, 7, 18, 19, 45) + timedelta(hours=config.DELTA)
+    tdate = datetime.now(config.TZ).utcnow()
+    # tdate = datetime(2021, 7, 18, 19, 45) + timedelta(hours=config.DELTA)
     dt_end = get_date_end()
 
     # Создаем клавиатуру с кнокой 'Назад'
@@ -165,7 +165,6 @@ async def show_what_next(
                     reply_markup=markup
                 )
 
-
 async def show_full_schedule(
     call: types.CallbackQuery,
     **kwargs # pylint: disable=unused-argument
@@ -194,7 +193,6 @@ async def show_full_schedule(
         reply_markup=markup
         )
 
-
 async def show_result_menu(
     call: types.CallbackQuery,
     category,
@@ -214,7 +212,6 @@ async def show_result_menu(
         reply_markup=markup
     )
 
-
 async def show_festival_cup_result(
     call:types.CallbackQuery,
     **kwargs # pylint: disable=unused-argument
@@ -230,10 +227,10 @@ async def show_festival_cup_result(
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    await call.message.answer(
-        text="Вот результат кубка фестиваля"
+    await call.message.answer_photo(
+        photo=open(r'data/img/results_new/festival_result.jpg', "rb"),
+        caption='Кубок фестиваля'
     )
-
 
 async def show_holding_cup_result(
     call: types.CallbackQuery,
@@ -249,10 +246,10 @@ async def show_holding_cup_result(
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    await call.message.answer(
-        text="Вот результат кубка ходинга"
+    await call.message.answer_photo(
+        photo=open(r'data/img/results_new/holding_result.jpg', "rb"),
+        caption='Кубок фестиваля'
     )
-
 
 async def show_tourism_cup_result(
     call: types.CallbackQuery,
@@ -269,10 +266,10 @@ async def show_tourism_cup_result(
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    await call.message.answer(
-        text="Вот результат кубка туризма"
+    await call.message.answer_photo(
+        photo=open(r'data/img/results_new/tourism_result.jpg', "rb"),
+        caption='Кубок фестиваля'
     )
-
 
 async def show_sport_cup_result(
     call: types.CallbackQuery,
@@ -289,10 +286,10 @@ async def show_sport_cup_result(
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    await call.message.answer(
-        text="Вот результат кубка туризма"
+    await call.message.answer_photo(
+        photo=open(r'data/img/results_new/sport_result.jpg', "rb"),
+        caption='Кубок фестиваля'
     )
-
 
 async def show_culture_cup_result(
     call: types.CallbackQuery,
@@ -309,10 +306,10 @@ async def show_culture_cup_result(
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    await call.message.answer(
-        text="Вот результат кубка культуры"
+    await call.message.answer_photo(
+        photo=open(r'data/img/results_new/culture_result.jpg', "rb"),
+        caption='Кубок фестиваля'
     )
-
 
 async def show_event_menu(
     call: types.CallbackQuery,
@@ -338,7 +335,6 @@ async def show_event_menu(
         reply_markup=markup
     )
 
-
 async def show_team_menu(
     call: types.CallbackQuery,
     category,
@@ -363,7 +359,6 @@ async def show_team_menu(
         reply_markup=markup
     )
 
-
 async def show_subscriptions_manager_menu(
     call: types.CallbackQuery,
     category,
@@ -387,7 +382,6 @@ async def show_subscriptions_manager_menu(
         text="Выберите какие подписки вы хоте ли бы настроить",
         reply_markup=markup
     )
-
 
 async def show_subscriptions_manager_team(
     call: types.CallbackQuery,
@@ -419,7 +413,6 @@ async def show_subscriptions_manager_team(
         reply_markup=markup
     )
 
-
 async def show_subscriptions_manager_event(
     call: types.CallbackQuery,
     category,
@@ -449,7 +442,6 @@ async def show_subscriptions_manager_event(
         reply_markup=markup
     )
 
-
 async def show_map(
     call: types.CallbackQuery,
     **kwargs # pylint: disable=unused-argument
@@ -473,7 +465,6 @@ async def show_map(
         caption="Карта фестиваля",
         reply_markup=markup
     )
-
 
 async def show_share(
     call: types.CallbackQuery,
@@ -500,7 +491,6 @@ async def show_share(
             reply_markup=markup
     )
 
-
 async def show_about(
     call: types.CallbackQuery,
     **kwargs # pylint: disable=unused-argument
@@ -524,7 +514,6 @@ async def show_about(
         caption="Положение туристического фестиваля Сварог2022",
         reply_markup=markup
     )
-
 
 async def navigate_to_category(
     call: types.CallbackQuery,
@@ -558,7 +547,6 @@ async def navigate_to_category(
         category = category
     )
 
-
 async def navigate_to_subcategory(
     call: types.CallbackQuery,
     category,
@@ -590,7 +578,6 @@ async def navigate_to_subcategory(
         category = category,
         subcategory = subcategory
     )
-
 
 async def function_with_item(
     call: types.CallbackQuery,
@@ -632,7 +619,6 @@ async def function_with_item(
         subcategory,
         item_id
     )
-
 
 async def show_item_info(
     call : types.CallbackQuery,
@@ -688,7 +674,6 @@ async def show_item_info(
             reply_markup=markup
         )
 
-
 async def subscribe_to_item(
     call: types.CallbackQuery,
     user_id:int,
@@ -732,7 +717,6 @@ async def subscribe_to_item(
             text="Что то пошло не так"
         )
 
-
 async def unsubscribe_to_item(
     call: types.CallbackQuery,
     user_id:int,
@@ -775,7 +759,6 @@ async def unsubscribe_to_item(
         await call.message.answer(
             text="Что то пошло не так"
         )
-
 
 @dp.callback_query_handler(main_menu_cb.filter())
 async def navigate_to_level(
