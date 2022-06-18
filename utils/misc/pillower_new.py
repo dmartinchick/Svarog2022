@@ -4,7 +4,7 @@ from datetime import datetime
 
 from PIL import Image, ImageFont, ImageDraw
 
-from utils.misc.results_processing import CupResults, FestivalResult
+from utils.misc.results_processing import CupResults, FestivalResult, HoldingResult
 
 
 class ResultsTable:
@@ -827,7 +827,7 @@ class UpdateTables:
         if cup == 'Кубок фестиваля':
             results_data = FestivalResult(holding=False).results
         elif cup == 'Кубок холдинга':
-            results_data = FestivalResult(holding=True).results
+            results_data = HoldingResult(holding=True).results
         else:
             results_data = CupResults(cup).convert_to_display
         cup_results = ResultsTable(results_data)
@@ -851,7 +851,7 @@ class UpdateTables:
             padding=(0, 25, 25, 12.5),
             row_name_left_padding=25,
             font_path=None,
-            font_size=23,
+            font_size=18,
             anchor='mm'
         )
 
