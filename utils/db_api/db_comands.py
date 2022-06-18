@@ -344,6 +344,11 @@ def get_team_name(team_id: int) -> str:
     team_name = s.query(Team.name).filter(Team.id == team_id).one()[0]
     return team_name
 
+def get_team_factory(team_name: str) -> str:
+    """Возвращает предприяте, которое представляет команда"""
+    factory = s.query(Team.factory).filter(Team.name == team_name).one()[0]
+    return factory
+
 def get_event_name(event_id: int) -> str:
     """Возвращает название конкурса по ID
 

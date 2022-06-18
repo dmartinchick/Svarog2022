@@ -3,7 +3,7 @@
 from operator import itemgetter
 
 from utils.db_api.db_comands import get_event_coefficient, get_event_name,\
-    get_events_list, get_place, get_team_name, get_teams_list
+    get_events_list, get_place, get_team_factory, get_team_name, get_teams_list
 
 
 class Result:
@@ -207,6 +207,143 @@ class FestivalResult:
                 result.update({'Место': place})
             else:
                 result.update({'Место': place})
+
+
+class HoldingResult:
+    """Класс для обработки результатов холдинга"""
+
+    def __init__(self, holding=False) -> None:
+        self.holding = holding
+        self.results = None
+        self.sum_point()
+        self.distribute_places_with_pass()
+
+    @property
+    def holding(self):
+        """get holding"""
+        return self.__holding
+
+    @holding.setter
+    def holding(self, holding):
+        if not isinstance(holding, bool):
+            raise TypeError('Значение holding должно быть True или False')
+        self.__holding = holding
+
+    @property
+    def results(self):
+        """get results"""
+        return self.__results
+
+    @results.setter
+    def results(self, results):
+        self.__results = []
+        if results is None:
+
+            tourism_cup = CupResults('Кубок туризма', self.holding).convert_to_short_display
+            sport_cup = CupResults('Кубок спорта', self.holding).convert_to_short_display
+            culture_cup = CupResults('Кубок культуры', self.holding).convert_to_short_display
+
+            self.__results = self.join_results(
+                self.join_results(tourism_cup,sport_cup),
+                culture_cup
+            )
+
+        else:
+            self.__results = results
+
+    @staticmethod
+    def join_results(li1, li2) -> list:
+        """Метод объединения двух списков в один
+
+        Args:
+            li1 (_type_): списко словарей
+            li2 (_type_): список словарей
+
+        Returns:
+            list: список словарей в формате:
+                {
+                    'Команда': team_name,
+                    'Кубок 1': point,
+                    'Кубок 2': point,
+                    'Кол-во очков': point,
+                    'Место': place
+                }
+        """
+        for elem1 in li1:
+            team_name = elem1['Команда']
+            for elem2 in li2:
+                if elem2['Команда'] == team_name:
+                    elem1.update(elem2)
+        return li1
+
+    def sum_point(self):
+        """Метод подсчета количества очков"""
+
+        for result in self.__results:
+            summ = 0
+            columns = result.keys()
+            for column in columns:
+                if column != 'Команда':
+                    if result[column] != '-/-':
+                        summ += float(result[column].split('/')[1])
+            result.update({'Кол-во очков': summ})
+
+    def sort_results(self, sortable_column='Кол-во очков'):
+        """Метод сортировки списка результатов по количеству очков"""
+        self.results.sort(key=itemgetter(sortable_column))
+
+    def distribute_places_with_pass(self):
+        """Метод распределяет места с пропуском мест при повторении
+        и добавляет колонку в результаты"""
+        self.sort_results()
+
+        factories = []
+        counter = 0
+        place = 0
+        previous_result = 0
+        for result in self.__results:
+
+            factory = get_team_factory(result['Команда'])
+            if factory in factories:
+                result.update({'Место': '-'})
+            else:
+                factories.append(factory)
+                if result['Кол-во очков'] != previous_result:
+                    if counter == 0:
+                        previous_result = result['Кол-во очков']
+                        place += 1
+                        result.update({'Место': place})
+                    else:
+                        previous_result = result['Кол-во очков']
+                        place += 1 + counter
+                        result.update({'Место': place})
+                        counter = 0
+                else:
+                    result.update({'Место': place})
+                    counter += 1
+
+    def distribute_places_withot_pass(self):
+        """Метод распределяет места без пропуска мест при повторении
+        и добавляет колонку в результаты"""
+
+        self.sort_results()
+
+        factories = []
+        place = 0
+        previous_result = 0
+        for result in self.__results:
+
+            factory = get_team_factory(result['Команда'])
+            if factory in factories:
+                result.update({'Место': '-'})
+            else:
+                factories.append(factory)
+                if result['Кол-во очков'] != previous_result:
+                    previous_result = result['Кол-во очков']
+                    place += 1
+                    result.update({'Место': place})
+                else:
+                    result.update({'Место': place})
 
 
 class CupResults:
