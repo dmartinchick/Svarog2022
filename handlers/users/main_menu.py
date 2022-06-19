@@ -510,7 +510,7 @@ async def show_about(
     markup = await back_to_main_keyboard()
 
     await call.message.answer_document(
-        document=open(r'data/docs/svarog2021_rule.pdf', "rb"),
+        document=open(r'data/docs/svarog2022_rule.pdf', "rb"),
         caption="Положение туристического фестиваля Сварог2022",
         reply_markup=markup
     )
