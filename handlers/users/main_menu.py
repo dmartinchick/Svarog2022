@@ -1,6 +1,5 @@
 """Хэндлеры управления главного меню"""
 # from datetime import timedelta
-from datetime import datetime
 import logging
 from typing import Union
 
@@ -14,15 +13,17 @@ from utils.db_api.db_comands import get_date_start, get_date_end, \
     set_sign_to_team, set_unsing_to_event, \
     set_unsing_to_team
 
+# Загрузка прочих функций
+from utils.misc.other import get_tdate
+
 #Загрузка клавиатур
 from keyboards.inline.inline_main_menu import back_item_keyboard, back_to_main_keyboard,\
     event_keyboard, main_menu_keyboard, result_keyboard, subscriptions_manager_keyboard, \
     sm_item_keyboard, team_keyboard
 from keyboards.inline.callback_datas import main_menu_cb
 
-
 from loader import dp
-from data import config
+
 
 @dp.message_handler(commands=['Меню', 'menu'], commands_prefix = ['⠀','/'])
 async def show_main_menu(
@@ -62,7 +63,7 @@ async def show_what_now(
     logging.info("callback_data='%s'", callback_data)
 
     # текущее время и дата
-    tdate = datetime.now(config.TZ).utcnow()
+    tdate = get_tdate()
     # tdate = datetime(2021, 7, 18, 19, 45) + timedelta(hours=config.DELTA)
     dt_start = get_date_start()
     dt_end = get_date_end()
@@ -126,7 +127,7 @@ async def show_what_next(
     logging.info("callback_data='%s'", callback_data)
 
     # получение текущей даты и времени, а так же даты и времени окончания фестиваля
-    tdate = datetime.now(config.TZ).utcnow()
+    tdate = get_tdate()
     # tdate = datetime(2021, 7, 18, 19, 45) + timedelta(hours=config.DELTA)
     dt_end = get_date_end()
 
