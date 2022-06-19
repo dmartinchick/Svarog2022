@@ -102,4 +102,10 @@ class Results(Base):
     place = Column(Integer)
 
 
+class LogTime(Base):
+    """Определение класа LogTime"""
+    id = Column(Integer, primary_key=True)
+    tdate = Column(DateTime)
+    content = Column(String)
+
 Base.metadata.create_all(engine)

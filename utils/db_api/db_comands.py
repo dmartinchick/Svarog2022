@@ -5,7 +5,8 @@ from sqlalchemy import create_engine, delete
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import and_, desc
 
-from utils.db_api.sqlalch import Event, Results, Schedule, Team, User, \
+from utils.misc.other import get_tdate
+from utils.db_api.sqlalch import Event, LogTime, Results, Schedule, Team, User, \
     ass_user_event, ass_user_team
 
 from data.config import USER, PASSWORD, HOST, DB
@@ -674,4 +675,15 @@ def set_update_schedule(schedule_id:int, star:datetime, end:datetime):
     s.query(Schedule).where(Schedule.id == schedule_id).\
         update({Schedule.time_start : star,
         Schedule.time_end :end}, synchronize_session = False)
+    s.commit()
+
+# Мусорная функция
+def set_loging_update():
+    """pass"""
+    tdate = get_tdate()
+    update = LogTime(
+        tdate = tdate,
+        content = 'connected'
+    )
+    s.add(update)
     s.commit()
