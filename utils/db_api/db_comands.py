@@ -660,6 +660,11 @@ def delete_event_result(event_id:int):
     s.execute(delete_event)
     s.commit()
 
+def delete_log_info():
+    """pass"""
+    s.query(LogTime).delete()
+    s.commit()
+
 # Функции изменения данных
 def set_update_result(result_id:int, place:int):
     """Обновляет результат команды в таблице Results
