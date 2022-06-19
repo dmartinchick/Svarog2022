@@ -3,7 +3,7 @@
 from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
 
-from utils.db_api.db_comands import get_event_name_by_cup
+# from utils.db_api.db_comands import get_event_name_by_cup
 
 
 class TableResult:

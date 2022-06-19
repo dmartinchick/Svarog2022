@@ -102,4 +102,13 @@ class Results(Base):
     place = Column(Integer)
 
 
+class LogTime(Base):
+    """pass"""
+    __tablename__ = 'logtime'
+
+    id = Column(Integer, primary_key=True)
+    tdate = Column(DateTime)
+    content = Column(String)
+
+
 Base.metadata.create_all(engine)

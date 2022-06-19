@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, delete
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import and_, desc
 
-from utils.db_api.sqlalch import Event, Results, Schedule, Team, User, \
+from utils.db_api.sqlalch import Event, LogTime, Results, Schedule, Team, User, \
     ass_user_event, ass_user_team
 
 from data.config import USER, PASSWORD, HOST, DB
@@ -598,6 +598,15 @@ def set_results(results: dict):
         )
         s.add(result)
         s.commit()
+
+def set_log_info(t_date):
+    """pass"""
+    update = LogTime(
+        tdate = t_date,
+        content = 'conected'
+    )
+    s.add(update)
+    s.commit()
 
 # Функции для удаления данных
 def set_unsing_to_event(user_id: int, event_id:int):
