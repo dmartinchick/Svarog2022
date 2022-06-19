@@ -103,12 +103,11 @@ class Results(Base):
 
 
 class LogTime(Base):
-    """pass"""
+    """Определение класа LogTime"""
     __tablename__ = 'logtime'
 
     id = Column(Integer, primary_key=True)
     tdate = Column(DateTime)
     content = Column(String)
-
 
 Base.metadata.create_all(engine)
