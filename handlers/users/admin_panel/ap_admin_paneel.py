@@ -1,15 +1,15 @@
 """Хэндлеры управления админ панелью"""
 import logging
-from aiogram import types
+# from datetime import datetime
+# from data import config
 
-from datetime import datetime
-from data import config
+from aiogram import types
 
 from keyboards.inline.inline_admin_panel import admin_panel_keyboard
 
 from loader import dp
 from utils.db_api.db_comands import get_admin_list
-from utils.misc.results_processing import show_test_data
+from utils.misc.other import get_tdate
 
 
 @dp.message_handler(commands="admin_panel")
@@ -46,5 +46,5 @@ async def show_set_fol(call: types.CallbackQuery):
     logging.info("callback_data='%s'", callback_data)
 
     await call.message.answer(
-        text=f'{datetime.now(tz=config.TZ).utcnow()}'
+        text=f'{get_tdate()}'
     )
