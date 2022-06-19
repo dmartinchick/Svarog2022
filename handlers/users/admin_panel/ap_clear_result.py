@@ -102,21 +102,32 @@ async def ap_clear_result_start(call: types.CallbackQuery):
     # создаем список словарей конкурсов результат которых уже введен
     results_list = []
     results_list_id = get_result_list()
-    for result in results_list_id:
-        results_list.append(
-            {'name':get_event_name(result),
-            'item_id':result}
+    if len(results_list_id) == 0:
+
+        markup = await admin_panel_keyboard()
+        await call.message.answer(
+            text='Нет ни одного введенного результата\n'
+                  'Панель администратора',
+            reply_markup=markup
         )
-    markup = await ap_event_keyboard(
-        events_list=results_list,
-        results_list=[],
-        to_do = to_do
-    )
-    await call.message.answer(
-        text="Выбирите конкурс, резьтат которого хотите удалить",
-        reply_markup=markup
-    )
-    await ClearResult.event_name.set()
+
+    else:
+
+        for result in results_list_id:
+            results_list.append(
+                {'name':get_event_name(result),
+                'item_id':result}
+            )
+        markup = await ap_event_keyboard(
+            events_list=results_list,
+            results_list=[],
+            to_do = to_do
+        )
+        await call.message.answer(
+            text="Выбирите конкурс, резьтат которого хотите удалить",
+            reply_markup=markup
+        )
+        await ClearResult.event_name.set()
 
 
 @dp.callback_query_handler(state=ClearResult.event_name)
