@@ -344,7 +344,7 @@ class Cell:
         self.canvas = canvas
         self.splitter = splitter
         self.__text = ''
-        self.__font_path = 'c:/code/py/svarog2022_Tbot/tbot/data/fonts/Montserrat-Regular.ttf'
+        self.__font_path = 'data/fonts/Montserrat-Regular.ttf'
         self.__font_size = 20
         self.__font = ImageFont.truetype(font=self.__font_path, size=self.__font_size)
         self.__fill = (255, 255, 255)
