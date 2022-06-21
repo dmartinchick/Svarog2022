@@ -104,7 +104,7 @@ def get_what_next(tdate) -> list:
             and_(
                 Schedule.event_id == Event.id,
                 Schedule.time_start > tdate)).order_by(
-                    Schedule.time_start).limit(2):
+                    Schedule.time_start).limit(3):
         next_event_list.append(
             {'name':item[0],
             'event_id':item[1],

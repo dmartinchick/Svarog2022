@@ -93,7 +93,7 @@ async def show_what_now(
             )
         else:
             for event in events_list:
-                message_text = f"Саейчас проходит конкурс '{event['name']}'\n"\
+                message_text = f"{event['name']}\n"\
                     + f"Он закончиться в {event['time_end'].strftime('%H:%M')}"
                 # проверяем является ли событие последним в списке текущих
                 # Если да, то приклепляем к нему клавиатуру
@@ -147,7 +147,7 @@ async def show_what_next(
         await call.message.answer("В скором времени состоится")
 
         for event in events_list:
-            message_text = f"\nКонкурс '{event['name']}'\n"\
+            message_text = f"\n'{event['name']}'\n"\
                 + "Начало "\
                 + f"{event['event_time_start'].strftime('%d.%m')} "\
                 + f"в {event['event_time_start'].strftime('%H:%M')}"
