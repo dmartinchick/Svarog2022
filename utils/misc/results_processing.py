@@ -375,9 +375,13 @@ class CupResults:
 
     @teams.setter
     def teams(self, teams):
+        self.__teams = teams
+
+        """
         self.__teams = []
         for team in teams:
             self.__teams.append(team['item_id'])
+        """
 
     @property
     def events(self):
@@ -386,9 +390,13 @@ class CupResults:
 
     @events.setter
     def events(self, events):
+        self.__events = events
+
+        """
         self.__events = []
         for event in events:
             self.__events.append(event['item_id'])
+        """
 
     @property
     def results(self):
@@ -418,12 +426,12 @@ class CupResults:
         cup_results = []
         for team in self.teams:
             team_results = {
-                'Команда': get_team_name(team)
+                'Команда': team['name']
             }
             for event in self.events:
                 team_results.update(
                     {
-                        get_event_name(event): Result(team, event)
+                        event['name']: Result(team['item_id'], event['item_id'])
                     }
                 )
             cup_results.append(team_results)

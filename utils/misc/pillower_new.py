@@ -830,6 +830,7 @@ class UpdateTables:
             results_data = HoldingResult(holding=True).results
         else:
             results_data = CupResults(cup).convert_to_display
+
         cup_results = ResultsTable(results_data)
 
         cup_results.title.draw_text(
