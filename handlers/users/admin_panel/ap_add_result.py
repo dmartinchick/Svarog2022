@@ -641,7 +641,7 @@ async def belshina_place_choosen(message: types.Message, state: FSMContext):
             await state.update_data(belshina_place = {'team_id': team_id, 'place' : answer})
             await message.answer(
                 text="Для прекращения остановки ввода введите 'СТОП'\n"\
-                    "Какое место заняла команда ММЗ?")
+                    "Какое место заняла команда IRON VIKINGS?")
             await AddResult.iron_vikings_place.set()
         else:
             await message.answer(
@@ -689,7 +689,7 @@ async def iron_vikings_place_choosen(message: types.Message, state: FSMContext):
                 text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}")
             await message.answer(
                 text="Для прекращения остановки ввода введите 'СТОП'\n"\
-                    "Какое место заняла команда iron_vikings?")
+                    "Какое место заняла команда IRON_VIKINGS?")
             await AddResult.iron_vikings_place.set()
         await AddResult.check_result.set()
 
