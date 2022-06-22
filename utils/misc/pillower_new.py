@@ -841,8 +841,8 @@ class UpdateTables:
 
         cup_results.footer.draw_text(
             padding=(25, 25, 25, 25),
-            text='* - Данные таблицы носят информационный характер.\n'
-                f'** - последнее обновление таблицы: {get_tdate()}',
+            text='* - Данные таблицы носят информационный характер.'
+                f'\t\t Последнее обновление таблицы: {get_tdate()}',
             font_path='data/fonts/Montserrat-LightItalic.ttf',
             font_size=14,
             anchor='la'
