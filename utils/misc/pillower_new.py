@@ -1,8 +1,7 @@
 """Пакет работы с таблицами результатов ver2.0"""
 
-from datetime import datetime
-
 from PIL import Image, ImageFont, ImageDraw
+from utils.misc.other import get_tdate
 
 from utils.misc.results_processing import CupResults, FestivalResult, HoldingResult
 
@@ -842,7 +841,8 @@ class UpdateTables:
 
         cup_results.footer.draw_text(
             padding=(25, 25, 25, 25),
-            text=f'* - последнее обновление таблицы: {datetime.now().strftime("%d.%m.%Y %H:%M")}',
+            text='* - Данные таблицы носят информационный характер.\n'
+                f'** - последнее обновление таблицы: {get_tdate()}',
             font_path='data/fonts/Montserrat-LightItalic.ttf',
             font_size=14,
             anchor='la'
