@@ -94,7 +94,7 @@ async def show_what_now(
         else:
             for event in events_list:
                 message_text = f"{event['name']}\n"\
-                    + f"Он закончиться в {event['time_end'].strftime('%H:%M')}"
+                    + f"Ориентировочное вреямя окончания: {event['time_end'].strftime('%H:%M')}"
                 # проверяем является ли событие последним в списке текущих
                 # Если да, то приклепляем к нему клавиатуру
                 if event != events_list[-1]:
@@ -249,7 +249,7 @@ async def show_holding_cup_result(
 
     await call.message.answer_photo(
         photo=open(r'data/img/results_new/holding_result.jpg', "rb"),
-        caption='Кубок фестиваля'
+        caption='Кубок холдинга'
     )
 
 async def show_tourism_cup_result(
@@ -269,7 +269,7 @@ async def show_tourism_cup_result(
 
     await call.message.answer_photo(
         photo=open(r'data/img/results_new/tourism_result.jpg', "rb"),
-        caption='Кубок фестиваля'
+        caption='Кубок туризма'
     )
 
 async def show_sport_cup_result(
@@ -289,7 +289,7 @@ async def show_sport_cup_result(
 
     await call.message.answer_photo(
         photo=open(r'data/img/results_new/sport_result.jpg', "rb"),
-        caption='Кубок фестиваля'
+        caption='Кубок спорта'
     )
 
 async def show_culture_cup_result(
@@ -309,7 +309,7 @@ async def show_culture_cup_result(
 
     await call.message.answer_photo(
         photo=open(r'data/img/results_new/culture_result.jpg', "rb"),
-        caption='Кубок фестиваля'
+        caption='Кубок культуры'
     )
 
 async def show_event_menu(
@@ -655,7 +655,7 @@ async def show_item_info(
         + f"{event_info['type']}\n\n"\
         + f"Коэфициент сложности: {event_info['coefficient']}\n\n"\
         + f"Состав представителей команд:\n{event_composition}\n\n"\
-        + f"Время начала конкурса:\n{event_info['time_start'].strftime('%d.%m %H:%M')}\n\n"\
+        + f"Начало проведения конкурса:\n{event_info['time_start'].strftime('%d.%m %H:%M')}\n\n"\
         + f"Правила конкурса:\n{event_info['rule']}"
 
         await call.message.answer_photo(
