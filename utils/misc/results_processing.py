@@ -2,18 +2,21 @@
 
 from operator import itemgetter
 
-from utils.db_api.db_comands import get_event_coefficient, get_event_name,\
-    get_events_list, get_place, get_team_factory, get_team_name, get_teams_list
+from utils.db_api.db_comands import get_event_coefficient,\
+    get_events_list, get_team_factory, get_teams_list
 
 
 class Result:
     """Класс для обработки одного результата"""
 
-    def __init__(self, team_id, event_id) -> None:
-        self.team_id = team_id
-        self.event_id = event_id
+    def __init__(self, team, event, all_results) -> None:
+        self.team_id = team['item_id']
+        self.team_name = team['name']
+        self.event_id = event['item_id']
+        self.event_name = event['name']
+        self.all_results = all_results
         self.coefficient = get_event_coefficient(self.event_id)
-        self.place = get_place(self.team_id, self.event_id)
+        self.place = self.all_results[(self.event_id, self.team_id)]
 
     @property
     def team_id(self):
@@ -31,7 +34,11 @@ class Result:
         Returns:
             _type_: _description_
         """
-        return get_team_name(self.team_id)
+        return self.__team_name
+
+    @team_name.setter
+    def team_name(self, team_name):
+        self.__team_name = team_name
 
     @property
     def event_name(self):
@@ -40,7 +47,11 @@ class Result:
         Returns:
             _type_: _description_
         """
-        return get_event_name(self.event_id)
+        return self.__event_name
+
+    @event_name.setter
+    def event_name(self, event_name):
+        self.__event_name = event_name
 
     @property
     def event_id(self):
@@ -59,6 +70,15 @@ class Result:
     @coefficient.setter
     def coefficient(self, coefficient):
         self.__coefficient = coefficient
+
+    @property
+    def place(self):
+        """get_place"""
+        return self.__place
+
+    @place.setter
+    def place(self, place):
+        self.__place = place
 
     @property
     def point(self):
@@ -88,11 +108,21 @@ class Result:
 class FestivalResult:
     """Класс для работы с резульаттами кубка фестиваля"""
 
-    def __init__(self, holding=False) -> None:
+    def __init__(self, all_results, holding=False) -> None:
+        self.all_results = all_results
         self.holding = holding
         self.results = None
         self.sum_point()
         self.distribute_places_with_pass()
+
+    @property
+    def all_results(self):
+        """get all_results"""
+        return self.__all_results
+
+    @all_results.setter
+    def all_results(self, all_results):
+        self.__all_results = all_results
 
     @property
     def holding(self):
@@ -115,9 +145,20 @@ class FestivalResult:
         self.__results = []
         if results is None:
 
-            tourism_cup = CupResults('Кубок туризма', self.holding).convert_to_short_display
-            sport_cup = CupResults('Кубок спорта', self.holding).convert_to_short_display
-            culture_cup = CupResults('Кубок культуры', self.holding).convert_to_short_display
+            tourism_cup = CupResults(
+                cup='Кубок туризма',
+                all_results=self.all_results,
+                holding=self.holding).convert_to_short_display
+
+            sport_cup = CupResults(
+                cup='Кубок спорта',
+                all_results=self.all_results,
+                holding=self.holding).convert_to_short_display
+
+            culture_cup = CupResults(
+                cup='Кубок культуры',
+                all_results=self.all_results,
+                holding=self.holding).convert_to_short_display
 
             self.__results = self.join_results(
                 self.join_results(tourism_cup,sport_cup),
@@ -212,11 +253,21 @@ class FestivalResult:
 class HoldingResult:
     """Класс для обработки результатов холдинга"""
 
-    def __init__(self, holding=False) -> None:
+    def __init__(self, all_results, holding=False) -> None:
+        self.all_results = all_results
         self.holding = holding
         self.results = None
         self.sum_point()
         self.distribute_places_with_pass()
+
+    @property
+    def all_results(self):
+        """get all_results"""
+        return self.__all_results
+
+    @all_results.setter
+    def all_results(self, all_results):
+        self.__all_results = all_results
 
     @property
     def holding(self):
@@ -239,9 +290,20 @@ class HoldingResult:
         self.__results = []
         if results is None:
 
-            tourism_cup = CupResults('Кубок туризма', self.holding).convert_to_short_display
-            sport_cup = CupResults('Кубок спорта', self.holding).convert_to_short_display
-            culture_cup = CupResults('Кубок культуры', self.holding).convert_to_short_display
+            tourism_cup = CupResults(
+                cup='Кубок туризма',
+                all_results=self.all_results,
+                holding=self.holding).convert_to_short_display
+
+            sport_cup = CupResults(
+                cup='Кубок спорта',
+                all_results=self.all_results,
+                holding=self.holding).convert_to_short_display
+
+            culture_cup = CupResults(
+                cup='Кубок культуры',
+                all_results=self.all_results,
+                holding=self.holding).convert_to_short_display
 
             self.__results = self.join_results(
                 self.join_results(tourism_cup,sport_cup),
@@ -349,13 +411,23 @@ class HoldingResult:
 class CupResults:
     """Класс для работы с результатами"""
 
-    def __init__(self, cup, holding=False):
+    def __init__(self, cup, all_results, holding=False):
+        self.all_results = all_results
         self.cup = cup
         self.teams = get_teams_list(holding)
         self.events = get_events_list(self.cup)
         self.results = None
         self.sum_point()
         self.distribute_places_with_pass()
+
+    @property
+    def all_results(self):
+        """get all_results"""
+        return self.__all_results
+
+    @all_results.setter
+    def all_results(self, all_results):
+        self.__all_results = all_results
 
     @property
     def cup(self):
@@ -431,7 +503,7 @@ class CupResults:
             for event in self.events:
                 team_results.update(
                     {
-                        event['name']: Result(team['item_id'], event['item_id'])
+                        event['name']: Result(team, event, self.all_results)
                     }
                 )
             cup_results.append(team_results)
@@ -555,11 +627,8 @@ class CupResults:
 
         return text_results
 
+
 def show_test_data():
     """тестовая функция
     """
-    test_data = FestivalResult()
-    # test_data = CupResults('Кубок спорта')
-
-
-    print(test_data.results)
+    pass
