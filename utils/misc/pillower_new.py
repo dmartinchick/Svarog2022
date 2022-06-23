@@ -1,7 +1,8 @@
 """Пакет работы с таблицами результатов ver2.0"""
 
 from PIL import Image, ImageFont, ImageDraw
-from utils.misc.other import get_tdate
+
+from utils.misc.other import make_data_results
 
 from utils.misc.results_processing import CupResults, FestivalResult, HoldingResult
 
@@ -814,21 +815,41 @@ class UpdateTables:
     """Класс для обновления таблиц"""
 
     def __init__(self) -> None:
-        self.update_cup('Кубок туризма', 'data/img/results_new/tourism_result.jpg')
-        self.update_cup('Кубок спорта', 'data/img/results_new/sport_result.jpg')
-        self.update_cup('Кубок культуры', 'data/img/results_new/culture_result.jpg')
-        self.update_cup('Кубок фестиваля', 'data/img/results_new/festival_result.jpg')
-        self.update_cup('Кубок холдинга', 'data/img/results_new/holding_result.jpg')
+        self.all_results = make_data_results()
+        self.update_cup(
+            cup='Кубок туризма',
+            file_path='data/img/results_new/tourism_result.jpg',
+            all_results=self.all_results)
 
-    def update_cup(self, cup, file_path):
+        self.update_cup(
+            cup='Кубок спорта',
+            file_path='data/img/results_new/sport_result.jpg',
+            all_results=self.all_results)
+
+        self.update_cup(
+            cup='Кубок культуры',
+            file_path='data/img/results_new/culture_result.jpg',
+            all_results=self.all_results)
+
+        self.update_cup(
+            cup='Кубок фестиваля',
+            file_path='data/img/results_new/festival_result.jpg',
+            all_results=self.all_results)
+
+        self.update_cup(
+            cup='Кубок холдинга',
+            file_path='data/img/results_new/holding_result.jpg',
+            all_results=self.all_results)
+
+    def update_cup(self, cup, file_path, all_results):
         """Обновление таблицы"""
 
         if cup == 'Кубок фестиваля':
-            results_data = FestivalResult(holding=False).results
+            results_data = FestivalResult(all_results, holding=False).results
         elif cup == 'Кубок холдинга':
-            results_data = HoldingResult(holding=True).results
+            results_data = HoldingResult(all_results, holding=True).results
         else:
-            results_data = CupResults(cup).convert_to_display
+            results_data = CupResults(cup, all_results).convert_to_display
 
         cup_results = ResultsTable(results_data)
 
@@ -841,8 +862,7 @@ class UpdateTables:
 
         cup_results.footer.draw_text(
             padding=(25, 25, 25, 25),
-            text='* - Данные таблицы носят информационный характер.'
-                f'\t\t Последнее обновление таблицы: {get_tdate()}',
+            text='* - Данные таблицы носят информационный характер.',
             font_path='data/fonts/Montserrat-LightItalic.ttf',
             font_size=14,
             anchor='la'

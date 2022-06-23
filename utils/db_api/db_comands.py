@@ -541,6 +541,42 @@ def get_cups():
             cups.append(cup[0])
     return cups
 
+def get_results() -> dict:
+    """Возвращает словарь с результатами"""
+    results = {}
+    for event_id, team_id, place in s.query(
+        Results.event_id,
+        Results.team_id,
+        Results.place):
+
+        results.update({(event_id, team_id): place})
+
+    return results
+
+def get_teams_id() -> list:
+    """Возвращает спискок id всех команд
+
+    Returns:
+        list: список словарей все команд
+    """
+    # pylint: disable=singleton-comparison
+    teams = []
+    for team in s.query(Team.id).all():
+            teams.append(team[0])
+    return teams
+
+def get_events_id() -> list:
+    """Возвращает пользователю список id конкурсов
+
+    Returns:
+        list: список словарей конкурсов
+
+    """
+    events = []
+    for event in s.query(Event.id).filter(Event.event_type != "Прочее"):
+        events.append(event[0])
+    return events
+
 # Функции добавления данных
 def set_user(user_id):
     """Добавлеят пользователя в БД
@@ -548,7 +584,7 @@ def set_user(user_id):
     Args:
         user_id (int): id пользователя
     """
-    user = User(user_id)
+    user = User(user_id = user_id, admin = 0)
     s.add(user)
     s.commit()
 

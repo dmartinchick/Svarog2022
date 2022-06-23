@@ -1,4 +1,5 @@
 """Хэндлеры управления админ панелью"""
+from email import message
 import logging
 # from datetime import datetime
 # from data import config
@@ -9,7 +10,7 @@ from keyboards.inline.inline_admin_panel import admin_panel_keyboard
 
 from loader import dp
 from utils.db_api.db_comands import get_admin_list
-from utils.misc.other import get_tdate
+from utils.misc.pillower_new import UpdateTables
 
 
 @dp.message_handler(commands="admin_panel")
@@ -45,6 +46,6 @@ async def show_set_fol(call: types.CallbackQuery):
     callback_data = call.data
     logging.info("callback_data='%s'", callback_data)
 
-    await call.message.answer(
-        text=f'{get_tdate()}'
-    )
+    UpdateTables()
+
+    await call.message.answer(text="Результаты обновлены")

@@ -16,7 +16,7 @@ async def admin_panel_keyboard() -> InlineKeyboardMarkup:
         {'name':"📝 Добавить результат конкурса", 'to_do_item':"add_result"},
         {'name': "Удалить результат конкруса", 'to_do_item':"claer_result"},
         {'name':"✏ Обновить результат конкурса", 'to_do_item':"update_result"},
-        {'name':"Добавить штраф", 'to_do_item':"set_fol"},
+        {'name':"Обновить таблицы результатов", 'to_do_item':"set_fol"},
         {'name':"🕑 Измененить расписания", 'to_do_item':"update_schedule"},
         {'name':"⚡ Экстренное сообщение", 'to_do_item':"emergency_message"}
     ]
