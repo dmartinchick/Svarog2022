@@ -33,7 +33,6 @@ class AddResult(StatesGroup):
     bycord_place = State()
     integral_place = State()
     mzkt_place = State()
-    maz_place = State()
     belshina_place = State()
     iron_vikings_place = State()
     check_result = State()
@@ -567,8 +566,8 @@ async def mzkt_place_choosen(message: types.Message, state: FSMContext):
             await state.update_data(mzkt_place = {'team_id': team_id, 'place' : answer})
             await message.answer(
                 text="Для прекращения остановки ввода введите 'СТОП'\n"\
-                    "Какое место заняла команда МАЗ?")
-            await AddResult.maz_place.set()
+                    "Какое место заняла команда Белшина?")
+            await AddResult.belshina_place.set()
         else:
             await message.answer(
                 text=f"Вы ввели неверное чилсо. Введите число от 1 до {count}"
@@ -579,14 +578,14 @@ async def mzkt_place_choosen(message: types.Message, state: FSMContext):
             )
             await AddResult.mzkt_place.set()
 
-@dp.message_handler(state=AddResult.maz_place)
+"""@dp.message_handler(state=AddResult.maz_place)
 async def maz_place_choosen(message: types.Message, state: FSMContext):
-    """добавляет в FSM Storege место которое заняла команда МАЗ
+    ""добавляет в FSM Storege место которое заняла команда МАЗ
 
     Args:
         message (types.Message): [description]
         state (FSMContext): [description]
-    """
+    ""
     if message.text == "СТОП":
         await state.finish()
         markup = await admin_panel_keyboard()
@@ -615,6 +614,7 @@ async def maz_place_choosen(message: types.Message, state: FSMContext):
                     "Какое место заняла команда МАЗ?"
             )
             await AddResult.maz_place.set()
+"""
 
 @dp.message_handler(state=AddResult.belshina_place)
 async def belshina_place_choosen(message: types.Message, state: FSMContext):
